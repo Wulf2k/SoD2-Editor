@@ -74,15 +74,15 @@ namespace SoD2_Editor
             public CommunityComponent(IntPtr addr) : base(addr) { }
             public IntPtr MoraleSettingsPtr => RIntPtr(BaseAddress + 0x168);
             public IntPtr BuffResourceManagerPtr => RIntPtr(BaseAddress + 0x190);
+            public float MinimumActionSpeedAdjustment => RSingle(BaseAddress + 0x198);
+            public float MinimumInfluenceProductionMultiplier => RSingle(BaseAddress + 0x19c);
             public IntPtr TimeOfDayComponentPtr => RIntPtr(BaseAddress + 0x1a0);
             public float CommunityStandingHighWaterMark => RSingle(BaseAddress + 0x12f0);
             public float PlayTime => RSingle(BaseAddress + 0x1308);
         }
         public class DaytonCharacter : UObject
         {
-            public DaytonCharacter(IntPtr addr) : base(addr)
-            { }
-
+            public DaytonCharacter(IntPtr addr) : base(addr) { }
             public int ID
             {
                 get => RInt32(BaseAddress + 0x368);
@@ -111,24 +111,15 @@ namespace SoD2_Editor
                     return textProp.Value;
                 }
             }
-            public CharacterStanding StandingLevel => (CharacterStanding)RUInt8(BaseAddress + 0x412);
-            public string HeroBonus
-            {
-                get
-                {
-                    int id = RInt32(BaseAddress + 0x418);
-                    return GetNameFromNameOffset(id);
-                }
-            }
+            public IntPtr NickNamePtr => RIntPtr(BaseAddress + 0x3b0);
 
-            public string LeaderType
-            {
-                get
-                {
-                    int id = RInt32(BaseAddress + 0x428);
-                    return GetNameFromNameOffset(id);
-                }
-            }
+            public string VoiceID => GetNameFromNameOffset(RInt32(BaseAddress + 0x3C8));
+            public string CulturalBackground => GetNameFromNameOffset(RInt32(BaseAddress + 0x3D0));
+            public string HumanDefinition => GetNameFromNameOffset(RInt32(BaseAddress + 0x3E8));
+            public CharacterStanding StandingLevel => (CharacterStanding)RUInt8(BaseAddress + 0x412);
+            public string HeroBonus => GetNameFromNameOffset(RInt32(BaseAddress + 0x418));
+
+            public string LeaderType => GetNameFromNameOffset(RInt32(BaseAddress + 0x428));
 
             public List<string> TraitNames
             {
@@ -192,6 +183,16 @@ namespace SoD2_Editor
                 get => RSingle(BaseAddress + 0x484);
                 set => WSingle(BaseAddress + 0x484, value);
             }
+            public float TraumaCounter
+            {
+                get => RSingle(BaseAddress + 0x48C);
+                set => WSingle(BaseAddress + 0x48C, value);
+            }
+            public float InjuryRecoveryCounter
+            {
+                get => RSingle(BaseAddress + 0x490);
+                set => WSingle(BaseAddress + 0x490, value);
+            }
 
             public float MaxStaminaBase => RSingle(BaseAddress + 0xAF4);
 
@@ -210,6 +211,7 @@ namespace SoD2_Editor
             }
 
             public Enclave Enclave => new Enclave(RIntPtr(BaseAddress + 0xE28));
+            public DaytonCharacterComponent CharacterComponent => new DaytonCharacterComponent(RIntPtr(BaseAddress + 0xE30));
 
             public float XPos => RSingle(BaseAddress + 0xFF0);
 
@@ -221,7 +223,8 @@ namespace SoD2_Editor
         public class DaytonCharacterComponent : UObject
         {
             public DaytonCharacterComponent(IntPtr addr) : base(addr) { }
-            public DaytonCharacter Character => new DaytonCharacter(RIntPtr(BaseAddress + 0xB8));
+            public DaytonHumanCharacter Character => new DaytonHumanCharacter(RIntPtr(BaseAddress + 0xB8));
+            public DaytonCharacter DaytonCharacter => new DaytonCharacter(RIntPtr(BaseAddress + 0x190));
         }
 
         public class DaytonGameGameMode : UObject
@@ -267,6 +270,10 @@ namespace SoD2_Editor
         {
             public DaytonHumanCharacter(IntPtr addr) : base(addr) { }
             public DaytonCharacterComponent CharacterComponent => new DaytonCharacterComponent(RIntPtr(BaseAddress + 0xBa0));
+            public float MaxSickness => RSingle(BaseAddress + 0xc3c);
+            public float CurrentEffectiveMaxHealth => RSingle(BaseAddress + 0xc58);
+            public float CurrentHealth => RSingle(BaseAddress + 0xc5c);
+            public byte bIsInCombat => RUInt8(BaseAddress + 0xc70);
         }
         public class DaytonLocalPlayer :UObject
         {

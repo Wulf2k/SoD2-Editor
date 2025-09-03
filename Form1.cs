@@ -158,9 +158,9 @@ namespace SoD2_Editor
                 var worldSettings = persistentLevel.WorldSettings;
 
                 var enclaveManager = gameMode.EnclaveManager;
-                DaytonLocalPlayer localPlayer = new DaytonLocalPlayer(_daytonLocalPlayer);
+                DaytonLocalPlayer localPlayer = new DaytonLocalPlayer(RIntPtr(_daytonLocalPlayer));
 
-                currEnclave = localPlayer.DaytonPlayerController.AnalyticsPawn.CharacterComponent.Character.Enclave;
+                currEnclave = localPlayer.DaytonPlayerController.AnalyticsPawn.CharacterComponent.DaytonCharacter.Enclave;
                 currDaytonHumanCharacter = localPlayer.DaytonPlayerController.AnalyticsPawn;
 
                 switch (tabs.SelectedTab.Name)
@@ -222,6 +222,9 @@ namespace SoD2_Editor
                                 chrdetails.AppendLine($"ID:                     {chr.ID}");
                                 chrdetails.AppendLine($"First Name:             {chr.FirstName}");
                                 chrdetails.AppendLine($"Last Name:              {chr.LastName}");
+                                chrdetails.AppendLine($"Voice ID:               {chr.VoiceID}");
+                                chrdetails.AppendLine($"Cultural Background:    {chr.CulturalBackground}");
+                                chrdetails.AppendLine($"Human Definition:       {chr.HumanDefinition}");
                                 chrdetails.AppendLine($"Hero Bonus:             {chr.HeroBonus}");
                                 chrdetails.AppendLine($"Leader Type:            {chr.LeaderType}");
                                 chrdetails.AppendLine($"Standing Level:         {chr.StandingLevel}");
@@ -231,6 +234,8 @@ namespace SoD2_Editor
                                 chrdetails.AppendLine($"Current Fatigue:    {chr.CurrFatigue,10:F4}");
                                 chrdetails.AppendLine($"Current Sick:       {chr.CurrSick,10:F4}");
                                 chrdetails.AppendLine($"Current Plague:     {chr.CurrPlague,10:F4}");
+                                chrdetails.AppendLine($"Trauma Counter:     {chr.TraumaCounter,10:F4}");
+                                chrdetails.AppendLine($"Inj Rcvry Counter:  {chr.InjuryRecoveryCounter,10:F4}");
                                 chrdetails.AppendLine($"Max Stamina Base:   {chr.MaxStaminaBase,10:F4}");
                                 chrdetails.AppendLine($"Max Health Base:    {chr.MaxHealthBase,10:F4}");
                                 chrdetails.AppendLine($"Max Sick:           {chr.MaxSick,10:F4}");
@@ -339,6 +344,9 @@ namespace SoD2_Editor
                         link.BackColor = Color.DarkRed;
                     else
                         link.BackColor = flowEnclaves.BackColor;
+
+                    if (newName == currEnclave.DisplayName)
+                        link.BackColor = Color.DarkGreen;
                 } catch (Exception ex) { Console.WriteLine($@"UpdateEnclaveList:  {ex}"); }
             }
         }
