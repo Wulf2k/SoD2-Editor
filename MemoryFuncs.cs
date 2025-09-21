@@ -34,14 +34,15 @@ namespace SoD2_Editor
             return buff;
         }
 
-        public static string RAsciiStr(IntPtr addr)
+        public static string RAsciiStr(IntPtr addr, int length = 0x200)
         {
-            return Encoding.ASCII.GetString(RBytes(addr, 0x200)).Split('\0')[0];
+            var bytes = RBytes(addr, length);
+            return Encoding.ASCII.GetString(bytes).Split('\0')[0];
         }
 
         public static string RUnicodeStr(IntPtr addr)
         {
-            return Encoding.Unicode.GetString(RBytes(addr, 0x200)).Split('\0')[0];
+            return Encoding.Unicode.GetString(RBytes(addr, 0x400)).Split('\0')[0];
         }
 
         public static object ReadAndConvert(IntPtr addr, int byteCount, string convertType)
@@ -120,7 +121,7 @@ namespace SoD2_Editor
 
         public static string GetNameFromNameOffset(int offset)
         {
-            IntPtr table = RIntPtr(_namesTablePtr);
+            IntPtr table = RIntPtr(addresses.Get("NamesTablePtr"));
             if (offset < 0x1000)
             {
                 offset = RInt32((IntPtr)(_ba + 0x44da8e0 + (offset * 4)));
@@ -131,7 +132,7 @@ namespace SoD2_Editor
 
         public static IntPtr GetObjFromObjId(int id)
         {
-            IntPtr table = (IntPtr)RInt64(_objTablePtr);
+            IntPtr table = (IntPtr)RInt64(addresses.Get("ObjTablePtr"));
             IntPtr obj = (IntPtr)RInt64((IntPtr)(table.ToInt64() + (0x18 * id)));
             return obj;
         }
