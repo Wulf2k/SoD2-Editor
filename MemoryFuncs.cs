@@ -24,6 +24,22 @@ namespace SoD2_Editor
         public static extern bool VirtualProtectEx(IntPtr hProcess, IntPtr lpAddress,
             uint dwSize, uint flNewProtect, out uint lpflOldProtect);
 
+        [DllImport("kernel32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+        static internal extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttributes, 
+            int dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, int dwCreationFlags, IntPtr lpThreadId);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+        static internal extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, int dwSize, int flAllocationType, int flProtect);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+        static internal extern bool VirtualFreeEx(IntPtr hProcess, IntPtr lpAddress, int dwSize, int dwFreeType);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+        static internal extern bool VirtualProtectEx(IntPtr hProcess, IntPtr lpAddress,
+            uint dwSize, int flNewProtect, out IntPtr lpflOldProtect);
+
+
+
         private static IntPtr _proc;
         private static bool _bigEndian = false;
 
@@ -40,9 +56,9 @@ namespace SoD2_Editor
             return Encoding.ASCII.GetString(bytes).Split('\0')[0];
         }
 
-        public static string RUnicodeStr(IntPtr addr)
+        public static string RUnicodeStr(IntPtr addr, int length = 0x200)
         {
-            return Encoding.Unicode.GetString(RBytes(addr, 0x400)).Split('\0')[0];
+            return Encoding.Unicode.GetString(RBytes(addr, length)).Split('\0')[0];
         }
 
         public static object ReadAndConvert(IntPtr addr, int byteCount, string convertType)
@@ -118,6 +134,28 @@ namespace SoD2_Editor
             Array.Copy(bytes, padded, bytes.Length);
             WBytes(addr, padded);
         }
+
+        internal const int PROCESS_VM_READ = 0x10;
+        internal const int TH32CS_SNAPPROCESS = 0x2;
+        internal const int MEM_COMMIT = 4096;
+        internal const int PAGE_READWRITE = 4;
+        internal const int PAGE_EXECUTE_READWRITE = 0x40;
+        internal const int PROCESS_CREATE_THREAD = (0x2);
+        internal const int PROCESS_VM_OPERATION = (0x8);
+        internal const int PROCESS_VM_WRITE = (0x20);
+        internal const int PROCESS_ALL_ACCESS = 0x1f0fff;
+        internal const int MEM_RELEASE = 0x8000;
+        internal const int CREATE_SUSPENDED = 0x4;
+        public IntPtr Alloc(int Size)
+        {
+            IntPtr h = (IntPtr)VirtualAllocEx(_proc, IntPtr.Zero, Size, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+            return h;
+        }
+        public bool Unalloc(IntPtr ptr, int size)
+        {
+            return VirtualFreeEx(_proc, ptr, size, MEM_RELEASE);
+        }
+
 
         public static string GetNameFromNameOffset(int offset)
         {

@@ -5,57 +5,43 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using static SoD2_Editor.Form1;
-using static SoD2_Editor.Form1.RangedWeapon.RangedWeaponItemInstance;
+
 
 namespace SoD2_Editor
 {
     public partial class Form1
     {
-        public enum ECharacterStanding : byte
+        public static ItemInstance ItemInstanceLookup(IntPtr baseAddress)
         {
-            Stranger = 0,
-            Recruit = 1,
-            Citizen = 2,
-            Hero = 3,
-            Leader = 4,
-            Count = 5,
-            MAX = 6
-        }
-        public enum ECommunityResourceType : byte
-        {
-            Ammo = 0,
-            Food = 1,
-            Fuel = 2,
-            Influence = 3,
-            Materials = 4,
-            Meds = 5,
-            Parts = 6,
-            Prestige = 7,
-            Counts = 8,
-            ECommunityResourceType_MAX = 9
-        }
-        public enum EEnclaveType : byte
-        {
-            Default = 0,
-            AmbientMission = 1,
-            Legacy = 2,
-            RadioTrader = 3,
-            Persistent = 4,
-            Num = 5,
-            MAX = 6
-        }
-        public enum EMeleeTypeEnum : byte
-        {
-            Blunt = 0,
-            Bladed = 1,
-            Heavy = 2,
-            EMeleeTypeEnum_MAX = 3
-        }
-        public enum ETimeOfDayPeriod : byte
-        {
-            Daytime = 0,
-            Nighttime = 1,
-            ETimeOfDayPeriod_MAX = 2
+            var tmpSlot = new ItemInstance(baseAddress);
+
+            switch (tmpSlot.Name)
+            {
+                case "AmmoItemInstance":
+                    return new AmmoItemInstance(baseAddress);
+                case "BackpackItemInstance":
+                    return new BackpackItemInstance(baseAddress);
+                case "CloseCombatItemInstance":
+                    return new CloseCombatItemInstance(baseAddress);
+                case "ConsumableItemInstance":
+                    return new ConsumableItemInstance(baseAddress);
+                case "FacilityModItemInstance":
+                    return new FacilityModItemInstance(baseAddress);
+                case "MeleeWeaponItemInstance":
+                    return new MeleeWeaponItemInstance(baseAddress);
+                case "MiscellaneousItemInstance":
+                    return new MiscellaneousItemInstance(baseAddress);
+                case "RangedWeaponItemInstance":
+                    return new RangedWeaponItemInstance(baseAddress);
+                case "RangedWeaponModItemInstance":
+                    return new RangedWeaponModItemInstance(baseAddress);
+                case "ResourceItemInstance":
+                    return new ResourceItemInstance(baseAddress);
+                default:
+                    return tmpSlot.BaseAddress != IntPtr.Zero
+                        ? new ItemInstance(baseAddress)
+                        : null;
+            }
         }
 
 
@@ -106,7 +92,21 @@ namespace SoD2_Editor
 
 
 
-
+        public class AmmoItemInstance : ItemInstance
+        {
+            public AmmoItemInstance(IntPtr addr) : base(addr) { }
+            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x48));
+            public override int stackCount
+            {
+                get => RInt32(BaseAddress + 0x50);
+                set => WInt32(BaseAddress + 0x50, value);
+            }
+        }
+        public class BackpackItemInstance : ItemInstance
+        {
+            public BackpackItemInstance(IntPtr addr) : base(addr) { }
+            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x48));
+        }
         public class CharacterSkillRecord
         {
             public IntPtr BaseAddress { get; set; }
@@ -134,6 +134,17 @@ namespace SoD2_Editor
                 set => WSingle(BaseAddress + 0xC, value);
             }
         }
+        public class CloseCombatItemInstance : ItemInstance
+        {
+            public CloseCombatItemInstance(IntPtr addr) : base(addr) { }
+            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x50));
+            public override int stackCount
+            {
+                get => RInt32(BaseAddress + 0x48);
+                set => WInt32(BaseAddress + 0x48, value);
+            }
+            public MeleeWeaponResourceStats Stats => new MeleeWeaponResourceStats(RIntPtr(BaseAddress + 0x58));
+        }
         public class CommunityComponent : UObject
         {
             public CommunityComponent(IntPtr addr) : base(addr) { }
@@ -145,128 +156,22 @@ namespace SoD2_Editor
             public float CommunityStandingHighWaterMark => RSingle(BaseAddress + 0x12f0);
             public float PlayTime => RSingle(BaseAddress + 0x1308);
         }
+        public class ConsumableItemInstance : ItemInstance
+        {
+            public ConsumableItemInstance(IntPtr addr) : base(addr) { }
+            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x48));
+            public override int stackCount
+            {
+                get => RInt32(BaseAddress + 0x50);
+                set => WInt32(BaseAddress + 0x50, value);
+            }
+        }
         public class DaytonCharacter : UObject
         {
             public DaytonCharacter(IntPtr addr) : base(addr) { }
-            public int ID
-            {
-                get => RInt32(BaseAddress + 0x368);
-                set => WInt32(BaseAddress + 0x368, value);
-            }
-            public string FirstName => new TextProperty(RIntPtr(BaseAddress + 0x380)).Value;
-            public string LastName => new TextProperty(RIntPtr(BaseAddress + 0x398)).Value;
-            public IntPtr NickNamePtr => RIntPtr(BaseAddress + 0x3b0);
 
-            public string VoiceID => GetNameFromNameOffset(RInt32(BaseAddress + 0x3C8));
-            public string CulturalBackground => GetNameFromNameOffset(RInt32(BaseAddress + 0x3D0));
-            public string HumanDefinition => GetNameFromNameOffset(RInt32(BaseAddress + 0x3E8));
-            public ECharacterStanding StandingLevel
-            {
-                get => (ECharacterStanding)RUInt8(BaseAddress + 0x412);
-                set => WUInt8(BaseAddress + 0x412, (byte)value);
-            }
-            public string HeroBonus => GetNameFromNameOffset(RInt32(BaseAddress + 0x418));
+            public DaytonCharacterRecord CharacterRecord => new DaytonCharacterRecord(BaseAddress + 0x368);
 
-            public string LeaderType => GetNameFromNameOffset(RInt32(BaseAddress + 0x428));
-            public Equipment Equipment => new Equipment(RIntPtr(BaseAddress + 0x438));
-            public List<CharacterSkillRecord> Skills
-            {
-                get
-                {
-                    var skills = new List<CharacterSkillRecord>();
-                    int count = numSkills;
-
-                    if (count <= 0)
-                        return skills;
-
-                    IntPtr skillsArrayPtr = RIntPtr(BaseAddress + 0x450);
-
-                    for (int i = 0; i < count; i++)
-                    {
-                        IntPtr skillPtr = skillsArrayPtr + i * 0x18;
-
-                        if (skillPtr != IntPtr.Zero)
-                        {
-                            skills.Add(new CharacterSkillRecord(skillPtr));
-                        }
-                    }
-
-                    return skills;
-                }
-            }
-            public int numSkills => RInt32(BaseAddress + 0x458);
-            public List<string> TraitNames
-            {
-                get
-                {
-                    var traits = new List<string>();
-
-                    IntPtr traitsPtr = RIntPtr(BaseAddress + 0x460);
-                    if (traitsPtr == IntPtr.Zero)
-                        return traits;
-
-                    int numTraits = RInt32(BaseAddress + 0x468);
-                    if (numTraits <= 0)
-                        return traits;
-
-                    for (int i = 0; i < numTraits; i++)
-                    {
-                        IntPtr traitBase = traitsPtr + (i * 0x18);
-
-                        int nameId = RInt32(traitBase + 0x18);
-                        if (nameId != 0)
-                            traits.Add(GetNameFromNameOffset(nameId));
-                    }
-
-                    return traits;
-                }
-            }
-
-            public float CurrStanding
-            {
-                get => RSingle(BaseAddress + 0x430);
-                set => WSingle(BaseAddress + 0x430, value);
-            }
-
-            public float CurrHealth
-            {
-                get => RSingle(BaseAddress + 0x470);
-                set => WSingle(BaseAddress + 0x470, value);
-            }
-
-            public float CurrStam
-            {
-                get => RSingle(BaseAddress + 0x474);
-                set => WSingle(BaseAddress + 0x474, value);
-            }
-
-            public float CurrFatigue
-            {
-                get => RSingle(BaseAddress + 0x478);
-                set => WSingle(BaseAddress + 0x478, value);
-            }
-
-            public float CurrSick
-            {
-                get => RSingle(BaseAddress + 0x480);
-                set => WSingle(BaseAddress + 0x480, value);
-            }
-
-            public float CurrPlague
-            {
-                get => RSingle(BaseAddress + 0x484);
-                set => WSingle(BaseAddress + 0x484, value);
-            }
-            public float TraumaCounter
-            {
-                get => RSingle(BaseAddress + 0x48C);
-                set => WSingle(BaseAddress + 0x48C, value);
-            }
-            public float InjuryRecoveryCounter
-            {
-                get => RSingle(BaseAddress + 0x490);
-                set => WSingle(BaseAddress + 0x490, value);
-            }
 
             public float MaxStaminaBase => RSingle(BaseAddress + 0xAF4);
 
@@ -305,7 +210,149 @@ namespace SoD2_Editor
             public DaytonHumanCharacter Character => new DaytonHumanCharacter(RIntPtr(BaseAddress + 0xB8));
             public DaytonCharacter DaytonCharacter => new DaytonCharacter(RIntPtr(BaseAddress + 0x190));
         }
+        public class DaytonCharacterRecord
+        {
+            public IntPtr BaseAddress { get; set; }
+            public DaytonCharacterRecord(IntPtr addr)
+            {
+                BaseAddress = addr;
+            }
 
+            public int ID
+            {
+                get => RInt32(BaseAddress + 0x0);
+                set => WInt32(BaseAddress + 0x0, value);
+            }
+
+            public string FirstName => new TextProperty(RIntPtr(BaseAddress + 0x18)).Value;
+            public string LastName => new TextProperty(RIntPtr(BaseAddress + 0x30)).Value;
+            public IntPtr NickNamePtr => RIntPtr(BaseAddress + 0x48);
+            public string VoiceID => GetNameFromNameOffset(RInt32(BaseAddress + 0x60));
+            public string CulturalBackground => GetNameFromNameOffset(RInt32(BaseAddress + 0x68));
+            public string HumanDefinition => GetNameFromNameOffset(RInt32(BaseAddress + 0x80));
+
+            public ECharacterPhilosophy Philosophy1
+            {
+                get => (ECharacterPhilosophy)RUInt8(BaseAddress + 0xA8);
+                set => WUInt8(BaseAddress + 0xA8, (byte)value);
+            }
+
+            public ECharacterPhilosophy Philosophy2
+            {
+                get => (ECharacterPhilosophy)RUInt8(BaseAddress + 0xA8);
+                set => WUInt8(BaseAddress + 0xA8, (byte)value);
+            }
+
+            public ECharacterStanding StandingLevel
+            {
+                get => (ECharacterStanding)RUInt8(BaseAddress + 0xAA);
+                set => WUInt8(BaseAddress + 0xAA, (byte)value);
+            }
+
+            public string HeroBonus => GetNameFromNameOffset(RInt32(BaseAddress + 0xB0));
+            public string LeaderType => GetNameFromNameOffset(RInt32(BaseAddress + 0xC0));
+
+            public float CurrStanding
+            {
+                get => RSingle(BaseAddress + 0xC8);
+                set => WSingle(BaseAddress + 0xC8, value);
+            }
+
+            public Equipment Equipment => new Equipment(RIntPtr(BaseAddress + 0xD0));
+            public Inventory Inventory => new Inventory(RIntPtr(BaseAddress + 0xE0));
+
+            public List<CharacterSkillRecord> Skills
+            {
+                get
+                {
+                    var skills = new List<CharacterSkillRecord>();
+                    int count = numSkills;
+
+                    if (count <= 0)
+                        return skills;
+
+                    IntPtr skillsArrayPtr = RIntPtr(BaseAddress + 0xE8);
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        IntPtr skillPtr = skillsArrayPtr + i * 0x18;
+                        if (skillPtr != IntPtr.Zero)
+                            skills.Add(new CharacterSkillRecord(skillPtr));
+                    }
+                    return skills;
+                }
+            }
+
+            public int numSkills => RInt32(BaseAddress + 0xF0);
+
+            public List<string> TraitNames
+            {
+                get
+                {
+                    var traits = new List<string>();
+                    IntPtr traitsPtr = RIntPtr(BaseAddress + 0xF8);
+                    if (traitsPtr == IntPtr.Zero)
+                        return traits;
+
+                    int numTraits = RInt32(BaseAddress + 0x100);
+                    if (numTraits <= 0)
+                        return traits;
+
+                    for (int i = 0; i < numTraits; i++)
+                    {
+                        IntPtr traitBase = traitsPtr + (i * 0x18);
+                        int nameId = RInt32(traitBase + 0x18);
+                        if (nameId != 0)
+                            traits.Add(GetNameFromNameOffset(nameId));
+                    }
+                    return traits;
+                }
+            }
+
+            public float CurrHealth
+            {
+                get => RSingle(BaseAddress + 0x108);
+                set => WSingle(BaseAddress + 0x108, value);
+            }
+
+            public float CurrStam
+            {
+                get => RSingle(BaseAddress + 0x10C);
+                set => WSingle(BaseAddress + 0x10C, value);
+            }
+
+            public float CurrFatigue
+            {
+                get => RSingle(BaseAddress + 0x110);
+                set => WSingle(BaseAddress + 0x110, value);
+            }
+
+            public float CurrSick
+            {
+                get => RSingle(BaseAddress + 0x118);
+                set => WSingle(BaseAddress + 0x118, value);
+            }
+
+            public float CurrPlague
+            {
+                get => RSingle(BaseAddress + 0x11C);
+                set => WSingle(BaseAddress + 0x11C, value);
+            }
+
+            public float TraumaCounter
+            {
+                get => RSingle(BaseAddress + 0x124);
+                set => WSingle(BaseAddress + 0x124, value);
+            }
+
+            public float InjuryRecoveryCounter
+            {
+                get => RSingle(BaseAddress + 0x128);
+                set => WSingle(BaseAddress + 0x128, value);
+            }
+        }
+
+    
         public class DaytonGameGameMode : UObject
         {
             public DaytonGameGameMode(IntPtr addr) : base(addr) { }
@@ -449,6 +496,17 @@ namespace SoD2_Editor
             public RangedWeaponItemInstance RangedWeaponItemInstance => new RangedWeaponItemInstance(RIntPtr(RIntPtr(BaseAddress + 0x38) + 0x08));
             public RangedWeaponItemInstance SideArmRangedWeaponItemInstance => new RangedWeaponItemInstance(RIntPtr(RIntPtr(BaseAddress + 0x38) + 0x28));
         }
+        public class FacilityModItemInstance : ItemInstance
+        {
+            public FacilityModItemInstance(IntPtr addr) : base(addr) { }
+            public override int stackCount
+            {
+                get => RInt32(BaseAddress + 0x48);
+                set => WInt32(BaseAddress + 0x48, value);
+            }
+            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x50));
+
+        }
         public class FireSettings : UObject
         {
             public FireSettings(IntPtr addr) : base(addr) { }
@@ -457,7 +515,40 @@ namespace SoD2_Editor
         {
             public GameInstance(IntPtr addr) : base(addr) { }
         }
-
+        public class Inventory : ItemInstance
+        {
+            public Inventory(IntPtr addr) : base(addr) { }
+            public List<ItemInstance> Slots
+            {
+                get
+                {
+                    var slots = new List<ItemInstance>();
+                    IntPtr arrPtr = RIntPtr(BaseAddress + 0x200);
+                    for (int i = 0; i < numSlots; i++)
+                    {
+                        IntPtr slotPtr = RIntPtr(arrPtr + i * IntPtr.Size);
+                        if (slotPtr != IntPtr.Zero)
+                        {
+                            IntPtr instancePtr = slotPtr;
+                            if (instancePtr != IntPtr.Zero)
+                            {
+                                ItemInstance slot = ItemInstanceLookup(instancePtr);
+                                if (slot != null)
+                                    slots.Add(slot);
+                            }
+                        }
+                    }//end for
+                    return slots;
+                } //end get
+            }
+            public int numSlots => RInt32(BaseAddress + 0x208);
+        }
+        public class ItemInstance : UObject
+        {
+            public ItemInstance(IntPtr addr) : base(addr) { }
+            public virtual UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x10));
+            public virtual int stackCount { get; set; }
+        }
         public class Level : UObject
         {
             public Level(IntPtr addr) : base(addr) { }
@@ -475,10 +566,11 @@ namespace SoD2_Editor
         {
             public MapStateComponent(IntPtr addr) : base(addr) { }
         }
-        public class MeleeWeaponItemInstance : UObject
+        public class MeleeWeaponItemInstance : ItemInstance
         {
             public MeleeWeaponItemInstance(IntPtr addr) : base(addr) { }
             public MeleeWeaponResourceStats Stats => new MeleeWeaponResourceStats(RIntPtr(BaseAddress + 0xF8));
+            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x100));
 
         }
         public class MeleeWeaponResourceStats : UObject
@@ -603,6 +695,17 @@ namespace SoD2_Editor
             public string WeaponDesc => RUnicodeStr(RIntPtr(BaseAddress + 0xE8));
             public EMeleeTypeEnum MeleeType => (EMeleeTypeEnum)RUInt8(BaseAddress + 0x110);
         }
+        public class MiscellaneousItemInstance : ItemInstance
+        {
+            public MiscellaneousItemInstance(IntPtr addr) : base(addr) { }
+            public override int stackCount
+            {
+                get => RInt32(BaseAddress + 0x48);
+                set => WInt32(BaseAddress + 0x48, value);
+            }
+            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x50));
+
+        }
         public class RangedWeapon : UObject
         {
             public RangedWeapon(IntPtr addr) : base(addr) { }
@@ -615,10 +718,23 @@ namespace SoD2_Editor
 
             }
         }
-        public class RangedWeaponItemInstance : UObject
+        public class RangedWeaponItemInstance : ItemInstance
         {
             public RangedWeaponItemInstance(IntPtr addr) : base(addr) { }
+            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x68));
             public RangedWeapon RangedWeapon => new RangedWeapon(RIntPtr(BaseAddress + 0x70));
+            
+        }
+
+        public class RangedWeaponModItemInstance : ItemInstance
+        {
+            public RangedWeaponModItemInstance(IntPtr addr) : base(addr) { }
+            public override int stackCount
+            {
+                get => RInt32(BaseAddress + 0x48);
+                set => WInt32(BaseAddress + 0x48, value);
+            }
+            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x50));
             
         }
         public class RangedWeaponResourceStats : UObject
@@ -709,7 +825,11 @@ namespace SoD2_Editor
             }
             public string TracerSettings => RUnicodeStr(RIntPtr(BaseAddress + 0x358));
         }
-
+        public class ResourceItemInstance : ItemInstance
+        {
+            public ResourceItemInstance(IntPtr addr) : base(addr) { }
+            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x48));
+        }
 
 
         public class TextProperty
@@ -796,7 +916,33 @@ namespace SoD2_Editor
                 set => WSingle(BaseAddress + 0x4F8, value);
             }
         }
+        public class ZombieDamagedAnalytics
+        {
+            public IntPtr BaseAddress { get; set; }
 
+            public ZombieDamagedAnalytics(IntPtr addr)
+            {
+                BaseAddress = addr;
+            }
+            public EZombieType ZombieTypeId => (EZombieType)RUInt8(BaseAddress + 0x150);
+            public int ZombieId => RInt32(BaseAddress + 0x154);
+            public byte IsPlagueZombie => RUInt8(BaseAddress + 0x158);
+            public int ZombieX => RInt32(BaseAddress + 0x15C);
+            public int ZombieY => RInt32(BaseAddress + 0x160);
+            public int ZombieZ => RInt32(BaseAddress + 0x164);
+            public EAnalyticsCauseOfDamage CauseOfDamageType => (EAnalyticsCauseOfDamage)RUInt8(BaseAddress + 0x168);
+            public string CauseOfDamageId => RUnicodeStr(RIntPtr(BaseAddress + 0x170));
+            public byte Killed => RUInt8(BaseAddress + 0x180);
+            public int DealerId => RInt32(BaseAddress + 0x184);
+            public string DealerState => RUnicodeStr(RIntPtr(BaseAddress + 0x188));
+            public float StunChance => RSingle(BaseAddress + 0x198);
+            public float DownChance => RSingle(BaseAddress + 0x19c);
+            public float KillChance => RSingle(BaseAddress + 0x1a0);
+            public float DismemberChance => RSingle(BaseAddress + 0x1a4);
+            public string PreDamageState => RUnicodeStr(RIntPtr(BaseAddress + 0x1a8));
+            public string ResultingState => RUnicodeStr(RIntPtr(BaseAddress + 0x1b8));
+            public int HeadshotCounter => RInt32(BaseAddress + 0x1d8);
+        }
     }
 }
 

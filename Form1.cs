@@ -1,15 +1,18 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Iced.Intel.AssemblerRegisters;
 using static SoD2_Editor.Form1;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
@@ -21,16 +24,20 @@ namespace SoD2_Editor
         private static IntPtr _ba;
 
 
-        private static Enclave currEnclave;
-        private static DaytonHumanCharacter currDaytonHumanCharacter;
-        private static DaytonCharacter selectedChar;
+        private static Enclave currEnclave = null;
+        private static DaytonHumanCharacter currDaytonHumanCharacter = null;
+        private static DaytonCharacter currDaytonCharacter = null;
+        private static DaytonCharacter selectedChar = null;
 
         private System.Windows.Forms.Timer refreshTimer;
 
         private static uint verIdent = 0;
         private static AddressBook addresses = new AddressBook();
         private static AddressBook funcs = new AddressBook();
-        private World world;
+        private static AddressBook hooks = new AddressBook();
+        private World world = null;
+
+        
 
         private void GameLogAdd(string name, IntPtr addr1, IntPtr addr2)
         {
@@ -49,10 +56,11 @@ namespace SoD2_Editor
             chkIsDemo.KeyUp += (s, e) => WUInt8(addresses.Get("ULIsDemo"), (byte)(1 - RUInt8(addresses.Get("ULIsDemo"))));
 
             EnableDarkMode(this);
-
-            
-
-
+        }
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            tabs.SelectedIndex = 1;
+            tabControlEnclaves.SelectedIndex = 1;
         }
 
         private List<string> logNames;
@@ -71,8 +79,16 @@ namespace SoD2_Editor
             funcs.Add("CheatAddSickness", _ba + 0x01cfa40, _ba + 0x01d0af0);
             //funcs.Add("", _ba + 0x, _ba + 0x);
 
-            logNames = new List<string> { };
+            //Hooks
+            hooks.Add("AnalyticsZombieDamagedHook", _ba + 0x251df00, _ba + 0x251f510);
+            hooks.Add("AnalyticsZombieDamagedReturn", _ba + 0x251df10, _ba + 0x251f520);
+            //hooks.Add("", _ba + 0x, _ba + 0x);
 
+
+            //This is dumb, why didn't I just make a different addressbook like funcs?
+            //Because I'm dumb, that's why.
+            //TODO:  Be less dumb.
+            logNames = new List<string> { };
             GameLogAdd("LogActor", _ba + 0x045b2720, _ba + 0x047012a0);
             GameLogAdd("LogActorComponent", _ba + 0x045b4e70, _ba + 0x047039f0);
             GameLogAdd("LogAIModule", _ba + 0x0459c030, _ba + 0x046eabb0);
@@ -105,6 +121,7 @@ namespace SoD2_Editor
             GameLogAdd("LogDaytonHumanAIController", _ba + 0x043fa218, _ba + 0x04548d98);
             GameLogAdd("LogDaytonPlayerController", _ba + 0x043fb2d0, _ba + 0x04549e50);
             GameLogAdd("LogDaytonWorldSettings", _ba + 0x043fdc18, _ba + 0x0454c798);
+            GameLogAdd("LogDebugHud", _ba + 0x043fdc28, _ba + 0x0454c7a8);
             GameLogAdd("LogDemo", _ba + 0x045b7720, _ba + 0x047062a0);
             GameLogAdd("LogDropbag", _ba + 0x043fdf40, _ba + 0x0454cac0);
             GameLogAdd("LogEmotes", _ba + 0x04403fb8, _ba + 0x04552b38);
@@ -147,6 +164,7 @@ namespace SoD2_Editor
             GameLogAdd("LogMultiplayerRewards", _ba + 0x043fbf80, _ba + 0x0454ab00);
             GameLogAdd("LogMusicManager", _ba + 0x043fa608, _ba + 0x04549188);
             GameLogAdd("LogNarrator", _ba + 0x043febd0, _ba + 0x0454d750);
+            GameLogAdd("LogNavigation", _ba + 0x045b29f0, _ba + 0x04701570);
             GameLogAdd("LogNavOctree", _ba + 0x045b2a00, _ba + 0x04701580);
             GameLogAdd("LogNet", _ba + 0x045b74e0, _ba + 0x04706060);
             GameLogAdd("LogNetVersion", _ba + 0x04455ff0, _ba + 0x045a4b70);
@@ -193,7 +211,7 @@ namespace SoD2_Editor
             GameLogAdd("LogWwiseBankManager", _ba + 0x04603790, _ba + 0x04752310);
 
             logNames.Add("");
-            //GameLogAdd("LogDropbag", _ba + 0x0, _ba + 0x0);
+            //GameLogAdd("LogNavigation", _ba + 0x0, _ba + 0x0);
         }
 
         private void EnableDarkMode(Control parent)
@@ -275,6 +293,7 @@ namespace SoD2_Editor
             if (_proc == IntPtr.Zero)
             {
                 lblVer.Text = "Not found.";
+                Output("Connect Failed - Not found");
             } else {
                 InitAddresses();
                 verIdent = RUInt32(_ba + 0xE8);
@@ -286,11 +305,13 @@ namespace SoD2_Editor
                 {
                     connected = true;
                     lblVer.Text = "MS Build 741435";
+                    Output("Connected - MS Build 741435");
                 }
                 else if (verIdent == 0xD54624B7) // Steam version
                 {
                     connected = true;
                     lblVer.Text = "Steam Build 741435";
+                    Output("Connected - Steam Build 741435");
                 }
                 if (connected)
                 {
@@ -350,6 +371,9 @@ namespace SoD2_Editor
 
                 currEnclave = localPlayer.DaytonPlayerController.AnalyticsPawn.CharacterComponent.DaytonCharacter.Enclave;
                 currDaytonHumanCharacter = localPlayer.DaytonPlayerController.AnalyticsPawn;
+                currDaytonCharacter = currDaytonHumanCharacter.CharacterComponent.DaytonCharacter;
+
+
 
                 switch (tabs.SelectedTab.Name)
                 {
@@ -450,15 +474,19 @@ namespace SoD2_Editor
                                         switch (tabControlEnclavesCharactersEquipment.SelectedTab.Name)
                                         {
                                             case "tabControlEnclavesCharactersEquipmentMelee":
-                                                UpdateMeleeWeaponDetails(chr.Equipment.MeleeWeaponItemInstance.Stats);
+                                                UpdateMeleeWeaponDetails(chr.CharacterRecord.Equipment.MeleeWeaponItemInstance.Stats);
                                                 break;
                                             case "tabControlEnclavesCharactersEquipmentSideArm":
-                                                UpdateRangedWeaponDetails(tlpSideArmWeaponStats, chr.Equipment.SideArmRangedWeaponItemInstance.RangedWeapon.Stats);
+                                                UpdateRangedWeaponDetails(tlpSideArmWeaponStats, chr.CharacterRecord.Equipment.SideArmRangedWeaponItemInstance.RangedWeapon.Stats);
                                                 break;
                                             case "tabControlEnclavesCharactersEquipmentRanged":
-                                                UpdateRangedWeaponDetails(tlpRangedWeaponStats, chr.Equipment.RangedWeaponItemInstance.RangedWeapon.Stats);
+                                                UpdateRangedWeaponDetails(tlpRangedWeaponStats, chr.CharacterRecord.Equipment.RangedWeaponItemInstance.RangedWeapon.Stats);
                                                 break;
                                         }
+                                        break;
+                                    case "tabEnclavesCharactersInventory":
+                                        UpdateCharacterInventoryList(chr);
+
                                         break;
                                 }
                             }
@@ -505,12 +533,44 @@ namespace SoD2_Editor
                         UpdateLog();
                         UpdateLogLevels();
                         break;
+                    case "tabAnalytics":
+                        UpdateAnalytics();
+                        break;
                     default:
                         break;
                 }
             }
         }
-        
+
+        private void UpdateAnalytics()
+        {
+
+            if (!AZDresults.Equals(IntPtr.Zero))
+            {
+                var analytics = new ZombieDamagedAnalytics(AZDresults);
+                
+                lblAnalyticsZombieDamagedDetail.Text =
+                    $"{"Zombie Type ID",-20}: {analytics.ZombieTypeId,7}\n" +
+                    $"{"Cause of Damage",-20}: {analytics.CauseOfDamageType}\n" +
+                    $"{"DealerState",-20}: {analytics.DealerState}\n" +
+                    $"{"PreDamageState",-20}: {analytics.PreDamageState}\n" +
+                    $"{"ResultingState",-20}: {analytics.ResultingState}\n" +
+                    $"{"Zombie ID",-20}: {analytics.ZombieId,7}\n" +
+                    $"{"Is Plague Zombie",-20}: {analytics.IsPlagueZombie,7}\n" +
+                    $"{"PosX",-20}: {analytics.ZombieX,7}\n" +
+                    $"{"PosY",-20}: {analytics.ZombieY,7}\n" +
+                    $"{"PosZ",-20}: {analytics.ZombieZ,7}\n" +
+                    $"{"Killed",-20}: {analytics.Killed,7}\n" +
+                    $"{"Dealer ID",-20}: {analytics.DealerId,7}\n" +
+                    $"{"Stun Chance",-20}: {analytics.StunChance,14:F6}\n" +
+                    $"{"Down Chance",-20}: {analytics.DownChance,14:F6}\n" +
+                    $"{"Kill Chance",-20}: {analytics.KillChance,14:F6}\n" +
+                    $"{"Dismember Chance",-20}: {analytics.DismemberChance,14:F6}\n" +
+                    $"{"Headshot Counter",-20}: {analytics.HeadshotCounter,7}";
+            }
+
+        }
+
         private LinkLabel _selectedEnclaveLink = null;
         private void UpdateEnclaveList(EnclaveManager enclaveManager)
         {
@@ -545,7 +605,7 @@ namespace SoD2_Editor
                 {
                     var link = (LinkLabel)flowEnclaves.Controls[i];
                     string newName = enclaveManager.Enclaves[i].DisplayName;
-                    //string newName = $"{i}: {enclaveManager.Enclaves[i].EnclaveName}";
+
                     if (link.Text != newName)
                         link.Text = newName;
 
@@ -597,8 +657,6 @@ namespace SoD2_Editor
 
             if (_currentEnclave != null)
             {
-
-
                 var characters = _currentEnclave.Characters;
                 int currentCount = flowEnclaveCharacters.Controls.Count;
                 int newCount = characters.Count;
@@ -624,6 +682,7 @@ namespace SoD2_Editor
                         link.BackColor = Color.DarkRed;
                         _selectedCharacterLink = link;
                         _characterSkillRows.Clear();
+                        _meleeWeaponDetailRows.Clear();
                         //This redeclares because of weird caching.
                         if (long.TryParse(txtEnclaveAddress.Text, System.Globalization.NumberStyles.HexNumber, null, out long encaddr2) && encaddr2 > 0)
                         {
@@ -639,7 +698,7 @@ namespace SoD2_Editor
                         {
                             txtCharacterAddress.Text = "";
                         }
-                    };
+                    };//end link.click
 
                     flowEnclaveCharacters.Controls.Add(link);
                     currentCount++;
@@ -654,17 +713,163 @@ namespace SoD2_Editor
                 for (int i = 0; i < newCount; i++)
                 {
                     var link = (LinkLabel)flowEnclaveCharacters.Controls[i];
-                    string newName = $"{characters[i].FirstName} {characters[i].LastName}";
+                    string newName = $"{characters[i].CharacterRecord.FirstName} {characters[i].CharacterRecord.LastName}";
                     if (link.Text != newName)
                         link.Text = newName;
 
                     if (_selectedCharacterLink != link)
+                    {
                         link.BackColor = Color.Transparent;
+                    } else {
+                        link.BackColor = Color.DarkRed;
+                    }
+                        
+
+                    if (newName == $"{currDaytonCharacter.CharacterRecord.FirstName} {currDaytonCharacter.CharacterRecord.LastName}")
+                    {
+                        link.BackColor = Color.DarkGreen;
+                    } else {
+                        if ((selectedChar != null)  && (newName != $"{selectedChar.CharacterRecord.FirstName} {selectedChar.CharacterRecord.LastName}"))
+                            link.BackColor = Color.Transparent;
+                    }
+
                 }
             }
 
         }
+        private class InventoryRowEntry
+        {
+            public Label NameLabel { get; set; }
+            public Label QuantityLabel { get; set; }
+            public Button EditButton { get; set; }
+        }
 
+        private readonly Dictionary<int, InventoryRowEntry> _inventoryRows = new Dictionary<int, InventoryRowEntry>();
+        private void InitializeCharacterInventoryTable()
+        {
+            tlpEnclaveCharactersInventory.SuspendLayout();
+            tlpEnclaveCharactersInventory.Controls.Clear();
+            tlpEnclaveCharactersInventory.RowStyles.Clear();
+            tlpEnclaveCharactersInventory.RowCount = 0;
+            tlpEnclaveCharactersInventory.ColumnStyles.Clear();
+            _inventoryRows.Clear();
+
+            tlpEnclaveCharactersInventory.ColumnCount = 3;
+            tlpEnclaveCharactersInventory.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 300));
+            tlpEnclaveCharactersInventory.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
+            tlpEnclaveCharactersInventory.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
+
+            tlpEnclaveCharactersInventory.ResumeLayout();
+        }
+
+        private void UpdateCharacterInventoryList(DaytonCharacter chr)
+        {
+            if (chr.CharacterRecord.Inventory.BaseAddress.ToString("X") != txtEnclavesCharactersInventoryAddress.Text)
+            {
+                _inventoryRows.Clear();
+                tlpEnclaveCharactersInventory.RowCount = 0;
+            }
+            if (tlpEnclaveCharactersInventory.RowCount == 0)
+                InitializeCharacterInventoryTable();
+
+
+            txtEnclavesCharactersInventoryAddress.Text = chr.CharacterRecord.Inventory.BaseAddress.ToString("X");
+            tlpEnclaveCharactersInventory.SuspendLayout();
+
+            int slotCount = chr.CharacterRecord.Inventory.Slots.Count;
+
+            for (int slotIndex = 0; slotIndex < slotCount; slotIndex++)
+            {
+
+                var item = chr.CharacterRecord.Inventory.Slots[slotIndex];
+
+                if (!_inventoryRows.ContainsKey(slotIndex))
+                {
+                    int rowIndex = tlpEnclaveCharactersInventory.RowCount++;
+
+                    var lblName = new Label
+                    {
+                        Text = $"{tlpEnclaveCharactersInventory.RowCount} {item.ItemClass?.Name}" ?? $"Unknown ({slotIndex})",
+                        AutoSize = true,
+                        Dock = DockStyle.Fill,
+                        Anchor = AnchorStyles.Left,
+                        Font = new Font("Consolas", 9),
+                    };
+
+                    var lblQuantity = new Label
+                    {
+                        Text = item.stackCount.ToString(),
+                        AutoSize = true,
+                        Dock = DockStyle.Fill,
+                        Anchor = AnchorStyles.Left,
+                        Font = new Font("Consolas", 9),
+                    };
+
+                    var btnEdit = new Button
+                    {
+                        Text = "Edit",
+                        Width = 25,
+                        Height = 10,
+                        Dock = DockStyle.Fill,
+                        Anchor = AnchorStyles.Left
+                    };
+
+                    btnEdit.Click += (s, e) =>
+                    {
+                        string input = ShowInputDialog("Edit Quantity",
+                            $"Enter new stack quantity for slot {slotIndex} ({item.ItemClass?.Name ?? "Unknown"})",
+                            lblQuantity.Text);
+
+                        if (int.TryParse(input, out int newQty))
+                        {
+                            item.stackCount = newQty;
+                            lblQuantity.Text = newQty.ToString();
+                        }
+                    };
+
+
+
+
+                    tlpEnclaveCharactersInventory.Controls.Add(lblName, 0, rowIndex);
+                    tlpEnclaveCharactersInventory.Controls.Add(btnEdit, 1, rowIndex);
+                    tlpEnclaveCharactersInventory.Controls.Add(lblQuantity, 2, rowIndex);
+                    tlpEnclaveCharactersInventory.RowStyles.Add(new RowStyle(SizeType.Absolute, 16));
+
+
+                    _inventoryRows[slotIndex] = new InventoryRowEntry
+                    {
+                        NameLabel = lblName,
+                        QuantityLabel = lblQuantity,
+                        EditButton = btnEdit
+                    };
+                }
+                else
+                {
+                    var row = _inventoryRows[slotIndex];
+                    row.NameLabel.Text = item.ItemClass?.Name ?? $"Unknown ({slotIndex})";
+                    row.QuantityLabel.Text = item.stackCount.ToString();
+
+                    row.NameLabel.Visible = true;
+                    row.QuantityLabel.Visible = true;
+                    row.EditButton.Visible = true;
+                }
+            }
+
+
+
+
+                /*var toRemove = _inventoryRows.Keys.Where(k => k >= slotCount).ToList();
+                foreach (var key in toRemove)
+                {
+                    var row = _inventoryRows[key];
+                    tlpEnclaveCharactersInventory.Controls.Remove(row.NameLabel);
+                    tlpEnclaveCharactersInventory.Controls.Remove(row.QuantityLabel);
+                    tlpEnclaveCharactersInventory.Controls.Remove(row.EditButton);
+                    _inventoryRows.Remove(key);
+                }*/
+
+                tlpEnclaveCharactersInventory.ResumeLayout();
+        }
 
 
 
@@ -752,19 +957,20 @@ namespace SoD2_Editor
             AddRow("Voice ID");
             AddRow("Cultural Background");
             AddRow("Human Definition");
+            AddRow("Philosophy");
             AddRow("Hero Bonus");
             AddRow("Leader Type");
-            AddRow("Standing Level", editable: true, onEdit: v => { selectedChar.StandingLevel = (ECharacterStanding)byte.Parse(v); });
-            AddRow("Current Standing", editable: true, onEdit: v => { selectedChar.CurrStanding = float.Parse(v);  });
-            AddRow("Current Fatigue", editable: true, onEdit: v => {  selectedChar.CurrFatigue = float.Parse(v);  });
-            AddRow("Current Stamina", editable: true, onEdit: v => { selectedChar.CurrStam = float.Parse(v); });
+            AddRow("Standing Level", editable: true, onEdit: v => { selectedChar.CharacterRecord.StandingLevel = (ECharacterStanding)byte.Parse(v); });
+            AddRow("Current Standing", editable: true, onEdit: v => { selectedChar.CharacterRecord.CurrStanding = float.Parse(v);  });
+            AddRow("Current Fatigue", editable: true, onEdit: v => {  selectedChar.CharacterRecord.CurrFatigue = float.Parse(v);  });
+            AddRow("Current Stamina", editable: true, onEdit: v => { selectedChar.CharacterRecord.CurrStam = float.Parse(v); });
             AddRow("Max Stamina Base");
-            AddRow("Current Health", editable: true, onEdit: v => { selectedChar.CurrHealth = float.Parse(v); });
+            AddRow("Current Health", editable: true, onEdit: v => { selectedChar.CharacterRecord.CurrHealth = float.Parse(v); });
             AddRow("Max Health Base");
             AddRow("Injury Recovery Counter");
             AddRow("Trauma Counter");
             AddRow("Trauma", editable: true, onEdit: v => { selectedChar.Trauma = float.Parse(v); });
-            AddRow("Current Sick", editable: true, onEdit: v => { selectedChar.CurrSick = float.Parse(v); });
+            AddRow("Current Sick", editable: true, onEdit: v => { selectedChar.CharacterRecord.CurrSick = float.Parse(v); });
             AddRow("Max Sick");
             AddRow("Current Plague");
             AddRow("Max Plague");
@@ -782,23 +988,24 @@ namespace SoD2_Editor
             if (_characterDetailRows.Count == 0)
                 InitializeCharacterTable();
 
-            _characterDetailRows["ID"].ValueLabel.Text = chr.ID.ToString();
-            _characterDetailRows["First Name"].ValueLabel.Text = chr.FirstName;
-            _characterDetailRows["Last Name"].ValueLabel.Text = chr.LastName;
-            _characterDetailRows["Voice ID"].ValueLabel.Text = chr.VoiceID.ToString();
-            _characterDetailRows["Cultural Background"].ValueLabel.Text = chr.CulturalBackground;
-            _characterDetailRows["Human Definition"].ValueLabel.Text = chr.HumanDefinition;
-            _characterDetailRows["Hero Bonus"].ValueLabel.Text = chr.HeroBonus;
-            _characterDetailRows["Leader Type"].ValueLabel.Text = chr.LeaderType;
-            _characterDetailRows["Standing Level"].ValueLabel.Text = chr.StandingLevel.ToString();
-            _characterDetailRows["Current Standing"].ValueLabel.Text = $"{chr.CurrStanding,12:F4}";
-            _characterDetailRows["Current Health"].ValueLabel.Text = $"{chr.CurrHealth,12:F4}";
-            _characterDetailRows["Current Stamina"].ValueLabel.Text = $"{chr.CurrStam,12:F4}";
-            _characterDetailRows["Current Fatigue"].ValueLabel.Text = $"{chr.CurrFatigue,12:F4}";
-            _characterDetailRows["Current Sick"].ValueLabel.Text = $"{chr.CurrSick,12:F4}";
-            _characterDetailRows["Current Plague"].ValueLabel.Text = $"{chr.CurrPlague,12:F4}";
-            _characterDetailRows["Trauma Counter"].ValueLabel.Text = $"{chr.TraumaCounter,12:F4}";
-            _characterDetailRows["Injury Recovery Counter"].ValueLabel.Text = $"{chr.InjuryRecoveryCounter,12:F4}";
+            _characterDetailRows["ID"].ValueLabel.Text = chr.CharacterRecord.ID.ToString();
+            _characterDetailRows["First Name"].ValueLabel.Text = chr.CharacterRecord.FirstName;
+            _characterDetailRows["Last Name"].ValueLabel.Text = chr.CharacterRecord.LastName;
+            _characterDetailRows["Voice ID"].ValueLabel.Text = chr.CharacterRecord.VoiceID.ToString();
+            _characterDetailRows["Cultural Background"].ValueLabel.Text = chr.CharacterRecord.CulturalBackground;
+            _characterDetailRows["Human Definition"].ValueLabel.Text = chr.CharacterRecord.HumanDefinition;
+            _characterDetailRows["Philosophy"].ValueLabel.Text = chr.CharacterRecord.Philosophy1.ToString();
+            _characterDetailRows["Hero Bonus"].ValueLabel.Text = chr.CharacterRecord.HeroBonus;
+            _characterDetailRows["Leader Type"].ValueLabel.Text = chr.CharacterRecord.LeaderType;
+            _characterDetailRows["Standing Level"].ValueLabel.Text = chr.CharacterRecord.StandingLevel.ToString();
+            _characterDetailRows["Current Standing"].ValueLabel.Text = $"{chr.CharacterRecord.CurrStanding,12:F4}";
+            _characterDetailRows["Current Health"].ValueLabel.Text = $"{chr.CharacterRecord.CurrHealth,12:F4}";
+            _characterDetailRows["Current Stamina"].ValueLabel.Text = $"{chr.CharacterRecord.CurrStam,12:F4}";
+            _characterDetailRows["Current Fatigue"].ValueLabel.Text = $"{chr.CharacterRecord.CurrFatigue,12:F4}";
+            _characterDetailRows["Current Sick"].ValueLabel.Text = $"{chr.CharacterRecord.CurrSick,12:F4}";
+            _characterDetailRows["Current Plague"].ValueLabel.Text = $"{chr.CharacterRecord.CurrPlague,12:F4}";
+            _characterDetailRows["Trauma Counter"].ValueLabel.Text = $"{chr.CharacterRecord.TraumaCounter,12:F4}";
+            _characterDetailRows["Injury Recovery Counter"].ValueLabel.Text = $"{chr.CharacterRecord.InjuryRecoveryCounter,12:F4}";
             _characterDetailRows["Max Stamina Base"].ValueLabel.Text = $"{chr.MaxStaminaBase,12:F4}";
             _characterDetailRows["Max Health Base"].ValueLabel.Text = $"{chr.MaxHealthBase,12:F4}";
             _characterDetailRows["Trauma"].ValueLabel.Text = $"{chr.Trauma,12:F4}";
@@ -875,7 +1082,7 @@ namespace SoD2_Editor
             
             
 
-            foreach (var skill in chr.Skills)
+            foreach (var skill in chr.CharacterRecord.Skills)
             {
                 if (!_characterSkillRows.TryGetValue(skill.Name, out var row))
                 {
@@ -964,6 +1171,7 @@ namespace SoD2_Editor
             tlpEnclavesCharactersSkills.RowCount++;
             tlpEnclavesCharactersSkills.ResumeLayout();
         }
+        
         private string ShowNumericInputDialog(string title, string prompt, string currentValue, bool isFloat = false)
         {
             using (Form form = new Form())
@@ -1139,7 +1347,6 @@ namespace SoD2_Editor
                     AutoSize = true,
                     Anchor = AnchorStyles.Left,
                     Font = new Font("Consolas", 9),
-                    //TextAlign = ContentAlignment.MiddleRight
                     TextAlign = ContentAlignment.MiddleLeft
                 };
 
@@ -1206,6 +1413,20 @@ namespace SoD2_Editor
         }
         private void UpdateMeleeWeaponDetails(MeleeWeaponResourceStats weapon)
         {
+            string weaponName = weapon.WeaponName;
+            weaponName = weaponName.Replace("{!v}", "");
+            weaponName = weaponName.Replace("{[0,+]'}", "");
+            weaponName = weaponName.Replace("{[0,+]s}", "");
+            weaponName = weaponName.Replace("{[0,+]es}", "");
+
+
+            if ((_meleeWeaponDetailRows.Count != 0) &&
+                //(_meleeWeaponDetailRows["Weapon Name"] != null) &&
+                (_meleeWeaponDetailRows["Weapon Name"].ValueLabel.Text != weaponName))
+            {
+                _meleeWeaponDetailRows.Clear();
+                InitializeMeleeWeaponTable(weapon); ;
+            }
             if (_meleeWeaponDetailRows.Count == 0)
                 InitializeMeleeWeaponTable(weapon);
 
@@ -1214,11 +1435,7 @@ namespace SoD2_Editor
             else
                 tlpMeleeWeaponStats.Visible = true;
 
-            string weaponName = weapon.WeaponName;
-            weaponName = weaponName.Replace("{!v}", "");
-            weaponName = weaponName.Replace("{[0,+]'}", "");
-            weaponName = weaponName.Replace("{[0,+]s}", "");
-            weaponName = weaponName.Replace("{[0,+]es}", "");
+            
             _meleeWeaponDetailRows["Weapon Name"].ValueLabel.Text = weaponName;
             _meleeWeaponDetailRows["Weapon Type"].ValueLabel.Text = weapon.WeaponType;
 
@@ -1345,6 +1562,19 @@ namespace SoD2_Editor
         }
         private void UpdateRangedWeaponDetails(TableLayoutPanel tlp, RangedWeaponResourceStats weapon)
         {
+            string weaponName = weapon.WeaponName;
+            weaponName = weaponName.Replace("{!v}", "");
+            weaponName = weaponName.Replace("{[0,+]'}", "");
+            weaponName = weaponName.Replace("{[0,+]s}", "");
+            weaponName = weaponName.Replace("{[0,+]es}", "");
+
+
+            if ((_rangedWeaponDetailRows.Count != 0) &&
+                (_rangedWeaponDetailRows["Weapon Name"].ValueLabel.Text != weaponName))
+            {
+                _rangedWeaponDetailRows.Clear();
+                InitializeRangedWeaponTable(tlp, weapon); ;
+            }
             if (_rangedWeaponDetailRows.Count == 0)
                 InitializeRangedWeaponTable(tlp, weapon);
 
@@ -1353,11 +1583,6 @@ namespace SoD2_Editor
             else
                 tlp.Visible = true;
 
-            string weaponName = weapon.WeaponName;
-            weaponName = weaponName.Replace("{!v}", "");
-            weaponName = weaponName.Replace("{[0,+]'}", "");
-            weaponName = weaponName.Replace("{[0,+]s}", "");
-            weaponName = weaponName.Replace("{[0,+]es}", "");
             _rangedWeaponDetailRows["Weapon Name"].ValueLabel.Text = weaponName;
             _rangedWeaponDetailRows["Weapon Type"].ValueLabel.Text = weapon.WeaponType;
 
@@ -1414,7 +1639,10 @@ namespace SoD2_Editor
         {
             int length = GameLog.LogEndOffset;
             if (length <= 0)
+            { 
+                Output("LogEndOffset <= 0");
                 return;
+            }
 
             byte[] zeros = new byte[length];
             WBytes(GameLog.GameLogTextPtr, zeros);
@@ -1422,6 +1650,193 @@ namespace SoD2_Editor
             GameLog.LogEndOffset2 = 0;
             rtbGameLog.Clear();
             _lastLogEnd = 0;
+
+            Output("Log Cleared");
         }
+
+
+        private void Output(string output)
+        {
+            txtOutput.Text = $"[{DateTime.Now:HH:mm:ss}] {output}";
+        }
+        IntPtr AZDresults = IntPtr.Zero;
+        int AZDresultsSize = 0x1000;
+        IntPtr AZDstrings = IntPtr.Zero;
+        int AZDstringsSize = 0x1000;
+        private void btnHookZombieDamagedAnalytics_Click(object sender, EventArgs e)
+        {
+
+            /*  
+            IntPtr newfunc = Alloc(0x1024);
+            Console.WriteLine(newfunc.ToString("X"));
+
+            Iced.Intel.Assembler asm = new Iced.Intel.Assembler(bitness: 64);
+            asm.sub(rsp, 0x1000);
+            asm.pushfq();
+
+            asm.popfq();
+            asm.add(rsp, 0x1000);
+            asm.ret();
+
+
+            var stream = new MemoryStream();
+            asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)newfunc);
+            byte[] machineCode = stream.ToArray();
+
+            WBytes(newfunc, machineCode);
+            CreateRemoteThread(_proc, IntPtr.Zero, 0, newfunc, IntPtr.Zero, 0, IntPtr.Zero);
+            */
+
+
+
+            //Hook Analytics for zombie hit
+            IntPtr AnalyticsZombieDamagedHook = hooks.Get("AnalyticsZombieDamagedHook");
+            IntPtr AnalyticsZombieDamagedReturn = hooks.Get("AnalyticsZombieDamagedReturn");
+            IntPtr AZDhookedFunc = Alloc(0x1000);
+            AZDresults = Alloc(AZDresultsSize);
+            AZDstrings = Alloc(AZDstringsSize);
+            int CauseOfDamageIdOffset = 0x80;
+            int DealerStateOffset = 0xC0;
+            int PreDamageStateOffset = 0x100;
+            int ResultingStateOffset = 0x140;
+            Console.WriteLine($"AZDhookedFunc: {AZDhookedFunc.ToString("X")}");
+            Console.WriteLine($"AZDresults: {AZDresults.ToString("X")}");
+            Console.WriteLine($"AZDstrings: {AZDstrings.ToString("X")}");
+
+            Iced.Intel.Assembler asm = new Iced.Intel.Assembler(bitness: 64);
+            //Start of hooked code
+            asm.sub(rsp, 0x1000);
+            asm.pushfq();
+
+
+
+            //Copy AnalyticsHelper
+            asm.mov(rax, AZDresults.ToInt64());
+            asm.push(rcx);
+            asm.push(rsi);
+            asm.push(rdi);
+            asm.mov(rsi, rcx);
+            asm.mov(rdi, rax);
+            asm.mov(rcx, 0x200);
+            asm.rep.movsb();
+            asm.pop(rdi);
+            asm.pop(rsi);
+            asm.pop(rcx);
+
+            //Copy CauseOfDamageId String
+            asm.mov(rax, AZDstrings.ToInt64());
+            asm.push(rcx);
+            asm.push(rsi);
+            asm.push(rdi);
+            asm.mov(rsi, __[rcx + 0x170]);
+            asm.add(rax, CauseOfDamageIdOffset);
+            asm.mov(rdi, rax);
+            asm.mov(ecx, __[rcx + 0x178]);
+            asm.add(ecx, ecx);
+            asm.rep.movsb();
+            asm.mov(rcx, AZDresults.ToInt64());
+            asm.mov(__[rcx + 0x170], rax);
+            asm.pop(rdi);
+            asm.pop(rsi);
+            asm.pop(rcx);
+            //Copy DealerState String
+            asm.mov(rax, AZDstrings.ToInt64());
+            asm.push(rcx);
+            asm.push(rsi);
+            asm.push(rdi);
+            asm.mov(rsi, __[rcx + 0x188]);
+            asm.add(rax, DealerStateOffset);
+            asm.mov(rdi, rax);
+            asm.mov(ecx, __[rcx + 0x190]);
+            asm.add(ecx, ecx);
+            asm.rep.movsb();
+            asm.mov(rcx, AZDresults.ToInt64());
+            asm.mov(__[rcx + 0x188], rax);
+            asm.pop(rdi);
+            asm.pop(rsi);
+            asm.pop(rcx);
+            //Copy PreDamageState String
+            asm.mov(rax, AZDstrings.ToInt64());
+            asm.push(rcx);
+            asm.push(rsi);
+            asm.push(rdi);
+            asm.mov(rsi, __[rcx + 0x1A8]);
+            asm.add(rax, PreDamageStateOffset);
+            asm.mov(rdi, rax);
+            asm.mov(ecx, __[rcx + 0x1B0]);
+            asm.add(ecx, ecx);
+            asm.rep.movsb();
+            asm.mov(rcx, AZDresults.ToInt64());
+            asm.mov(__[rcx + 0x1A8], rax);
+            asm.pop(rdi);
+            asm.pop(rsi);
+            asm.pop(rcx);
+            //Copy ResultingState String
+            asm.mov(rax, AZDstrings.ToInt64());
+            asm.push(rcx);
+            asm.push(rsi);
+            asm.push(rdi);
+            asm.mov(rsi, __[rcx + 0x1B8]);
+            asm.add(rax, ResultingStateOffset);
+            asm.mov(rdi, rax);
+            asm.mov(ecx, __[rcx + 0x1C0]);
+            asm.add(ecx, ecx);
+            asm.rep.movsb();
+            asm.mov(rcx, AZDresults.ToInt64());
+            asm.mov(__[rcx + 0x1B8], rax);
+            asm.pop(rdi);
+            asm.pop(rsi);
+            asm.pop(rcx);
+
+
+            
+
+            
+
+
+
+            asm.popfq();
+            asm.add(rsp, 0x1000);
+            //Replacing code we broke with our hook
+            asm.push(rbp);
+            asm.push(rbx);
+            asm.push(rdi);
+            asm.lea(rbp, rsp - 0x47);
+            asm.sub(rsp, 0xa0);
+            asm.mov(rax, AnalyticsZombieDamagedReturn.ToInt64());
+            asm.jmp(rax);
+            //Jmp back out of hook
+            var stream = new MemoryStream();
+            asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)AZDhookedFunc);
+            byte[] machineCode = stream.ToArray();
+            WBytes(AZDhookedFunc, machineCode);
+
+
+            asm = new Iced.Intel.Assembler(bitness: 64);
+            asm.mov(rax, AZDhookedFunc.ToInt64());
+            asm.jmp(rax);
+            stream = new MemoryStream();
+            asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)AZDhookedFunc);
+            machineCode = stream.ToArray();
+            WBytes(AnalyticsZombieDamagedHook, machineCode);
+
+        }
+
+        private void btnUnhookZombieDamagedAnalytics_Click(object sender, EventArgs e)
+        {
+            lblAnalyticsZombieDamagedDetail.Text = "Unhooked";
+            IntPtr AnalyticsZombieDamagedHook = hooks.Get("AnalyticsZombieDamagedHook");
+
+            Iced.Intel.Assembler asm = new Iced.Intel.Assembler(bitness: 64);
+            //Start of hooked code
+            asm.sub(rsp, 0x1000);
+
+
+
+            AZDresults = Alloc(0x1000);
+            AZDstrings = Alloc(0x1000);
+        }
+
+        
     }
 }
