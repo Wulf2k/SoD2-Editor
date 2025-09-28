@@ -174,8 +174,10 @@ namespace SoD2_Editor
 
 
             public float MaxStaminaBase => RSingle(BaseAddress + 0xAF4);
+            public float MaxStaminaModifier => RSingle(BaseAddress + 0xAF8);
 
             public float MaxHealthBase => RSingle(BaseAddress + 0xB00);
+            public float MaxHealthModifier => RSingle(BaseAddress + 0xB04);
             public float Trauma
             {
                 get => RSingle(BaseAddress + 0xb08);

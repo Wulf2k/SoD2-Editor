@@ -548,7 +548,7 @@ namespace SoD2_Editor
             if (!AZDresults.Equals(IntPtr.Zero))
             {
                 var analytics = new ZombieDamagedAnalytics(AZDresults);
-                
+
                 lblAnalyticsZombieDamagedDetail.Text =
                     $"{"Zombie Type ID",-20}: {analytics.ZombieTypeId,7}\n" +
                     $"{"Cause of Damage",-20}: {analytics.CauseOfDamageType}\n" +
@@ -568,6 +568,8 @@ namespace SoD2_Editor
                     $"{"Dismember Chance",-20}: {analytics.DismemberChance,14:F6}\n" +
                     $"{"Headshot Counter",-20}: {analytics.HeadshotCounter,7}";
             }
+            else
+                lblAnalyticsZombieDamagedDetail.Text = "Unhooked";
 
         }
 
@@ -764,7 +766,9 @@ namespace SoD2_Editor
 
         private void UpdateCharacterInventoryList(DaytonCharacter chr)
         {
-            if (chr.CharacterRecord.Inventory.BaseAddress.ToString("X") != txtEnclavesCharactersInventoryAddress.Text)
+            int slotCount = chr.CharacterRecord.Inventory.Slots.Count;
+            if ((tlpEnclaveCharactersInventory.RowCount != slotCount + 1) || 
+                (chr.CharacterRecord.Inventory.BaseAddress.ToString("X") != txtEnclavesCharactersInventoryAddress.Text))
             {
                 _inventoryRows.Clear();
                 tlpEnclaveCharactersInventory.RowCount = 0;
@@ -776,7 +780,7 @@ namespace SoD2_Editor
             txtEnclavesCharactersInventoryAddress.Text = chr.CharacterRecord.Inventory.BaseAddress.ToString("X");
             tlpEnclaveCharactersInventory.SuspendLayout();
 
-            int slotCount = chr.CharacterRecord.Inventory.Slots.Count;
+            
 
             for (int slotIndex = 0; slotIndex < slotCount; slotIndex++)
             {
@@ -850,25 +854,21 @@ namespace SoD2_Editor
                     row.QuantityLabel.Text = item.stackCount.ToString();
 
                     row.NameLabel.Visible = true;
-                    row.QuantityLabel.Visible = true;
-                    row.EditButton.Visible = true;
+                    if (item.stackCount > 0)
+                    {
+                        row.QuantityLabel.Visible = true;
+                        row.EditButton.Visible = true;
+                    }
+                    else
+                    {
+                        row.QuantityLabel.Visible = false;
+                        row.EditButton.Visible = false;
+                    }
+                    
                 }
             }
-
-
-
-
-                /*var toRemove = _inventoryRows.Keys.Where(k => k >= slotCount).ToList();
-                foreach (var key in toRemove)
-                {
-                    var row = _inventoryRows[key];
-                    tlpEnclaveCharactersInventory.Controls.Remove(row.NameLabel);
-                    tlpEnclaveCharactersInventory.Controls.Remove(row.QuantityLabel);
-                    tlpEnclaveCharactersInventory.Controls.Remove(row.EditButton);
-                    _inventoryRows.Remove(key);
-                }*/
-
-                tlpEnclaveCharactersInventory.ResumeLayout();
+            tlpEnclaveCharactersInventory.RowCount = slotCount + 1;
+            tlpEnclaveCharactersInventory.ResumeLayout();
         }
 
 
@@ -965,8 +965,10 @@ namespace SoD2_Editor
             AddRow("Current Fatigue", editable: true, onEdit: v => {  selectedChar.CharacterRecord.CurrFatigue = float.Parse(v);  });
             AddRow("Current Stamina", editable: true, onEdit: v => { selectedChar.CharacterRecord.CurrStam = float.Parse(v); });
             AddRow("Max Stamina Base");
+            AddRow("Max Stamina Mod");
             AddRow("Current Health", editable: true, onEdit: v => { selectedChar.CharacterRecord.CurrHealth = float.Parse(v); });
             AddRow("Max Health Base");
+            AddRow("Max Health Mod");
             AddRow("Injury Recovery Counter");
             AddRow("Trauma Counter");
             AddRow("Trauma", editable: true, onEdit: v => { selectedChar.Trauma = float.Parse(v); });
@@ -1007,7 +1009,9 @@ namespace SoD2_Editor
             _characterDetailRows["Trauma Counter"].ValueLabel.Text = $"{chr.CharacterRecord.TraumaCounter,12:F4}";
             _characterDetailRows["Injury Recovery Counter"].ValueLabel.Text = $"{chr.CharacterRecord.InjuryRecoveryCounter,12:F4}";
             _characterDetailRows["Max Stamina Base"].ValueLabel.Text = $"{chr.MaxStaminaBase,12:F4}";
+            _characterDetailRows["Max Stamina Mod"].ValueLabel.Text = $"{chr.MaxStaminaModifier,12:F4}";
             _characterDetailRows["Max Health Base"].ValueLabel.Text = $"{chr.MaxHealthBase,12:F4}";
+            _characterDetailRows["Max Health Mod"].ValueLabel.Text = $"{chr.MaxHealthModifier,12:F4}";
             _characterDetailRows["Trauma"].ValueLabel.Text = $"{chr.Trauma,12:F4}";
             _characterDetailRows["Max Sick"].ValueLabel.Text = $"{chr.MaxSick,12:F4}";
             _characterDetailRows["Max Plague"].ValueLabel.Text = $"{chr.MaxPlague,12:F4}";
@@ -1665,30 +1669,6 @@ namespace SoD2_Editor
         int AZDstringsSize = 0x1000;
         private void btnHookZombieDamagedAnalytics_Click(object sender, EventArgs e)
         {
-
-            /*  
-            IntPtr newfunc = Alloc(0x1024);
-            Console.WriteLine(newfunc.ToString("X"));
-
-            Iced.Intel.Assembler asm = new Iced.Intel.Assembler(bitness: 64);
-            asm.sub(rsp, 0x1000);
-            asm.pushfq();
-
-            asm.popfq();
-            asm.add(rsp, 0x1000);
-            asm.ret();
-
-
-            var stream = new MemoryStream();
-            asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)newfunc);
-            byte[] machineCode = stream.ToArray();
-
-            WBytes(newfunc, machineCode);
-            CreateRemoteThread(_proc, IntPtr.Zero, 0, newfunc, IntPtr.Zero, 0, IntPtr.Zero);
-            */
-
-
-
             //Hook Analytics for zombie hit
             IntPtr AnalyticsZombieDamagedHook = hooks.Get("AnalyticsZombieDamagedHook");
             IntPtr AnalyticsZombieDamagedReturn = hooks.Get("AnalyticsZombieDamagedReturn");
@@ -1699,9 +1679,6 @@ namespace SoD2_Editor
             int DealerStateOffset = 0xC0;
             int PreDamageStateOffset = 0x100;
             int ResultingStateOffset = 0x140;
-            Console.WriteLine($"AZDhookedFunc: {AZDhookedFunc.ToString("X")}");
-            Console.WriteLine($"AZDresults: {AZDresults.ToString("X")}");
-            Console.WriteLine($"AZDstrings: {AZDstrings.ToString("X")}");
 
             Iced.Intel.Assembler asm = new Iced.Intel.Assembler(bitness: 64);
             //Start of hooked code
@@ -1819,24 +1796,54 @@ namespace SoD2_Editor
             asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)AZDhookedFunc);
             machineCode = stream.ToArray();
             WBytes(AnalyticsZombieDamagedHook, machineCode);
-
+            Output("Hooked ZombieDamageAnalytics");
         }
 
         private void btnUnhookZombieDamagedAnalytics_Click(object sender, EventArgs e)
         {
-            lblAnalyticsZombieDamagedDetail.Text = "Unhooked";
+            
             IntPtr AnalyticsZombieDamagedHook = hooks.Get("AnalyticsZombieDamagedHook");
 
             Iced.Intel.Assembler asm = new Iced.Intel.Assembler(bitness: 64);
-            //Start of hooked code
-            asm.sub(rsp, 0x1000);
+            asm.nop();
+            asm.push(rbp);
+            asm.push(rbx);
+            asm.push(rdi);
+            asm.lea(rbp, rsp - 0x47);
+            asm.sub(rsp, 0xa0);
+            var stream = new MemoryStream();
+            asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)AnalyticsZombieDamagedHook);
+            byte[] machineCode = stream.ToArray();
+            WBytes(AnalyticsZombieDamagedHook, machineCode);
 
 
-
-            AZDresults = Alloc(0x1000);
-            AZDstrings = Alloc(0x1000);
+            Unalloc(AZDresults, 0x1000);
+            Unalloc(AZDstrings, 0x1000);
+            AZDresults = IntPtr.Zero;
+            AZDstrings = IntPtr.Zero;
+            Output("Unhooked ZombieDamageAnalytics");
         }
 
-        
+        private void btnEditDilation_Click(object sender, EventArgs e)
+        {
+            var gameMode = world.GameMode;
+            var persistentLevel = world.PersistentLevel;
+            var worldSettings = persistentLevel.WorldSettings;
+            string input = ShowNumericInputDialog("Edit Time Dilation", $"Enter new time dilation", worldSettings.TimeDilation.ToString(), isFloat: true);
+            if (!string.IsNullOrWhiteSpace(input))
+            {
+                worldSettings.TimeDilation = float.Parse(input);
+            }  
+        }
+
+        private void btnEditToD_Click(object sender, EventArgs e)
+        {
+            DaytonLocalPlayer localPlayer = new DaytonLocalPlayer(RIntPtr(addresses.Get("DaytonLocalPlayer")));
+            string input = ShowNumericInputDialog("Edit Time Dilation", $"Enter new time dilation", localPlayer.DaytonPlayerController.CommunityComponent.TimeOfDayComponent.TimeOfDay.ToString(), isFloat: true);
+            if (!string.IsNullOrWhiteSpace(input))
+            {
+                localPlayer.DaytonPlayerController.CommunityComponent.TimeOfDayComponent.TimeOfDay = float.Parse(input);
+            }
+        }
     }
 }

@@ -89,6 +89,8 @@
             this.btnHookZombieDamagedAnalytics = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.txtOutput = new System.Windows.Forms.TextBox();
+            this.btnEditToD = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             this.tabs.SuspendLayout();
             this.tabWorld.SuspendLayout();
             this.tabEnclaves.SuspendLayout();
@@ -151,6 +153,7 @@
             // 
             // tabWorld
             // 
+            this.tabWorld.Controls.Add(this.btnEditToD);
             this.tabWorld.Controls.Add(this.btnEditDilation);
             this.tabWorld.Controls.Add(this.lblWorldToD);
             this.tabWorld.Controls.Add(this.label2);
@@ -176,6 +179,7 @@
             this.btnEditDilation.TabIndex = 9;
             this.btnEditDilation.Text = "Edit";
             this.btnEditDilation.UseVisualStyleBackColor = true;
+            this.btnEditDilation.Click += new System.EventHandler(this.btnEditDilation_Click);
             // 
             // lblWorldToD
             // 
@@ -340,6 +344,7 @@
             // 
             // tabEnclavesCharactersDetails
             // 
+            this.tabEnclavesCharactersDetails.Controls.Add(this.label3);
             this.tabEnclavesCharactersDetails.Controls.Add(this.tlpEnclavesCharactersDetails);
             this.tabEnclavesCharactersDetails.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersDetails.Name = "tabEnclavesCharactersDetails";
@@ -364,7 +369,7 @@
             this.tlpEnclavesCharactersDetails.RowCount = 1;
             this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 631F));
             this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 631F));
-            this.tlpEnclavesCharactersDetails.Size = new System.Drawing.Size(1015, 591);
+            this.tlpEnclavesCharactersDetails.Size = new System.Drawing.Size(1015, 570);
             this.tlpEnclavesCharactersDetails.TabIndex = 15;
             // 
             // tabEnclavesCharactersSkills
@@ -816,6 +821,26 @@
             this.txtOutput.Size = new System.Drawing.Size(1354, 20);
             this.txtOutput.TabIndex = 4;
             // 
+            // btnEditToD
+            // 
+            this.btnEditToD.Location = new System.Drawing.Point(80, 76);
+            this.btnEditToD.Name = "btnEditToD";
+            this.btnEditToD.Size = new System.Drawing.Size(25, 10);
+            this.btnEditToD.TabIndex = 10;
+            this.btnEditToD.Text = "Edit";
+            this.btnEditToD.UseVisualStyleBackColor = true;
+            this.btnEditToD.Click += new System.EventHandler(this.btnEditToD_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 579);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(394, 13);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "(NOTE:  Most Details edits currently only work with characters out of render rang" +
+    "e)";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -840,6 +865,7 @@
             this.tabEnclaveCharacters.PerformLayout();
             this.tabControlEnclavesCharacters.ResumeLayout(false);
             this.tabEnclavesCharactersDetails.ResumeLayout(false);
+            this.tabEnclavesCharactersDetails.PerformLayout();
             this.tabEnclavesCharactersSkills.ResumeLayout(false);
             this.tabEnclavesCharactersEquipment.ResumeLayout(false);
             this.tabControlEnclavesCharactersEquipment.ResumeLayout(false);
@@ -926,6 +952,8 @@
         private System.Windows.Forms.TabPage tabEnclavesCharactersInventory;
         private System.Windows.Forms.TableLayoutPanel tlpEnclaveCharactersInventory;
         private System.Windows.Forms.TextBox txtEnclavesCharactersInventoryAddress;
+        private System.Windows.Forms.Button btnEditToD;
+        private System.Windows.Forms.Label label3;
     }
 }
 
