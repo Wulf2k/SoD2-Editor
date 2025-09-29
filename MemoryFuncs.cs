@@ -115,24 +115,16 @@ namespace SoD2_Editor
         public static void WUInt64(IntPtr addr, ulong val) => WBytes(addr, BitConverter.GetBytes(val));
         public static void WSingle(IntPtr addr, float val) => WBytes(addr, BitConverter.GetBytes(val));
 
-        public static void WAsciiStr(IntPtr addr, string str, int maxLen = 0x50)
+        public static void WAsciiStr(IntPtr addr, string str)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(str);
-            if (bytes.Length >= maxLen)
-                Array.Resize(ref bytes, maxLen - 1);
-            byte[] padded = new byte[maxLen];
-            Array.Copy(bytes, padded, bytes.Length);
-            WBytes(addr, padded);
+            WBytes(addr, bytes);
         }
 
-        public static void WUnicodeStr(IntPtr addr, string str, int maxLen = 0x50)
+        public static void WUnicodeStr(IntPtr addr, string str)
         {
             byte[] bytes = Encoding.Unicode.GetBytes(str);
-            if (bytes.Length >= maxLen)
-                Array.Resize(ref bytes, maxLen - 2);
-            byte[] padded = new byte[maxLen];
-            Array.Copy(bytes, padded, bytes.Length);
-            WBytes(addr, padded);
+            WBytes(addr, bytes);
         }
 
         internal const int PROCESS_VM_READ = 0x10;

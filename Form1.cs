@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Iced.Intel.AssemblerRegisters;
+
 using static SoD2_Editor.Form1;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
@@ -61,6 +61,14 @@ namespace SoD2_Editor
         {
             tabs.SelectedIndex = 1;
             tabControlEnclaves.SelectedIndex = 1;
+            lblCharacterTraits.Text = "";
+            lblCharactersLabel.Text = "";
+            lblEnclavesLabel.Text = "";
+            lblEquipment.Text = "";
+            lblMelee.Text = "";
+            lblRanged.Text = "";
+            lblSidearm.Text = "";
+            lblInventory.Text = "";
         }
 
         private List<string> logNames;
@@ -117,6 +125,7 @@ namespace SoD2_Editor
             GameLogAdd("LogDaybreakGameMode", _ba + 0x043fd258, _ba + 0x0454bdd8);
             GameLogAdd("LogDaytonCharacter", _ba + 0x043facd0, _ba + 0x04549850);
             GameLogAdd("LogDaytonGame", _ba + 0x043fda18, _ba + 0x0454c598);
+            GameLogAdd("LogDaytonGameCharacter", _ba + 0x043fd2d8, _ba + 0x0454be58);
             GameLogAdd("LogDaytonGameSession", _ba + 0x043fda40, _ba + 0x0454c5c0);
             GameLogAdd("LogDaytonHumanAIController", _ba + 0x043fa218, _ba + 0x04548d98);
             GameLogAdd("LogDaytonPlayerController", _ba + 0x043fb2d0, _ba + 0x04549e50);
@@ -211,7 +220,9 @@ namespace SoD2_Editor
             GameLogAdd("LogWwiseBankManager", _ba + 0x04603790, _ba + 0x04752310);
 
             logNames.Add("");
-            //GameLogAdd("LogNavigation", _ba + 0x0, _ba + 0x0);
+            //GameLogAdd("LogDaytonGameCharacter", _ba + 0x0, _ba + 0x0);
+
+            //TODO:  Try add to rowcount instead of just adding an empty row
         }
 
         private void EnableDarkMode(Control parent)
@@ -352,6 +363,7 @@ namespace SoD2_Editor
             if (RUInt32(_ba + 0xE8) == 0)
             {
                 connected = false;
+                tlpEnclavesCharactersDetails.Controls.Clear();
                 txtCharacterAddress.Text = "0";
                 txtEnclaveAddress.Text = "0";
                 lblVer.Text = "Not connected.";
@@ -410,7 +422,7 @@ namespace SoD2_Editor
                         string result = string.Format("{0:D2}:{1:D2}:{2:D2}", hourPart, minutes, seconds);
                         lblWorldToD.Text = result;
 
-                        break;
+                        break; //end tabWorld
 
                     case "tabEnclaves":
                         string newEnclavesLabel = $"{world.Name}\n{gameMode.Name}\n{enclaveManager.Name}";
@@ -453,15 +465,6 @@ namespace SoD2_Editor
                                 IntPtr chrPtr = new IntPtr(chraddr);
                                 var chr = new DaytonCharacter(chrPtr);
                                 selectedChar = chr;
-                                /*
-                                if (chr.TraitNames != null && chr.TraitNames.Count > 0)
-                                {
-                                    chrdetails.AppendLine("Traits:");
-                                    foreach (var trait in chr.TraitNames)
-                                    {
-                                        chrdetails.AppendLine($"    {trait}");
-                                    }
-                                }*/
                                 switch (tabControlEnclavesCharacters.SelectedTab.Name)
                                 {
                                     case "tabEnclavesCharactersDetails":
@@ -470,38 +473,46 @@ namespace SoD2_Editor
                                     case "tabEnclavesCharactersSkills":
                                         UpdateCharacterSkills(chr);
                                         break;
+                                    case "tabEnclavesCharactersTraits":
+                                        lblCharacterTraits.Text = string.Join(Environment.NewLine, chr.CharacterRecord.TraitNames);
+                                        break;
                                     case "tabEnclavesCharactersEquipment":
                                         switch (tabControlEnclavesCharactersEquipment.SelectedTab.Name)
                                         {
                                             case "tabControlEnclavesCharactersEquipmentMelee":
                                                 UpdateMeleeWeaponDetails(chr.CharacterRecord.Equipment.MeleeWeaponItemInstance.Stats);
+                                                lblMelee.Text = $"{chr.CharacterRecord.Equipment.MeleeWeaponItemInstance.Name}";
                                                 break;
                                             case "tabControlEnclavesCharactersEquipmentSideArm":
                                                 UpdateRangedWeaponDetails(tlpSideArmWeaponStats, chr.CharacterRecord.Equipment.SideArmRangedWeaponItemInstance.RangedWeapon.Stats);
+                                                lblSidearm.Text = $"{chr.CharacterRecord.Equipment.SideArmRangedWeaponItemInstance.Name}";
                                                 break;
                                             case "tabControlEnclavesCharactersEquipmentRanged":
                                                 UpdateRangedWeaponDetails(tlpRangedWeaponStats, chr.CharacterRecord.Equipment.RangedWeaponItemInstance.RangedWeapon.Stats);
+                                                lblRanged.Text = $"{chr.CharacterRecord.Equipment.MeleeWeaponItemInstance.Name}";
                                                 break;
                                         }
+                                        lblEquipment.Text = $"{chr.CharacterRecord.Equipment.Name}";
                                         break;
                                     case "tabEnclavesCharactersInventory":
                                         UpdateCharacterInventoryList(chr);
-
+                                        lblInventory.Text = $"{chr.CharacterRecord.Inventory.Name}";
                                         break;
-                                }
-                            }
+                                }//end switch cha tab name
+                                lblCharactersLabel.Text = $"{chr.Name}";
+                            }// end if parsed char addr
                             else
                             {
-
+                                lblCharactersLabel.Text = "";
                             }
-
-
-                        } else { 
-                            lblEnclaveDetails.Text = "enclaveLabel";
+                        } //end if parse enclave address
+                        else 
+                        { 
+                            lblEnclaveDetails.Text = "";
                             lblEnclavesNumCharacters.Text = "x Characters";
                         }
 
-                        break;
+                        break; //end tabEnclaves
                     case "tabSpawner":
                         var spawner = gameMode.DynamicPawnSpawner;
 
@@ -527,14 +538,14 @@ namespace SoD2_Editor
 
                         lblSpawnerDetails.Text = spawnerdetails.ToString();
 
-                        break;
+                        break; //end tabSpawner
 
                     case "tabGameLog":
                         UpdateLog();
                         UpdateLogLevels();
                         break;
                     case "tabAnalytics":
-                        UpdateAnalytics();
+                        UpdateZombieDamagedAnalytics();
                         break;
                     default:
                         break;
@@ -542,109 +553,9 @@ namespace SoD2_Editor
             }
         }
 
-        private void UpdateAnalytics()
-        {
+        
 
-            if (!AZDresults.Equals(IntPtr.Zero))
-            {
-                var analytics = new ZombieDamagedAnalytics(AZDresults);
-
-                lblAnalyticsZombieDamagedDetail.Text =
-                    $"{"Zombie Type ID",-20}: {analytics.ZombieTypeId,7}\n" +
-                    $"{"Cause of Damage",-20}: {analytics.CauseOfDamageType}\n" +
-                    $"{"DealerState",-20}: {analytics.DealerState}\n" +
-                    $"{"PreDamageState",-20}: {analytics.PreDamageState}\n" +
-                    $"{"ResultingState",-20}: {analytics.ResultingState}\n" +
-                    $"{"Zombie ID",-20}: {analytics.ZombieId,7}\n" +
-                    $"{"Is Plague Zombie",-20}: {analytics.IsPlagueZombie,7}\n" +
-                    $"{"PosX",-20}: {analytics.ZombieX,7}\n" +
-                    $"{"PosY",-20}: {analytics.ZombieY,7}\n" +
-                    $"{"PosZ",-20}: {analytics.ZombieZ,7}\n" +
-                    $"{"Killed",-20}: {analytics.Killed,7}\n" +
-                    $"{"Dealer ID",-20}: {analytics.DealerId,7}\n" +
-                    $"{"Stun Chance",-20}: {analytics.StunChance,14:F6}\n" +
-                    $"{"Down Chance",-20}: {analytics.DownChance,14:F6}\n" +
-                    $"{"Kill Chance",-20}: {analytics.KillChance,14:F6}\n" +
-                    $"{"Dismember Chance",-20}: {analytics.DismemberChance,14:F6}\n" +
-                    $"{"Headshot Counter",-20}: {analytics.HeadshotCounter,7}";
-            }
-            else
-                lblAnalyticsZombieDamagedDetail.Text = "Unhooked";
-
-        }
-
-        private LinkLabel _selectedEnclaveLink = null;
-        private void UpdateEnclaveList(EnclaveManager enclaveManager)
-        {
-            int currentCount = flowEnclaves.Controls.Count;
-            int newCount = enclaveManager.NumEnclaves;
-
-            while (currentCount < newCount)
-            {
-                var link = new LinkLabel
-                {
-                    AutoSize = true,
-                    LinkColor = Color.LightBlue,
-                    Margin = new Padding(3),
-                    Cursor = Cursors.Hand,
-                    BackColor = flowEnclaves.BackColor
-                };
-                int index = currentCount;
-                link.Click += (s, e) => OnEnclaveLinkClicked((LinkLabel)s, enclaveManager.Enclaves[index]);
-                flowEnclaves.Controls.Add(link);
-                currentCount++;
-            }
-
-            while (currentCount > newCount)
-            {
-                flowEnclaves.Controls.RemoveAt(currentCount - 1);
-                currentCount--;
-            }
-
-            for (int i = 0; i < newCount; i++)
-            {
-                try
-                {
-                    var link = (LinkLabel)flowEnclaves.Controls[i];
-                    string newName = enclaveManager.Enclaves[i].DisplayName;
-
-                    if (link.Text != newName)
-                        link.Text = newName;
-
-                    if (link == _selectedEnclaveLink)
-                        link.BackColor = Color.DarkRed;
-                    else
-                        link.BackColor = flowEnclaves.BackColor;
-
-                    if (newName == currEnclave.DisplayName)
-                        link.BackColor = Color.DarkGreen;
-                } catch (Exception ex) { Console.WriteLine($@"UpdateEnclaveList:  {ex}"); }
-            }
-        }
-
-        private void OnEnclaveLinkClicked(LinkLabel clickedLink, Enclave enclave)
-        {
-            if (_selectedEnclaveLink != null && _selectedEnclaveLink != clickedLink)
-            {
-                _selectedEnclaveLink.BackColor = flowEnclaves.BackColor;
-            }
-
-            clickedLink.BackColor = Color.DarkRed;
-            _selectedEnclaveLink = clickedLink;
-            txtEnclaveAddress.Text = enclave.BaseAddress.ToString("X");
-
-            txtCharacterAddress.Text = "0";
-            _characterSkillRows.Clear();
-            
-
-            foreach (Control ctrl in flowEnclaveCharacters.Controls)
-            {
-                if (ctrl is LinkLabel link)
-                {
-                    link.BackColor = Color.Transparent;
-                }
-            }
-        }
+        
 
         private LinkLabel _selectedCharacterLink = null;
 
@@ -704,7 +615,7 @@ namespace SoD2_Editor
 
                     flowEnclaveCharacters.Controls.Add(link);
                     currentCount++;
-                }
+                }//end while curr < new
 
                 while (currentCount > newCount)
                 {
@@ -734,10 +645,8 @@ namespace SoD2_Editor
                         if ((selectedChar != null)  && (newName != $"{selectedChar.CharacterRecord.FirstName} {selectedChar.CharacterRecord.LastName}"))
                             link.BackColor = Color.Transparent;
                     }
-
-                }
-            }
-
+                }//end for
+            }//end ifnot null
         }
         private class InventoryRowEntry
         {
@@ -766,6 +675,7 @@ namespace SoD2_Editor
 
         private void UpdateCharacterInventoryList(DaytonCharacter chr)
         {
+            tlpEnclaveCharactersInventory.SuspendLayout();
             int slotCount = chr.CharacterRecord.Inventory.Slots.Count;
             if ((tlpEnclaveCharactersInventory.RowCount != slotCount + 1) || 
                 (chr.CharacterRecord.Inventory.BaseAddress.ToString("X") != txtEnclavesCharactersInventoryAddress.Text))
@@ -778,7 +688,7 @@ namespace SoD2_Editor
 
 
             txtEnclavesCharactersInventoryAddress.Text = chr.CharacterRecord.Inventory.BaseAddress.ToString("X");
-            tlpEnclaveCharactersInventory.SuspendLayout();
+            
 
             
 
@@ -873,6 +783,76 @@ namespace SoD2_Editor
 
 
 
+        private string ShowInputDialog(string title, string prompt, string defaultValue = "")
+                {
+                    Form promptForm = new Form()
+                    {
+                        Width = 400,
+                        Height = 150,
+                        FormBorderStyle = FormBorderStyle.FixedDialog,
+                        Text = title,
+                        StartPosition = FormStartPosition.CenterParent
+                    };
+
+                    Label lblPrompt = new Label() { Left = 10, Top = 20, Text = prompt, AutoSize = true };
+                    TextBox txtInput = new TextBox() { Left = 10, Top = 50, Width = 360, Text = defaultValue };
+                    Button btnOk = new Button() { Text = "OK", Left = 220, Width = 70, Top = 80, DialogResult = DialogResult.OK };
+                    Button btnCancel = new Button() { Text = "Cancel", Left = 300, Width = 70, Top = 80, DialogResult = DialogResult.Cancel };
+
+                    btnOk.Click += (sender, e) => { promptForm.Close(); };
+                    btnCancel.Click += (sender, e) => { promptForm.Close(); };
+
+                    promptForm.Controls.Add(lblPrompt);
+                    promptForm.Controls.Add(txtInput);
+                    promptForm.Controls.Add(btnOk);
+                    promptForm.Controls.Add(btnCancel);
+
+                    promptForm.AcceptButton = btnOk;
+                    promptForm.CancelButton = btnCancel;
+
+                    return promptForm.ShowDialog() == DialogResult.OK ? txtInput.Text : null;
+                }
+        private string ShowNumericInputDialog(string title, string prompt, string currentValue, bool isFloat = false)
+        {
+            using (Form form = new Form())
+            {
+                form.Text = title;
+                form.Width = 300;
+                form.Height = 150;
+                form.StartPosition = FormStartPosition.CenterParent;
+
+                Label lbl = new Label() { Left = 10, Top = 20, Text = prompt, AutoSize = true };
+                TextBox txt = new TextBox() { Left = 10, Top = 50, Width = 250, Text = currentValue };
+
+                Button ok = new Button() { Text = "OK", Left = 100, Width = 80, Top = 80, DialogResult = DialogResult.OK };
+                form.Controls.Add(lbl);
+                form.Controls.Add(txt);
+                form.Controls.Add(ok);
+                form.AcceptButton = ok;
+
+                ok.Click += (s, e) =>
+                {
+                    if (isFloat)
+                    {
+                        if (!float.TryParse(txt.Text, out _))
+                        {
+                            MessageBox.Show("Please enter a valid floating-point number.");
+                            form.DialogResult = DialogResult.None;
+                        }
+                    }
+                    else
+                    {
+                        if (!int.TryParse(txt.Text, out _))
+                        {
+                            MessageBox.Show("Please enter a valid integer.");
+                            form.DialogResult = DialogResult.None;
+                        }
+                    }
+                };
+
+                return form.ShowDialog() == DialogResult.OK ? txt.Text : null;
+            }
+        }
 
 
 
@@ -926,7 +906,7 @@ namespace SoD2_Editor
                     editButton = new Button
                     {
                         Text = "Edit",
-                        Width = 50,
+                        Width = 25,
                         Height = 10
                     };
                     editButton.Click += (s, e) =>
@@ -952,14 +932,16 @@ namespace SoD2_Editor
 
             AddRow("Enclave Name");
             AddRow("ID");
-            AddRow("First Name");
-            AddRow("Last Name");
+            AddRow("First Name", editable: true, onEdit: v => { selectedChar.CharacterRecord.FirstName = v; });
+            AddRow("Last Name", editable: true, onEdit: v => { selectedChar.CharacterRecord.LastName = v; });
+            AddRow("Nickname", editable: true, onEdit: v => { selectedChar.CharacterRecord.NickName = v; });
             AddRow("Voice ID");
             AddRow("Cultural Background");
             AddRow("Human Definition");
             AddRow("Philosophy");
             AddRow("Hero Bonus");
             AddRow("Leader Type");
+            AddRow("Zombies Killed");
             AddRow("Standing Level", editable: true, onEdit: v => { selectedChar.CharacterRecord.StandingLevel = (ECharacterStanding)byte.Parse(v); });
             AddRow("Current Standing", editable: true, onEdit: v => { selectedChar.CharacterRecord.CurrStanding = float.Parse(v);  });
             AddRow("Current Fatigue", editable: true, onEdit: v => {  selectedChar.CharacterRecord.CurrFatigue = float.Parse(v);  });
@@ -982,6 +964,8 @@ namespace SoD2_Editor
             AddRow("Position Z");
             AddRow("");  //Empty row added because it magically fixes things and I'd rather not waste the time figuring out why
 
+            //TODO: Instead of AddRow, just add an extra ++ to RowCount and test
+
 
             tlpEnclavesCharactersDetails.ResumeLayout();
         }
@@ -993,12 +977,14 @@ namespace SoD2_Editor
             _characterDetailRows["ID"].ValueLabel.Text = chr.CharacterRecord.ID.ToString();
             _characterDetailRows["First Name"].ValueLabel.Text = chr.CharacterRecord.FirstName;
             _characterDetailRows["Last Name"].ValueLabel.Text = chr.CharacterRecord.LastName;
+            _characterDetailRows["Nickname"].ValueLabel.Text = chr.CharacterRecord.NickName;
             _characterDetailRows["Voice ID"].ValueLabel.Text = chr.CharacterRecord.VoiceID.ToString();
             _characterDetailRows["Cultural Background"].ValueLabel.Text = chr.CharacterRecord.CulturalBackground;
             _characterDetailRows["Human Definition"].ValueLabel.Text = chr.CharacterRecord.HumanDefinition;
             _characterDetailRows["Philosophy"].ValueLabel.Text = chr.CharacterRecord.Philosophy1.ToString();
             _characterDetailRows["Hero Bonus"].ValueLabel.Text = chr.CharacterRecord.HeroBonus;
             _characterDetailRows["Leader Type"].ValueLabel.Text = chr.CharacterRecord.LeaderType;
+            _characterDetailRows["Zombies Killed"].ValueLabel.Text = chr.CharacterRecord.ZombiesKilled.ToString();
             _characterDetailRows["Standing Level"].ValueLabel.Text = chr.CharacterRecord.StandingLevel.ToString();
             _characterDetailRows["Current Standing"].ValueLabel.Text = $"{chr.CharacterRecord.CurrStanding,12:F4}";
             _characterDetailRows["Current Health"].ValueLabel.Text = $"{chr.CharacterRecord.CurrHealth,12:F4}";
@@ -1022,36 +1008,7 @@ namespace SoD2_Editor
             _characterDetailRows["Position Z"].ValueLabel.Text = $"{chr.ZPos,12:F4}";   
         }
 
-        private string ShowInputDialog(string title, string prompt, string defaultValue = "")
-        {
-            Form promptForm = new Form()
-            {
-                Width = 400,
-                Height = 150,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                Text = title,
-                StartPosition = FormStartPosition.CenterParent
-            };
-
-            Label lblPrompt = new Label() { Left = 10, Top = 20, Text = prompt, AutoSize = true };
-            TextBox txtInput = new TextBox() { Left = 10, Top = 50, Width = 360, Text = defaultValue };
-            Button btnOk = new Button() { Text = "OK", Left = 220, Width = 70, Top = 80, DialogResult = DialogResult.OK };
-            Button btnCancel = new Button() { Text = "Cancel", Left = 300, Width = 70, Top = 80, DialogResult = DialogResult.Cancel };
-
-            btnOk.Click += (sender, e) => { promptForm.Close(); };
-            btnCancel.Click += (sender, e) => { promptForm.Close(); };
-
-            promptForm.Controls.Add(lblPrompt);
-            promptForm.Controls.Add(txtInput);
-            promptForm.Controls.Add(btnOk);
-            promptForm.Controls.Add(btnCancel);
-
-            promptForm.AcceptButton = btnOk;
-            promptForm.CancelButton = btnCancel;
-
-            return promptForm.ShowDialog() == DialogResult.OK ? txtInput.Text : null;
-        }
-
+        
 
         private class CharacterSkillRowEntry
         {
@@ -1176,48 +1133,7 @@ namespace SoD2_Editor
             tlpEnclavesCharactersSkills.ResumeLayout();
         }
         
-        private string ShowNumericInputDialog(string title, string prompt, string currentValue, bool isFloat = false)
-        {
-            using (Form form = new Form())
-            {
-                form.Text = title;
-                form.Width = 300;
-                form.Height = 150;
-                form.StartPosition = FormStartPosition.CenterParent;
-
-                Label lbl = new Label() { Left = 10, Top = 20, Text = prompt, AutoSize = true };
-                TextBox txt = new TextBox() { Left = 10, Top = 50, Width = 250, Text = currentValue };
-
-                Button ok = new Button() { Text = "OK", Left = 100, Width = 80, Top = 80, DialogResult = DialogResult.OK };
-                form.Controls.Add(lbl);
-                form.Controls.Add(txt);
-                form.Controls.Add(ok);
-                form.AcceptButton = ok;
-
-                ok.Click += (s, e) =>
-                {
-                    if (isFloat)
-                    {
-                        if (!float.TryParse(txt.Text, out _))
-                        {
-                            MessageBox.Show("Please enter a valid floating-point number.");
-                            form.DialogResult = DialogResult.None;
-                        }
-                    }
-                    else
-                    {
-                        if (!int.TryParse(txt.Text, out _))
-                        {
-                            MessageBox.Show("Please enter a valid integer.");
-                            form.DialogResult = DialogResult.None;
-                        }
-                    }
-                };
-
-                return form.ShowDialog() == DialogResult.OK ? txt.Text : null;
-            }
-        }
-
+        
 
 
 
@@ -1425,7 +1341,6 @@ namespace SoD2_Editor
 
 
             if ((_meleeWeaponDetailRows.Count != 0) &&
-                //(_meleeWeaponDetailRows["Weapon Name"] != null) &&
                 (_meleeWeaponDetailRows["Weapon Name"].ValueLabel.Text != weaponName))
             {
                 _meleeWeaponDetailRows.Clear();
@@ -1445,6 +1360,8 @@ namespace SoD2_Editor
 
             string weaponDesc = weapon.WeaponDesc;
             weaponDesc = weaponDesc.Replace("<br>", Environment.NewLine);
+            weaponDesc = weaponDesc.Replace("{color}", "");
+            weaponDesc = weaponDesc.Replace("{color:highlight}","");
             _meleeWeaponDetailRows["Weapon Desc"].ValueLabel.Text = weaponDesc;
             _meleeWeaponDetailRows["Weapon Desc"].ValueLabel.BorderStyle = BorderStyle.FixedSingle;
 
@@ -1592,6 +1509,8 @@ namespace SoD2_Editor
 
             string weaponDesc = weapon.WeaponDesc;
             weaponDesc = weaponDesc.Replace("<br>", Environment.NewLine);
+            weaponDesc = weaponDesc.Replace("{/color}", "");
+            weaponDesc = weaponDesc.Replace("{color:highlight}", "");
             _rangedWeaponDetailRows["Weapon Desc"].ValueLabel.Text = weaponDesc;
             _rangedWeaponDetailRows["Weapon Desc"].ValueLabel.BorderStyle = BorderStyle.FixedSingle;
 
@@ -1663,166 +1582,7 @@ namespace SoD2_Editor
         {
             txtOutput.Text = $"[{DateTime.Now:HH:mm:ss}] {output}";
         }
-        IntPtr AZDresults = IntPtr.Zero;
-        int AZDresultsSize = 0x1000;
-        IntPtr AZDstrings = IntPtr.Zero;
-        int AZDstringsSize = 0x1000;
-        private void btnHookZombieDamagedAnalytics_Click(object sender, EventArgs e)
-        {
-            //Hook Analytics for zombie hit
-            IntPtr AnalyticsZombieDamagedHook = hooks.Get("AnalyticsZombieDamagedHook");
-            IntPtr AnalyticsZombieDamagedReturn = hooks.Get("AnalyticsZombieDamagedReturn");
-            IntPtr AZDhookedFunc = Alloc(0x1000);
-            AZDresults = Alloc(AZDresultsSize);
-            AZDstrings = Alloc(AZDstringsSize);
-            int CauseOfDamageIdOffset = 0x80;
-            int DealerStateOffset = 0xC0;
-            int PreDamageStateOffset = 0x100;
-            int ResultingStateOffset = 0x140;
-
-            Iced.Intel.Assembler asm = new Iced.Intel.Assembler(bitness: 64);
-            //Start of hooked code
-            asm.sub(rsp, 0x1000);
-            asm.pushfq();
-
-
-
-            //Copy AnalyticsHelper
-            asm.mov(rax, AZDresults.ToInt64());
-            asm.push(rcx);
-            asm.push(rsi);
-            asm.push(rdi);
-            asm.mov(rsi, rcx);
-            asm.mov(rdi, rax);
-            asm.mov(rcx, 0x200);
-            asm.rep.movsb();
-            asm.pop(rdi);
-            asm.pop(rsi);
-            asm.pop(rcx);
-
-            //Copy CauseOfDamageId String
-            asm.mov(rax, AZDstrings.ToInt64());
-            asm.push(rcx);
-            asm.push(rsi);
-            asm.push(rdi);
-            asm.mov(rsi, __[rcx + 0x170]);
-            asm.add(rax, CauseOfDamageIdOffset);
-            asm.mov(rdi, rax);
-            asm.mov(ecx, __[rcx + 0x178]);
-            asm.add(ecx, ecx);
-            asm.rep.movsb();
-            asm.mov(rcx, AZDresults.ToInt64());
-            asm.mov(__[rcx + 0x170], rax);
-            asm.pop(rdi);
-            asm.pop(rsi);
-            asm.pop(rcx);
-            //Copy DealerState String
-            asm.mov(rax, AZDstrings.ToInt64());
-            asm.push(rcx);
-            asm.push(rsi);
-            asm.push(rdi);
-            asm.mov(rsi, __[rcx + 0x188]);
-            asm.add(rax, DealerStateOffset);
-            asm.mov(rdi, rax);
-            asm.mov(ecx, __[rcx + 0x190]);
-            asm.add(ecx, ecx);
-            asm.rep.movsb();
-            asm.mov(rcx, AZDresults.ToInt64());
-            asm.mov(__[rcx + 0x188], rax);
-            asm.pop(rdi);
-            asm.pop(rsi);
-            asm.pop(rcx);
-            //Copy PreDamageState String
-            asm.mov(rax, AZDstrings.ToInt64());
-            asm.push(rcx);
-            asm.push(rsi);
-            asm.push(rdi);
-            asm.mov(rsi, __[rcx + 0x1A8]);
-            asm.add(rax, PreDamageStateOffset);
-            asm.mov(rdi, rax);
-            asm.mov(ecx, __[rcx + 0x1B0]);
-            asm.add(ecx, ecx);
-            asm.rep.movsb();
-            asm.mov(rcx, AZDresults.ToInt64());
-            asm.mov(__[rcx + 0x1A8], rax);
-            asm.pop(rdi);
-            asm.pop(rsi);
-            asm.pop(rcx);
-            //Copy ResultingState String
-            asm.mov(rax, AZDstrings.ToInt64());
-            asm.push(rcx);
-            asm.push(rsi);
-            asm.push(rdi);
-            asm.mov(rsi, __[rcx + 0x1B8]);
-            asm.add(rax, ResultingStateOffset);
-            asm.mov(rdi, rax);
-            asm.mov(ecx, __[rcx + 0x1C0]);
-            asm.add(ecx, ecx);
-            asm.rep.movsb();
-            asm.mov(rcx, AZDresults.ToInt64());
-            asm.mov(__[rcx + 0x1B8], rax);
-            asm.pop(rdi);
-            asm.pop(rsi);
-            asm.pop(rcx);
-
-
-            
-
-            
-
-
-
-            asm.popfq();
-            asm.add(rsp, 0x1000);
-            //Replacing code we broke with our hook
-            asm.push(rbp);
-            asm.push(rbx);
-            asm.push(rdi);
-            asm.lea(rbp, rsp - 0x47);
-            asm.sub(rsp, 0xa0);
-            asm.mov(rax, AnalyticsZombieDamagedReturn.ToInt64());
-            asm.jmp(rax);
-            //Jmp back out of hook
-            var stream = new MemoryStream();
-            asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)AZDhookedFunc);
-            byte[] machineCode = stream.ToArray();
-            WBytes(AZDhookedFunc, machineCode);
-
-
-            asm = new Iced.Intel.Assembler(bitness: 64);
-            asm.mov(rax, AZDhookedFunc.ToInt64());
-            asm.jmp(rax);
-            stream = new MemoryStream();
-            asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)AZDhookedFunc);
-            machineCode = stream.ToArray();
-            WBytes(AnalyticsZombieDamagedHook, machineCode);
-            Output("Hooked ZombieDamageAnalytics");
-        }
-
-        private void btnUnhookZombieDamagedAnalytics_Click(object sender, EventArgs e)
-        {
-            
-            IntPtr AnalyticsZombieDamagedHook = hooks.Get("AnalyticsZombieDamagedHook");
-
-            Iced.Intel.Assembler asm = new Iced.Intel.Assembler(bitness: 64);
-            asm.nop();
-            asm.push(rbp);
-            asm.push(rbx);
-            asm.push(rdi);
-            asm.lea(rbp, rsp - 0x47);
-            asm.sub(rsp, 0xa0);
-            var stream = new MemoryStream();
-            asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)AnalyticsZombieDamagedHook);
-            byte[] machineCode = stream.ToArray();
-            WBytes(AnalyticsZombieDamagedHook, machineCode);
-
-
-            Unalloc(AZDresults, 0x1000);
-            Unalloc(AZDstrings, 0x1000);
-            AZDresults = IntPtr.Zero;
-            AZDstrings = IntPtr.Zero;
-            Output("Unhooked ZombieDamageAnalytics");
-        }
+        
 
         private void btnEditDilation_Click(object sender, EventArgs e)
         {
@@ -1844,6 +1604,16 @@ namespace SoD2_Editor
             {
                 localPlayer.DaytonPlayerController.CommunityComponent.TimeOfDayComponent.TimeOfDay = float.Parse(input);
             }
+        }
+
+        private void btnDiscord_Click(object sender, EventArgs e)
+        {
+            //https://discord.gg/UT5yFag7Xk
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://discord.gg/UT5yFag7Xk",
+                UseShellExecute = true
+            });
         }
     }
 }

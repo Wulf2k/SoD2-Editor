@@ -226,9 +226,60 @@ namespace SoD2_Editor
                 set => WInt32(BaseAddress + 0x0, value);
             }
 
-            public string FirstName => new TextProperty(RIntPtr(BaseAddress + 0x18)).Value;
-            public string LastName => new TextProperty(RIntPtr(BaseAddress + 0x30)).Value;
-            public IntPtr NickNamePtr => RIntPtr(BaseAddress + 0x48);
+            public string FirstName //=> new TextProperty(RIntPtr(BaseAddress + 0x18)).Value;
+            {
+                get
+                {
+                    return new TextProperty(RIntPtr(BaseAddress + 0x18)).Value;
+                }
+                set
+                {
+                    value += '\0';
+                    TextProperty tp = new TextProperty(RIntPtr(BaseAddress + 0x18));
+                    if (tp.BaseAddress != IntPtr.Zero)
+                    {
+                        if (value.Length > tp.Length)
+                            value = value.Substring(0, tp.Length - 1);
+                        tp.Value = value;
+                    }
+                }
+            }
+            public string LastName //=> new TextProperty(RIntPtr(BaseAddress + 0x30)).Value;
+            {
+                get
+                {
+                    return new TextProperty(RIntPtr(BaseAddress + 0x30)).Value;
+                }
+                set
+                {
+                    value += '\0';
+                    TextProperty tp = new TextProperty(RIntPtr(BaseAddress + 0x30));
+                    if (tp.BaseAddress != IntPtr.Zero)
+                    {
+                        if (value.Length > tp.Length)
+                            value = value.Substring(0, tp.Length - 1);
+                        tp.Value = value;
+                    }
+                }
+            }
+            public string NickName
+            {
+                get
+                {
+                    return new TextProperty(RIntPtr(BaseAddress + 0x48)).Value;
+                }
+                set
+                {
+                    value += '\0';
+                    TextProperty tp = new TextProperty(RIntPtr(BaseAddress + 0x48));
+                    if (tp.BaseAddress != IntPtr.Zero)
+                    {
+                        if (value.Length > tp.Length)
+                            value = value.Substring(0, tp.Length - 1);
+                        tp.Value = value;
+                    }
+                }
+            }
             public string VoiceID => GetNameFromNameOffset(RInt32(BaseAddress + 0x60));
             public string CulturalBackground => GetNameFromNameOffset(RInt32(BaseAddress + 0x68));
             public string HumanDefinition => GetNameFromNameOffset(RInt32(BaseAddress + 0x80));
@@ -351,6 +402,11 @@ namespace SoD2_Editor
             {
                 get => RSingle(BaseAddress + 0x128);
                 set => WSingle(BaseAddress + 0x128, value);
+            }
+            public int ZombiesKilled
+            {
+                get => RInt32(BaseAddress + 0x12C);
+                set => WInt32(BaseAddress + 0x12C, value);
             }
         }
 
@@ -842,6 +898,28 @@ namespace SoD2_Editor
             {
                 BaseAddress = baseAddress;
             }
+            public int Length
+            {
+                get
+                {
+                    return RInt32(RIntPtr(BaseAddress + 0x8) + 0x8);
+                }
+                set
+                {
+                    WInt32(RIntPtr(BaseAddress + 0x8) + 0x8, value);
+                }
+            }
+            public int Length2
+            {
+                get
+                {
+                    return RInt32(RIntPtr(BaseAddress + 0x8) + 0xc);
+                }
+                set
+                {
+                    WInt32(RIntPtr(BaseAddress + 0x8) + 0xc, value);
+                }
+            }
 
             public string Value
             {
@@ -849,12 +927,19 @@ namespace SoD2_Editor
                 {
                     if (BaseAddress == IntPtr.Zero)
                         return string.Empty;
-
-                    IntPtr strPtr = RIntPtr(BaseAddress + 0x28);
-                    if (strPtr == IntPtr.Zero)
-                        return string.Empty;
-
+                    IntPtr strPtr =  RIntPtr(BaseAddress + 0x8);
+                    strPtr = RIntPtr(strPtr);
                     return RUnicodeStr(strPtr);
+                }
+                set
+                {
+                    IntPtr strPtr;
+                    strPtr = RIntPtr(BaseAddress + 0x28);
+                    WUnicodeStr(strPtr, value);  //To save it
+
+                    strPtr = RIntPtr(BaseAddress + 0x8);
+                    strPtr = RIntPtr(strPtr);
+                    WUnicodeStr(strPtr, value);
                 }
             }
         }

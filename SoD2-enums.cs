@@ -261,6 +261,15 @@ namespace SoD2_Editor
             Counts = 8,
             ECommunityResourceType_MAX = 9
         }
+        public enum EGamePlayMode
+        {
+            Vanilla = 0,
+            Daybreak = 1,
+            Heartland = 2,
+            Chariot = 3,
+            Num = 4,
+            EGamePlayMode_MAX = 5
+        }
         public enum EEnclaveType : byte
         {
             Default = 0,
@@ -270,6 +279,28 @@ namespace SoD2_Editor
             Persistent = 4,
             Num = 5,
             EEnclaveType_MAX = 6
+        }
+        public enum EEquipmentSlot
+        {
+            Melee = 0,
+            Ranged = 1,
+            Rucksack = 2,
+            CloseCombat = 3,
+            Backpack = 4,
+            Sidearm = 5,
+            Temporary = 6,
+            Count = 7,
+            EEquipmentSlot_MAX = 8
+        }
+        public enum EFacilityState
+        {
+            Destroyed = 0,
+            Building = 1,
+            Completed = 2,
+            Damaged = 3,
+            Infested = 4,
+            Count = 5,
+            EFacilityState_MAX = 6
         }
         public enum EMeleeTypeEnum : byte
         {
@@ -303,6 +334,29 @@ namespace SoD2_Editor
             RUCKSACK = 11,
             EMiscellaneousItemType_MAX = 12
         }
+        enum EStandingSimulationRewardType
+        {
+            DeliverRucksack = 0,
+            SecureSite = 1,
+            DestroyInfestation = 2,
+            DestroyHorde = 3,
+            KillJuggernaut = 4,
+            KillFeral = 5,
+            KillBloater = 6,
+            KillScreamer = 7,
+            KillOrRouteHostileHuman = 8,
+            DestroyHostileHumanEnclave = 9,
+            KillXZombies = 10,
+            ClaimOutpost = 11,
+            CuringBloodPlague = 12,
+            KillPlagueHeart = 13,
+            KillBloodPlagueJuggernaut = 14,
+            AddCommunityMember = 15,
+            BoonsBanesKillRewards = 16,
+            BoonsBanesKillCesspitZombie = 17,
+            Count = 18,
+            EStandingSimulationRewardType_MAX = 19
+        };
         public enum ETimeOfDayPeriod : byte
         {
             Daytime = 0,
