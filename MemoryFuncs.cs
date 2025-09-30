@@ -114,6 +114,13 @@ namespace SoD2_Editor
         public static void WUInt32(IntPtr addr, uint val) => WBytes(addr, BitConverter.GetBytes(val));
         public static void WUInt64(IntPtr addr, ulong val) => WBytes(addr, BitConverter.GetBytes(val));
         public static void WSingle(IntPtr addr, float val) => WBytes(addr, BitConverter.GetBytes(val));
+        public static void WIntPtr(IntPtr addr, IntPtr value)
+        {
+            if (IntPtr.Size == 8)
+                WInt64(addr, value.ToInt64());
+            else
+                WInt32(addr, value.ToInt32());
+        }
 
         public static void WAsciiStr(IntPtr addr, string str)
         {
@@ -138,7 +145,7 @@ namespace SoD2_Editor
         internal const int PROCESS_ALL_ACCESS = 0x1f0fff;
         internal const int MEM_RELEASE = 0x8000;
         internal const int CREATE_SUSPENDED = 0x4;
-        public IntPtr Alloc(int Size)
+        public static IntPtr Alloc(int Size)
         {
             IntPtr h = (IntPtr)VirtualAllocEx(_proc, IntPtr.Zero, Size, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
             return h;

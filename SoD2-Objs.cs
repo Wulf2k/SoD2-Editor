@@ -226,7 +226,7 @@ namespace SoD2_Editor
                 set => WInt32(BaseAddress + 0x0, value);
             }
 
-            public string FirstName //=> new TextProperty(RIntPtr(BaseAddress + 0x18)).Value;
+            public string FirstName
             {
                 get
                 {
@@ -234,17 +234,12 @@ namespace SoD2_Editor
                 }
                 set
                 {
-                    value += '\0';
                     TextProperty tp = new TextProperty(RIntPtr(BaseAddress + 0x18));
-                    if (tp.BaseAddress != IntPtr.Zero)
-                    {
-                        if (value.Length > tp.Length)
-                            value = value.Substring(0, tp.Length - 1);
-                        tp.Value = value;
-                    }
+                    tp.Value = value;
+
                 }
             }
-            public string LastName //=> new TextProperty(RIntPtr(BaseAddress + 0x30)).Value;
+            public string LastName
             {
                 get
                 {
@@ -252,14 +247,9 @@ namespace SoD2_Editor
                 }
                 set
                 {
-                    value += '\0';
                     TextProperty tp = new TextProperty(RIntPtr(BaseAddress + 0x30));
-                    if (tp.BaseAddress != IntPtr.Zero)
-                    {
-                        if (value.Length > tp.Length)
-                            value = value.Substring(0, tp.Length - 1);
-                        tp.Value = value;
-                    }
+                    tp.Value = value;
+                    
                 }
             }
             public string NickName
@@ -270,14 +260,8 @@ namespace SoD2_Editor
                 }
                 set
                 {
-                    value += '\0';
                     TextProperty tp = new TextProperty(RIntPtr(BaseAddress + 0x48));
-                    if (tp.BaseAddress != IntPtr.Zero)
-                    {
-                        if (value.Length > tp.Length)
-                            value = value.Substring(0, tp.Length - 1);
-                        tp.Value = value;
-                    }
+                    tp.Value = value;
                 }
             }
             public string VoiceID => GetNameFromNameOffset(RInt32(BaseAddress + 0x60));
@@ -933,13 +917,23 @@ namespace SoD2_Editor
                 }
                 set
                 {
-                    IntPtr strPtr;
-                    strPtr = RIntPtr(BaseAddress + 0x28);
-                    WUnicodeStr(strPtr, value);  //To save it
+                    if (BaseAddress != IntPtr.Zero)
+                    {
+                        
+                        if (RInt64(BaseAddress + 0x0) == RInt64(BaseAddress + 0x40))
+                        {
+                            IntPtr newPtr = newString(value);
+                            WIntPtr(BaseAddress + 0x28, newPtr);
+                            WInt32(BaseAddress + 0x30, value.Length + 1);
+                            WInt32(BaseAddress + 0x34, value.Length + 1);
+                        }
+                        
 
-                    strPtr = RIntPtr(BaseAddress + 0x8);
-                    strPtr = RIntPtr(strPtr);
-                    WUnicodeStr(strPtr, value);
+                        IntPtr strPtr = RIntPtr(BaseAddress + 0x8);
+                        WIntPtr(strPtr, newString(value));
+                        Length = value.Length + 1;
+                        Length2 = value.Length + 1;
+                    }
                 }
             }
         }

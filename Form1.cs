@@ -74,6 +74,8 @@ namespace SoD2_Editor
         private List<string> logNames;
         public void InitAddresses()
         {
+            newStringsPtr = IntPtr.Zero;
+            newStringsOffset = 0;
             addresses.Add("DaytonLocalPlayer", _ba + 0x045BDB10, _ba + 0x0470C690);
             addresses.Add("DaytonVehicleVtPtr", _ba + 0x03418E40, _ba + 0x034E8930);
             addresses.Add("GameLogPtr", _ba + 0x044243e0, _ba + 0x04572f60);
