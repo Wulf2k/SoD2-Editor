@@ -22,7 +22,8 @@ namespace SoD2_Editor
     {
         private bool connected = false;
         private static IntPtr _ba;
-
+        private static IntPtr lastInspected = IntPtr.Zero;
+        private readonly List<IntPtr> inspectHistory = new List<IntPtr>();
 
         private static Enclave currEnclave = null;
         private static DaytonHumanCharacter currDaytonHumanCharacter = null;
@@ -549,6 +550,10 @@ namespace SoD2_Editor
                     case "tabAnalytics":
                         UpdateZombieDamagedAnalytics();
                         break;
+                    case "tabInspector":
+                        UpdateInspector();
+                        break;//end tabInspector
+
                     default:
                         break;
                 }
@@ -1616,6 +1621,63 @@ namespace SoD2_Editor
                 FileName = "https://discord.gg/UT5yFag7Xk",
                 UseShellExecute = true
             });
+        }
+
+        private void btnTest_Click(object sender, EventArgs e)
+        {
+            //UClass obj = currDaytonCharacter.UClass;
+            /*UClass obj = (new UObject((IntPtr)0x0109A2D520)).UClass;
+            Console.WriteLine($"0x{obj.Size.ToString("X16")}   {obj.Name}");
+            */
+
+            /*Console.WriteLine($"{currDaytonHumanCharacter.Class.Name}  {currDaytonHumanCharacter.Class.BaseClass.Name}  {currDaytonHumanCharacter.Class.BaseClass.BaseClass.Name}");
+            UProperty prop = currDaytonHumanCharacter.Class.nextProp;
+
+            while (prop.BaseAddress != IntPtr.Zero)
+            {
+                IntPtr Offset = (IntPtr)prop.Offset;
+                if (prop.Class.Name == "Function")
+                {
+                    Offset = (new UFunction(prop.BaseAddress)).FunctionPtr;
+                }
+                //Console.WriteLine($"0x{prop.BaseAddress.ToString("X16")}   0x{Offset.ToString("X16")}   {prop.UClass.Name}   {prop.Name}");
+                Console.WriteLine($"0x{prop.BaseAddress.ToString("X16")}  {prop.Class.BaseClass.Name}  {prop.Type}     {prop.Name}");
+                prop = prop.nextProp;
+            }
+
+            //UClass obj = (new UObject((IntPtr)0x0109A2D520)).UClass;
+            //DaytonHumanCharacter dhc = new DaytonHumanCharacter((IntPtr)0x109a2d520);
+            */
+
+            /*
+            DaytonHumanCharacter dhc = currDaytonHumanCharacter;
+            UObject meleeTarget = new UObject(RIntPtr(dhc.GetPropertyAddress("MeleeTarget")));
+            ArrayProperty bcc = new ArrayProperty(meleeTarget.GetPropertyAddress("BlueprintCreatedComponents"));
+            
+            UObject za = new UObject((IntPtr)0);
+            foreach (UObject item in bcc.Entries)
+            {
+                if (item.Name == "ZombieAction")
+                    za = new UObject(item.BaseAddress);
+            }
+            Console.WriteLine($"{za.GetPropertyAddress("ReactInfo").ToString("X")}");
+            */
+            Console.WriteLine(currDaytonHumanCharacter.Path());
+        }
+
+        private void btnInspectorBack_Click(object sender, EventArgs e)
+        {
+            if (inspectHistory.Count > 1)
+            {
+                inspectHistory.RemoveAt(inspectHistory.Count - 1);
+                IntPtr prevAddr = inspectHistory.Last();
+                txtInspectorAddress.Text = $"{prevAddr.ToString("X")}";
+            }
+        }
+
+        private void btnInspectWorld_Click(object sender, EventArgs e)
+        {
+            txtInspectorAddress.Text = world.BaseAddress.ToString("X");
         }
     }
 }

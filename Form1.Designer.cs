@@ -32,6 +32,7 @@
             this.lblVer = new System.Windows.Forms.Label();
             this.tabs = new System.Windows.Forms.TabControl();
             this.tabWorld = new System.Windows.Forms.TabPage();
+            this.btnEditToD = new System.Windows.Forms.Button();
             this.btnEditDilation = new System.Windows.Forms.Button();
             this.lblWorldToD = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -47,20 +48,29 @@
             this.lblEnclaveDetails = new System.Windows.Forms.Label();
             this.txtEnclaveAddress = new System.Windows.Forms.TextBox();
             this.tabEnclaveCharacters = new System.Windows.Forms.TabPage();
+            this.lblCharactersLabel = new System.Windows.Forms.Label();
             this.tabControlEnclavesCharacters = new System.Windows.Forms.TabControl();
             this.tabEnclavesCharactersDetails = new System.Windows.Forms.TabPage();
+            this.label3 = new System.Windows.Forms.Label();
             this.tlpEnclavesCharactersDetails = new System.Windows.Forms.TableLayoutPanel();
             this.tabEnclavesCharactersSkills = new System.Windows.Forms.TabPage();
             this.tlpEnclavesCharactersSkills = new System.Windows.Forms.TableLayoutPanel();
+            this.tabEnclavesCharactersTraits = new System.Windows.Forms.TabPage();
+            this.lblCharacterTraits = new System.Windows.Forms.Label();
             this.tabEnclavesCharactersEquipment = new System.Windows.Forms.TabPage();
+            this.lblEquipment = new System.Windows.Forms.Label();
             this.tabControlEnclavesCharactersEquipment = new System.Windows.Forms.TabControl();
             this.tabControlEnclavesCharactersEquipmentMelee = new System.Windows.Forms.TabPage();
+            this.lblMelee = new System.Windows.Forms.Label();
             this.tlpMeleeWeaponStats = new System.Windows.Forms.TableLayoutPanel();
             this.tabControlEnclavesCharactersEquipmentSideArm = new System.Windows.Forms.TabPage();
+            this.lblSidearm = new System.Windows.Forms.Label();
             this.tlpSideArmWeaponStats = new System.Windows.Forms.TableLayoutPanel();
             this.tabControlEnclavesCharactersEquipmentRanged = new System.Windows.Forms.TabPage();
+            this.lblRanged = new System.Windows.Forms.Label();
             this.tlpRangedWeaponStats = new System.Windows.Forms.TableLayoutPanel();
             this.tabEnclavesCharactersInventory = new System.Windows.Forms.TabPage();
+            this.lblInventory = new System.Windows.Forms.Label();
             this.txtEnclavesCharactersInventoryAddress = new System.Windows.Forms.TextBox();
             this.tlpEnclaveCharactersInventory = new System.Windows.Forms.TableLayoutPanel();
             this.txtCharacterAddress = new System.Windows.Forms.TextBox();
@@ -87,18 +97,15 @@
             this.btnUnhookZombieDamagedAnalytics = new System.Windows.Forms.Button();
             this.lblAnalyticsZombieDamagedDetail = new System.Windows.Forms.Label();
             this.btnHookZombieDamagedAnalytics = new System.Windows.Forms.Button();
+            this.tabInspector = new System.Windows.Forms.TabPage();
+            this.btnInspectWorld = new System.Windows.Forms.Button();
+            this.btnInspectorBack = new System.Windows.Forms.Button();
+            this.tlpInspector = new System.Windows.Forms.TableLayoutPanel();
+            this.txtInspectorAddress = new System.Windows.Forms.TextBox();
             this.txtOutput = new System.Windows.Forms.TextBox();
-            this.btnEditToD = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
             this.btnDiscord = new System.Windows.Forms.Button();
-            this.tabEnclavesCharactersTraits = new System.Windows.Forms.TabPage();
-            this.lblCharacterTraits = new System.Windows.Forms.Label();
-            this.lblCharactersLabel = new System.Windows.Forms.Label();
-            this.lblEquipment = new System.Windows.Forms.Label();
-            this.lblMelee = new System.Windows.Forms.Label();
-            this.lblSidearm = new System.Windows.Forms.Label();
-            this.lblRanged = new System.Windows.Forms.Label();
-            this.lblInventory = new System.Windows.Forms.Label();
+            this.btnTest = new System.Windows.Forms.Button();
+            this.lblInspector = new System.Windows.Forms.Label();
             this.tabs.SuspendLayout();
             this.tabWorld.SuspendLayout();
             this.tabEnclaves.SuspendLayout();
@@ -108,6 +115,7 @@
             this.tabControlEnclavesCharacters.SuspendLayout();
             this.tabEnclavesCharactersDetails.SuspendLayout();
             this.tabEnclavesCharactersSkills.SuspendLayout();
+            this.tabEnclavesCharactersTraits.SuspendLayout();
             this.tabEnclavesCharactersEquipment.SuspendLayout();
             this.tabControlEnclavesCharactersEquipment.SuspendLayout();
             this.tabControlEnclavesCharactersEquipmentMelee.SuspendLayout();
@@ -122,7 +130,7 @@
             this.tabAnalytics.SuspendLayout();
             this.tabControlAnalytics.SuspendLayout();
             this.tabControlAnalyticsZombieDamaged.SuspendLayout();
-            this.tabEnclavesCharactersTraits.SuspendLayout();
+            this.tabInspector.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnConnect
@@ -154,10 +162,11 @@
             this.tabs.Controls.Add(this.tabSpawner);
             this.tabs.Controls.Add(this.tabGameLog);
             this.tabs.Controls.Add(this.tabAnalytics);
+            this.tabs.Controls.Add(this.tabInspector);
             this.tabs.Location = new System.Drawing.Point(12, 41);
             this.tabs.Name = "tabs";
             this.tabs.SelectedIndex = 0;
-            this.tabs.Size = new System.Drawing.Size(1354, 733);
+            this.tabs.Size = new System.Drawing.Size(1863, 727);
             this.tabs.TabIndex = 3;
             // 
             // tabWorld
@@ -179,6 +188,16 @@
             this.tabWorld.TabIndex = 0;
             this.tabWorld.Text = "World";
             this.tabWorld.UseVisualStyleBackColor = true;
+            // 
+            // btnEditToD
+            // 
+            this.btnEditToD.Location = new System.Drawing.Point(80, 76);
+            this.btnEditToD.Name = "btnEditToD";
+            this.btnEditToD.Size = new System.Drawing.Size(25, 10);
+            this.btnEditToD.TabIndex = 10;
+            this.btnEditToD.Text = "Edit";
+            this.btnEditToD.UseVisualStyleBackColor = true;
+            this.btnEditToD.Click += new System.EventHandler(this.btnEditToD_Click);
             // 
             // btnEditDilation
             // 
@@ -337,6 +356,16 @@
             this.tabEnclaveCharacters.Text = "Characters";
             this.tabEnclaveCharacters.UseVisualStyleBackColor = true;
             // 
+            // lblCharactersLabel
+            // 
+            this.lblCharactersLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblCharactersLabel.AutoSize = true;
+            this.lblCharactersLabel.Location = new System.Drawing.Point(12, 642);
+            this.lblCharactersLabel.Name = "lblCharactersLabel";
+            this.lblCharactersLabel.Size = new System.Drawing.Size(83, 13);
+            this.lblCharactersLabel.TabIndex = 17;
+            this.lblCharactersLabel.Text = "charactersLabel";
+            // 
             // tabControlEnclavesCharacters
             // 
             this.tabControlEnclavesCharacters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -364,6 +393,17 @@
             this.tabEnclavesCharactersDetails.TabIndex = 0;
             this.tabEnclavesCharactersDetails.Text = "Details";
             this.tabEnclavesCharactersDetails.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 579);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(394, 13);
+            this.label3.TabIndex = 16;
+            this.label3.Text = "(NOTE:  Most Details edits currently only work with characters out of render rang" +
+    "e)";
             // 
             // tlpEnclavesCharactersDetails
             // 
@@ -413,6 +453,25 @@
             this.tlpEnclavesCharactersSkills.Size = new System.Drawing.Size(1021, 599);
             this.tlpEnclavesCharactersSkills.TabIndex = 16;
             // 
+            // tabEnclavesCharactersTraits
+            // 
+            this.tabEnclavesCharactersTraits.Controls.Add(this.lblCharacterTraits);
+            this.tabEnclavesCharactersTraits.Location = new System.Drawing.Point(4, 22);
+            this.tabEnclavesCharactersTraits.Name = "tabEnclavesCharactersTraits";
+            this.tabEnclavesCharactersTraits.Size = new System.Drawing.Size(1027, 595);
+            this.tabEnclavesCharactersTraits.TabIndex = 4;
+            this.tabEnclavesCharactersTraits.Text = "Traits";
+            this.tabEnclavesCharactersTraits.UseVisualStyleBackColor = true;
+            // 
+            // lblCharacterTraits
+            // 
+            this.lblCharacterTraits.AutoSize = true;
+            this.lblCharacterTraits.Location = new System.Drawing.Point(12, 14);
+            this.lblCharacterTraits.Name = "lblCharacterTraits";
+            this.lblCharacterTraits.Size = new System.Drawing.Size(55, 13);
+            this.lblCharacterTraits.TabIndex = 7;
+            this.lblCharacterTraits.Text = "traitsLabel";
+            // 
             // tabEnclavesCharactersEquipment
             // 
             this.tabEnclavesCharactersEquipment.Controls.Add(this.lblEquipment);
@@ -423,6 +482,16 @@
             this.tabEnclavesCharactersEquipment.TabIndex = 2;
             this.tabEnclavesCharactersEquipment.Text = "Equipment";
             this.tabEnclavesCharactersEquipment.UseVisualStyleBackColor = true;
+            // 
+            // lblEquipment
+            // 
+            this.lblEquipment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblEquipment.AutoSize = true;
+            this.lblEquipment.Location = new System.Drawing.Point(6, 575);
+            this.lblEquipment.Name = "lblEquipment";
+            this.lblEquipment.Size = new System.Drawing.Size(82, 13);
+            this.lblEquipment.TabIndex = 18;
+            this.lblEquipment.Text = "equipmentLabel";
             // 
             // tabControlEnclavesCharactersEquipment
             // 
@@ -450,6 +519,16 @@
             this.tabControlEnclavesCharactersEquipmentMelee.Text = "Melee";
             this.tabControlEnclavesCharactersEquipmentMelee.UseVisualStyleBackColor = true;
             // 
+            // lblMelee
+            // 
+            this.lblMelee.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblMelee.AutoSize = true;
+            this.lblMelee.Location = new System.Drawing.Point(6, 524);
+            this.lblMelee.Name = "lblMelee";
+            this.lblMelee.Size = new System.Drawing.Size(61, 13);
+            this.lblMelee.TabIndex = 19;
+            this.lblMelee.Text = "meleeLabel";
+            // 
             // tlpMeleeWeaponStats
             // 
             this.tlpMeleeWeaponStats.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -476,6 +555,16 @@
             this.tabControlEnclavesCharactersEquipmentSideArm.TabIndex = 2;
             this.tabControlEnclavesCharactersEquipmentSideArm.Text = "SideArm";
             this.tabControlEnclavesCharactersEquipmentSideArm.UseVisualStyleBackColor = true;
+            // 
+            // lblSidearm
+            // 
+            this.lblSidearm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblSidearm.AutoSize = true;
+            this.lblSidearm.Location = new System.Drawing.Point(6, 524);
+            this.lblSidearm.Name = "lblSidearm";
+            this.lblSidearm.Size = new System.Drawing.Size(69, 13);
+            this.lblSidearm.TabIndex = 19;
+            this.lblSidearm.Text = "sidearmLabel";
             // 
             // tlpSideArmWeaponStats
             // 
@@ -505,6 +594,16 @@
             this.tabControlEnclavesCharactersEquipmentRanged.Text = "Ranged";
             this.tabControlEnclavesCharactersEquipmentRanged.UseVisualStyleBackColor = true;
             // 
+            // lblRanged
+            // 
+            this.lblRanged.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblRanged.AutoSize = true;
+            this.lblRanged.Location = new System.Drawing.Point(6, 524);
+            this.lblRanged.Name = "lblRanged";
+            this.lblRanged.Size = new System.Drawing.Size(66, 13);
+            this.lblRanged.TabIndex = 19;
+            this.lblRanged.Text = "rangedLabel";
+            // 
             // tlpRangedWeaponStats
             // 
             this.tlpRangedWeaponStats.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -532,6 +631,16 @@
             this.tabEnclavesCharactersInventory.TabIndex = 3;
             this.tabEnclavesCharactersInventory.Text = "Inventory";
             this.tabEnclavesCharactersInventory.UseVisualStyleBackColor = true;
+            // 
+            // lblInventory
+            // 
+            this.lblInventory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblInventory.AutoSize = true;
+            this.lblInventory.Location = new System.Drawing.Point(6, 575);
+            this.lblInventory.Name = "lblInventory";
+            this.lblInventory.Size = new System.Drawing.Size(76, 13);
+            this.lblInventory.TabIndex = 18;
+            this.lblInventory.Text = "inventoryLabel";
             // 
             // txtEnclavesCharactersInventoryAddress
             // 
@@ -699,7 +808,7 @@
             this.tlpGameLogLogLevels.RowCount = 2;
             this.tlpGameLogLogLevels.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpGameLogLogLevels.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpGameLogLogLevels.Size = new System.Drawing.Size(1116, 33865);
+            this.tlpGameLogLogLevels.Size = new System.Drawing.Size(895, 65535);
             this.tlpGameLogLogLevels.TabIndex = 0;
             // 
             // btnGameLogLogLevelsMin
@@ -821,41 +930,80 @@
             this.btnHookZombieDamagedAnalytics.UseVisualStyleBackColor = true;
             this.btnHookZombieDamagedAnalytics.Click += new System.EventHandler(this.btnHookZombieDamagedAnalytics_Click);
             // 
+            // tabInspector
+            // 
+            this.tabInspector.Controls.Add(this.lblInspector);
+            this.tabInspector.Controls.Add(this.btnInspectWorld);
+            this.tabInspector.Controls.Add(this.btnInspectorBack);
+            this.tabInspector.Controls.Add(this.tlpInspector);
+            this.tabInspector.Controls.Add(this.txtInspectorAddress);
+            this.tabInspector.Location = new System.Drawing.Point(4, 22);
+            this.tabInspector.Name = "tabInspector";
+            this.tabInspector.Size = new System.Drawing.Size(1855, 701);
+            this.tabInspector.TabIndex = 5;
+            this.tabInspector.Text = "Inspector";
+            this.tabInspector.UseVisualStyleBackColor = true;
+            // 
+            // btnInspectWorld
+            // 
+            this.btnInspectWorld.Location = new System.Drawing.Point(205, 6);
+            this.btnInspectWorld.Name = "btnInspectWorld";
+            this.btnInspectWorld.Size = new System.Drawing.Size(75, 23);
+            this.btnInspectWorld.TabIndex = 15;
+            this.btnInspectWorld.Text = "World";
+            this.btnInspectWorld.UseVisualStyleBackColor = true;
+            this.btnInspectWorld.Click += new System.EventHandler(this.btnInspectWorld_Click);
+            // 
+            // btnInspectorBack
+            // 
+            this.btnInspectorBack.Enabled = false;
+            this.btnInspectorBack.Location = new System.Drawing.Point(124, 6);
+            this.btnInspectorBack.Name = "btnInspectorBack";
+            this.btnInspectorBack.Size = new System.Drawing.Size(75, 23);
+            this.btnInspectorBack.TabIndex = 14;
+            this.btnInspectorBack.Text = "Back";
+            this.btnInspectorBack.UseVisualStyleBackColor = true;
+            this.btnInspectorBack.Click += new System.EventHandler(this.btnInspectorBack_Click);
+            // 
+            // tlpInspector
+            // 
+            this.tlpInspector.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tlpInspector.AutoScroll = true;
+            this.tlpInspector.ColumnCount = 2;
+            this.tlpInspector.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpInspector.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpInspector.Location = new System.Drawing.Point(11, 35);
+            this.tlpInspector.Name = "tlpInspector";
+            this.tlpInspector.RowCount = 2;
+            this.tlpInspector.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpInspector.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpInspector.Size = new System.Drawing.Size(1841, 663);
+            this.tlpInspector.TabIndex = 13;
+            // 
+            // txtInspectorAddress
+            // 
+            this.txtInspectorAddress.Location = new System.Drawing.Point(11, 8);
+            this.txtInspectorAddress.Name = "txtInspectorAddress";
+            this.txtInspectorAddress.Size = new System.Drawing.Size(107, 20);
+            this.txtInspectorAddress.TabIndex = 12;
+            this.txtInspectorAddress.Text = "0";
+            // 
             // txtOutput
             // 
             this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOutput.Enabled = false;
-            this.txtOutput.Location = new System.Drawing.Point(12, 780);
+            this.txtOutput.Location = new System.Drawing.Point(12, 774);
             this.txtOutput.Name = "txtOutput";
-            this.txtOutput.Size = new System.Drawing.Size(1354, 20);
+            this.txtOutput.Size = new System.Drawing.Size(1863, 20);
             this.txtOutput.TabIndex = 4;
-            // 
-            // btnEditToD
-            // 
-            this.btnEditToD.Location = new System.Drawing.Point(80, 76);
-            this.btnEditToD.Name = "btnEditToD";
-            this.btnEditToD.Size = new System.Drawing.Size(25, 10);
-            this.btnEditToD.TabIndex = 10;
-            this.btnEditToD.Text = "Edit";
-            this.btnEditToD.UseVisualStyleBackColor = true;
-            this.btnEditToD.Click += new System.EventHandler(this.btnEditToD_Click);
-            // 
-            // label3
-            // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 579);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(394, 13);
-            this.label3.TabIndex = 16;
-            this.label3.Text = "(NOTE:  Most Details edits currently only work with characters out of render rang" +
-    "e)";
             // 
             // btnDiscord
             // 
             this.btnDiscord.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDiscord.Location = new System.Drawing.Point(1287, 12);
+            this.btnDiscord.Location = new System.Drawing.Point(1796, 12);
             this.btnDiscord.Name = "btnDiscord";
             this.btnDiscord.Size = new System.Drawing.Size(75, 23);
             this.btnDiscord.TabIndex = 5;
@@ -863,90 +1011,31 @@
             this.btnDiscord.UseVisualStyleBackColor = true;
             this.btnDiscord.Click += new System.EventHandler(this.btnDiscord_Click);
             // 
-            // tabEnclavesCharactersTraits
+            // btnTest
             // 
-            this.tabEnclavesCharactersTraits.Controls.Add(this.lblCharacterTraits);
-            this.tabEnclavesCharactersTraits.Location = new System.Drawing.Point(4, 22);
-            this.tabEnclavesCharactersTraits.Name = "tabEnclavesCharactersTraits";
-            this.tabEnclavesCharactersTraits.Size = new System.Drawing.Size(1027, 595);
-            this.tabEnclavesCharactersTraits.TabIndex = 4;
-            this.tabEnclavesCharactersTraits.Text = "Traits";
-            this.tabEnclavesCharactersTraits.UseVisualStyleBackColor = true;
+            this.btnTest.Location = new System.Drawing.Point(408, 17);
+            this.btnTest.Name = "btnTest";
+            this.btnTest.Size = new System.Drawing.Size(75, 23);
+            this.btnTest.TabIndex = 6;
+            this.btnTest.Text = "Test Button";
+            this.btnTest.UseVisualStyleBackColor = true;
+            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
             // 
-            // lblCharacterTraits
+            // lblInspector
             // 
-            this.lblCharacterTraits.AutoSize = true;
-            this.lblCharacterTraits.Location = new System.Drawing.Point(12, 14);
-            this.lblCharacterTraits.Name = "lblCharacterTraits";
-            this.lblCharacterTraits.Size = new System.Drawing.Size(55, 13);
-            this.lblCharacterTraits.TabIndex = 7;
-            this.lblCharacterTraits.Text = "traitsLabel";
-            // 
-            // lblCharactersLabel
-            // 
-            this.lblCharactersLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblCharactersLabel.AutoSize = true;
-            this.lblCharactersLabel.Location = new System.Drawing.Point(12, 642);
-            this.lblCharactersLabel.Name = "lblCharactersLabel";
-            this.lblCharactersLabel.Size = new System.Drawing.Size(83, 13);
-            this.lblCharactersLabel.TabIndex = 17;
-            this.lblCharactersLabel.Text = "charactersLabel";
-            // 
-            // lblEquipment
-            // 
-            this.lblEquipment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblEquipment.AutoSize = true;
-            this.lblEquipment.Location = new System.Drawing.Point(6, 575);
-            this.lblEquipment.Name = "lblEquipment";
-            this.lblEquipment.Size = new System.Drawing.Size(82, 13);
-            this.lblEquipment.TabIndex = 18;
-            this.lblEquipment.Text = "equipmentLabel";
-            // 
-            // lblMelee
-            // 
-            this.lblMelee.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblMelee.AutoSize = true;
-            this.lblMelee.Location = new System.Drawing.Point(6, 524);
-            this.lblMelee.Name = "lblMelee";
-            this.lblMelee.Size = new System.Drawing.Size(61, 13);
-            this.lblMelee.TabIndex = 19;
-            this.lblMelee.Text = "meleeLabel";
-            // 
-            // lblSidearm
-            // 
-            this.lblSidearm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblSidearm.AutoSize = true;
-            this.lblSidearm.Location = new System.Drawing.Point(6, 524);
-            this.lblSidearm.Name = "lblSidearm";
-            this.lblSidearm.Size = new System.Drawing.Size(69, 13);
-            this.lblSidearm.TabIndex = 19;
-            this.lblSidearm.Text = "sidearmLabel";
-            // 
-            // lblRanged
-            // 
-            this.lblRanged.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblRanged.AutoSize = true;
-            this.lblRanged.Location = new System.Drawing.Point(6, 524);
-            this.lblRanged.Name = "lblRanged";
-            this.lblRanged.Size = new System.Drawing.Size(66, 13);
-            this.lblRanged.TabIndex = 19;
-            this.lblRanged.Text = "rangedLabel";
-            // 
-            // lblInventory
-            // 
-            this.lblInventory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblInventory.AutoSize = true;
-            this.lblInventory.Location = new System.Drawing.Point(6, 575);
-            this.lblInventory.Name = "lblInventory";
-            this.lblInventory.Size = new System.Drawing.Size(76, 13);
-            this.lblInventory.TabIndex = 18;
-            this.lblInventory.Text = "inventoryLabel";
+            this.lblInspector.AutoSize = true;
+            this.lblInspector.Location = new System.Drawing.Point(286, 11);
+            this.lblInspector.Name = "lblInspector";
+            this.lblInspector.Size = new System.Drawing.Size(73, 13);
+            this.lblInspector.TabIndex = 16;
+            this.lblInspector.Text = "labelInspector";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1378, 812);
+            this.ClientSize = new System.Drawing.Size(1887, 806);
+            this.Controls.Add(this.btnTest);
             this.Controls.Add(this.btnDiscord);
             this.Controls.Add(this.txtOutput);
             this.Controls.Add(this.tabs);
@@ -969,6 +1058,8 @@
             this.tabEnclavesCharactersDetails.ResumeLayout(false);
             this.tabEnclavesCharactersDetails.PerformLayout();
             this.tabEnclavesCharactersSkills.ResumeLayout(false);
+            this.tabEnclavesCharactersTraits.ResumeLayout(false);
+            this.tabEnclavesCharactersTraits.PerformLayout();
             this.tabEnclavesCharactersEquipment.ResumeLayout(false);
             this.tabEnclavesCharactersEquipment.PerformLayout();
             this.tabControlEnclavesCharactersEquipment.ResumeLayout(false);
@@ -990,8 +1081,8 @@
             this.tabControlAnalytics.ResumeLayout(false);
             this.tabControlAnalyticsZombieDamaged.ResumeLayout(false);
             this.tabControlAnalyticsZombieDamaged.PerformLayout();
-            this.tabEnclavesCharactersTraits.ResumeLayout(false);
-            this.tabEnclavesCharactersTraits.PerformLayout();
+            this.tabInspector.ResumeLayout(false);
+            this.tabInspector.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1070,6 +1161,13 @@
         private System.Windows.Forms.Label lblSidearm;
         private System.Windows.Forms.Label lblRanged;
         private System.Windows.Forms.Label lblInventory;
+        private System.Windows.Forms.Button btnTest;
+        private System.Windows.Forms.TabPage tabInspector;
+        private System.Windows.Forms.TextBox txtInspectorAddress;
+        private System.Windows.Forms.TableLayoutPanel tlpInspector;
+        private System.Windows.Forms.Button btnInspectorBack;
+        private System.Windows.Forms.Button btnInspectWorld;
+        private System.Windows.Forms.Label lblInspector;
     }
 }
 

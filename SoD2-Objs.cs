@@ -63,17 +63,7 @@ namespace SoD2_Editor
 
 
 
-        public class UObject
-        {
-            public IntPtr BaseAddress { get; set; }
-
-            public UObject(IntPtr addr)
-            {
-                BaseAddress = addr;
-            }
-
-            public string Name => GetNameFromNameOffset(RInt32(BaseAddress + 0x18));
-        }
+        
         public static class GameLog
         {
             public static IntPtr BaseAddress => RIntPtr(addresses.Get("GameLogPtr"));
@@ -393,8 +383,6 @@ namespace SoD2_Editor
                 set => WInt32(BaseAddress + 0x12C, value);
             }
         }
-
-    
         public class DaytonGameGameMode : UObject
         {
             public DaytonGameGameMode(IntPtr addr) : base(addr) { }
@@ -412,7 +400,6 @@ namespace SoD2_Editor
         {
             public DaytonGameInstance(IntPtr addr) : base(addr) { }
         }
-
         public class DaytonHumanCharacter : UObject
         {
             public DaytonHumanCharacter(IntPtr addr) : base(addr) { }
@@ -530,7 +517,6 @@ namespace SoD2_Editor
                 }
             }
         }
-
         public class Equipment : UObject
         {
             public Equipment(IntPtr addr) : base(addr) { }
