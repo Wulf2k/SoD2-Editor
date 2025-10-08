@@ -167,10 +167,10 @@ namespace SoD2_Editor
             return name;
         }
 
-        public static IntPtr GetObjFromObjId(int id)
+        public static UObject GetObjFromObjId(int id)
         {
             IntPtr table = (IntPtr)RInt64(addresses.Get("ObjTablePtr"));
-            IntPtr obj = (IntPtr)RInt64((IntPtr)(table.ToInt64() + (0x18 * id)));
+            UObject obj = new UObject((IntPtr)RInt64((IntPtr)(table.ToInt64() + (0x18 * id))));
             return obj;
         }
     }

@@ -146,6 +146,7 @@ namespace SoD2_Editor
             public float CommunityStandingHighWaterMark => RSingle(BaseAddress + 0x12f0);
             public float PlayTime => RSingle(BaseAddress + 0x1308);
         }
+        
         public class ConsumableItemInstance : ItemInstance
         {
             public ConsumableItemInstance(IntPtr addr) : base(addr) { }
@@ -216,44 +217,10 @@ namespace SoD2_Editor
                 set => WInt32(BaseAddress + 0x0, value);
             }
 
-            public string FirstName
-            {
-                get
-                {
-                    return new TextProperty(RIntPtr(BaseAddress + 0x18)).Value;
-                }
-                set
-                {
-                    TextProperty tp = new TextProperty(RIntPtr(BaseAddress + 0x18));
-                    tp.Value = value;
+            public FText FirstName =>  new FText(BaseAddress + 0x18);
+            public FText LastName => new FText(BaseAddress + 0x30);
+            public FText NickName => new FText(BaseAddress + 0x48);
 
-                }
-            }
-            public string LastName
-            {
-                get
-                {
-                    return new TextProperty(RIntPtr(BaseAddress + 0x30)).Value;
-                }
-                set
-                {
-                    TextProperty tp = new TextProperty(RIntPtr(BaseAddress + 0x30));
-                    tp.Value = value;
-                    
-                }
-            }
-            public string NickName
-            {
-                get
-                {
-                    return new TextProperty(RIntPtr(BaseAddress + 0x48)).Value;
-                }
-                set
-                {
-                    TextProperty tp = new TextProperty(RIntPtr(BaseAddress + 0x48));
-                    tp.Value = value;
-                }
-            }
             public string VoiceID => GetNameFromNameOffset(RInt32(BaseAddress + 0x60));
             public string CulturalBackground => GetNameFromNameOffset(RInt32(BaseAddress + 0x68));
             public string HumanDefinition => GetNameFromNameOffset(RInt32(BaseAddress + 0x80));
@@ -451,14 +418,7 @@ namespace SoD2_Editor
             public string DisplayName => NameProperty.Value;
             public string Source => RUnicodeStr(RIntPtr(BaseAddress + 0x200));
             public string SchemaPath => RUnicodeStr(RIntPtr(BaseAddress + 0x210));
-            public TextProperty NameProperty
-            {
-                get
-                {
-                    IntPtr textPropPtr = RIntPtr(BaseAddress + 0x228);
-                    return new TextProperty(textPropPtr);
-                }
-            }
+            public FText NameProperty =>  new FText(BaseAddress + 0x228);
             public int Influence => RInt32(BaseAddress + 0x2A0);
             public int NumMemberDeaths => RInt32(BaseAddress + 0x2A8);
             public byte bDisplayOnMap => RUInt8(BaseAddress + 0x2c8);
@@ -539,9 +499,31 @@ namespace SoD2_Editor
         {
             public FireSettings(IntPtr addr) : base(addr) { }
         }
+        public class GameEngine : UObject
+        {
+            public GameEngine(IntPtr addr) : base(addr) { }
+            public GameViewport GameViewport => new GameViewport(RIntPtr(BaseAddress + 0x6c8));
+
+        }
         public class GameInstance : UObject
         {
             public GameInstance(IntPtr addr) : base(addr) { }
+        }
+        public class GameViewport : UObject 
+        {
+            public GameViewport(IntPtr addr) : base(addr) { }
+            public UConsole ViewportConsole
+            {
+                get
+                {
+                    return new UConsole(RIntPtr(BaseAddress + 0x38));
+                }
+                set
+                {
+                    WIntPtr(BaseAddress + 0x38, value.BaseAddress);
+                }
+            }
+
         }
         public class Inventory : ItemInstance
         {
@@ -860,69 +842,7 @@ namespace SoD2_Editor
         }
 
 
-        public class TextProperty
-        {
-            public IntPtr BaseAddress { get; }
-
-            public TextProperty(IntPtr baseAddress)
-            {
-                BaseAddress = baseAddress;
-            }
-            public int Length
-            {
-                get
-                {
-                    return RInt32(RIntPtr(BaseAddress + 0x8) + 0x8);
-                }
-                set
-                {
-                    WInt32(RIntPtr(BaseAddress + 0x8) + 0x8, value);
-                }
-            }
-            public int Length2
-            {
-                get
-                {
-                    return RInt32(RIntPtr(BaseAddress + 0x8) + 0xc);
-                }
-                set
-                {
-                    WInt32(RIntPtr(BaseAddress + 0x8) + 0xc, value);
-                }
-            }
-
-            public string Value
-            {
-                get
-                {
-                    if (BaseAddress == IntPtr.Zero)
-                        return string.Empty;
-                    IntPtr strPtr =  RIntPtr(BaseAddress + 0x8);
-                    strPtr = RIntPtr(strPtr);
-                    return RUnicodeStr(strPtr);
-                }
-                set
-                {
-                    if (BaseAddress != IntPtr.Zero)
-                    {
-                        
-                        if (RInt64(BaseAddress + 0x0) == RInt64(BaseAddress + 0x40))
-                        {
-                            IntPtr newPtr = newString(value);
-                            WIntPtr(BaseAddress + 0x28, newPtr);
-                            WInt32(BaseAddress + 0x30, value.Length + 1);
-                            WInt32(BaseAddress + 0x34, value.Length + 1);
-                        }
-                        
-
-                        IntPtr strPtr = RIntPtr(BaseAddress + 0x8);
-                        WIntPtr(strPtr, newString(value));
-                        Length = value.Length + 1;
-                        Length2 = value.Length + 1;
-                    }
-                }
-            }
-        }
+        
         public class TimeOfDayComponent : UObject
         {
             public TimeOfDayComponent(IntPtr addr) : base(addr) { }
@@ -962,6 +882,21 @@ namespace SoD2_Editor
                 set => WUInt8(BaseAddress + 0x12c, (byte)value);
             }
 
+        }
+        public class UConsole : UObject
+        {
+            public UConsole(IntPtr addr) : base(addr) { }
+            public DaytonLocalPlayer ConsoleTargetPlayer
+            {
+                get
+                {
+                    return new DaytonLocalPlayer(RIntPtr(BaseAddress + 0x38));
+                }
+                set
+                {
+                    WIntPtr(BaseAddress + 0x38, value.BaseAddress);
+                }
+            }
         }
         public class World : UObject
         {

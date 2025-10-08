@@ -29,6 +29,17 @@ namespace SoD2_Editor
             ACOD_Plague = 16,
             ACOD_MAX = 17
         }
+        public enum ECharacterHitType : byte
+        {
+            Melee = 0,
+            Ranged = 1,
+            Bumped = 2,
+            BurstEffect = 3,
+            VehicleExplosion = 4,
+            RangedProjectile = 5,
+            DirectHealthLoss = 6,
+            ECharacterHitType_MAX = 7
+        };
         public enum ECharacterPhilosophy : byte
         {
             Daring = 0,

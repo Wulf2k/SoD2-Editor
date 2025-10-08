@@ -32,6 +32,7 @@
             this.lblVer = new System.Windows.Forms.Label();
             this.tabs = new System.Windows.Forms.TabControl();
             this.tabWorld = new System.Windows.Forms.TabPage();
+            this.btnEnableConsole = new System.Windows.Forms.Button();
             this.btnEditToD = new System.Windows.Forms.Button();
             this.btnEditDilation = new System.Windows.Forms.Button();
             this.lblWorldToD = new System.Windows.Forms.Label();
@@ -98,6 +99,8 @@
             this.lblAnalyticsZombieDamagedDetail = new System.Windows.Forms.Label();
             this.btnHookZombieDamagedAnalytics = new System.Windows.Forms.Button();
             this.tabInspector = new System.Windows.Forms.TabPage();
+            this.btnInspectDHC = new System.Windows.Forms.Button();
+            this.lblInspector = new System.Windows.Forms.Label();
             this.btnInspectWorld = new System.Windows.Forms.Button();
             this.btnInspectorBack = new System.Windows.Forms.Button();
             this.tlpInspector = new System.Windows.Forms.TableLayoutPanel();
@@ -105,7 +108,6 @@
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.btnDiscord = new System.Windows.Forms.Button();
             this.btnTest = new System.Windows.Forms.Button();
-            this.lblInspector = new System.Windows.Forms.Label();
             this.tabs.SuspendLayout();
             this.tabWorld.SuspendLayout();
             this.tabEnclaves.SuspendLayout();
@@ -166,11 +168,12 @@
             this.tabs.Location = new System.Drawing.Point(12, 41);
             this.tabs.Name = "tabs";
             this.tabs.SelectedIndex = 0;
-            this.tabs.Size = new System.Drawing.Size(1863, 727);
+            this.tabs.Size = new System.Drawing.Size(1481, 727);
             this.tabs.TabIndex = 3;
             // 
             // tabWorld
             // 
+            this.tabWorld.Controls.Add(this.btnEnableConsole);
             this.tabWorld.Controls.Add(this.btnEditToD);
             this.tabWorld.Controls.Add(this.btnEditDilation);
             this.tabWorld.Controls.Add(this.lblWorldToD);
@@ -184,10 +187,20 @@
             this.tabWorld.Location = new System.Drawing.Point(4, 22);
             this.tabWorld.Name = "tabWorld";
             this.tabWorld.Padding = new System.Windows.Forms.Padding(3);
-            this.tabWorld.Size = new System.Drawing.Size(1346, 707);
+            this.tabWorld.Size = new System.Drawing.Size(1473, 701);
             this.tabWorld.TabIndex = 0;
             this.tabWorld.Text = "World";
             this.tabWorld.UseVisualStyleBackColor = true;
+            // 
+            // btnEnableConsole
+            // 
+            this.btnEnableConsole.Location = new System.Drawing.Point(111, 122);
+            this.btnEnableConsole.Name = "btnEnableConsole";
+            this.btnEnableConsole.Size = new System.Drawing.Size(157, 23);
+            this.btnEnableConsole.TabIndex = 11;
+            this.btnEnableConsole.Text = "Enable Console (Insert)";
+            this.btnEnableConsole.UseVisualStyleBackColor = true;
+            this.btnEnableConsole.Click += new System.EventHandler(this.btnEnableConsole_Click);
             // 
             // btnEditToD
             // 
@@ -292,7 +305,7 @@
             this.tabEnclaves.Location = new System.Drawing.Point(4, 22);
             this.tabEnclaves.Name = "tabEnclaves";
             this.tabEnclaves.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclaves.Size = new System.Drawing.Size(1346, 707);
+            this.tabEnclaves.Size = new System.Drawing.Size(1473, 701);
             this.tabEnclaves.TabIndex = 1;
             this.tabEnclaves.Text = "Enclaves";
             this.tabEnclaves.UseVisualStyleBackColor = true;
@@ -732,7 +745,7 @@
             this.tabSpawner.Controls.Add(this.lblSpawnerLabel);
             this.tabSpawner.Location = new System.Drawing.Point(4, 22);
             this.tabSpawner.Name = "tabSpawner";
-            this.tabSpawner.Size = new System.Drawing.Size(1346, 707);
+            this.tabSpawner.Size = new System.Drawing.Size(1473, 701);
             this.tabSpawner.TabIndex = 2;
             this.tabSpawner.Text = "Spawner";
             this.tabSpawner.UseVisualStyleBackColor = true;
@@ -762,7 +775,7 @@
             this.tabGameLog.Controls.Add(this.tabGameLogTabs);
             this.tabGameLog.Location = new System.Drawing.Point(4, 22);
             this.tabGameLog.Name = "tabGameLog";
-            this.tabGameLog.Size = new System.Drawing.Size(1346, 707);
+            this.tabGameLog.Size = new System.Drawing.Size(1473, 701);
             this.tabGameLog.TabIndex = 3;
             this.tabGameLog.Text = "GameLog";
             this.tabGameLog.UseVisualStyleBackColor = true;
@@ -808,7 +821,7 @@
             this.tlpGameLogLogLevels.RowCount = 2;
             this.tlpGameLogLogLevels.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpGameLogLogLevels.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpGameLogLogLevels.Size = new System.Drawing.Size(895, 65535);
+            this.tlpGameLogLogLevels.Size = new System.Drawing.Size(844, 65535);
             this.tlpGameLogLogLevels.TabIndex = 0;
             // 
             // btnGameLogLogLevelsMin
@@ -870,7 +883,7 @@
             this.tabAnalytics.Controls.Add(this.tabControlAnalytics);
             this.tabAnalytics.Location = new System.Drawing.Point(4, 22);
             this.tabAnalytics.Name = "tabAnalytics";
-            this.tabAnalytics.Size = new System.Drawing.Size(1346, 707);
+            this.tabAnalytics.Size = new System.Drawing.Size(1473, 701);
             this.tabAnalytics.TabIndex = 4;
             this.tabAnalytics.Text = "Analytics";
             this.tabAnalytics.UseVisualStyleBackColor = true;
@@ -932,6 +945,7 @@
             // 
             // tabInspector
             // 
+            this.tabInspector.Controls.Add(this.btnInspectDHC);
             this.tabInspector.Controls.Add(this.lblInspector);
             this.tabInspector.Controls.Add(this.btnInspectWorld);
             this.tabInspector.Controls.Add(this.btnInspectorBack);
@@ -939,14 +953,33 @@
             this.tabInspector.Controls.Add(this.txtInspectorAddress);
             this.tabInspector.Location = new System.Drawing.Point(4, 22);
             this.tabInspector.Name = "tabInspector";
-            this.tabInspector.Size = new System.Drawing.Size(1855, 701);
+            this.tabInspector.Size = new System.Drawing.Size(1473, 701);
             this.tabInspector.TabIndex = 5;
             this.tabInspector.Text = "Inspector";
             this.tabInspector.UseVisualStyleBackColor = true;
             // 
+            // btnInspectDHC
+            // 
+            this.btnInspectDHC.Location = new System.Drawing.Point(11, 64);
+            this.btnInspectDHC.Name = "btnInspectDHC";
+            this.btnInspectDHC.Size = new System.Drawing.Size(75, 23);
+            this.btnInspectDHC.TabIndex = 17;
+            this.btnInspectDHC.Text = "Human";
+            this.btnInspectDHC.UseVisualStyleBackColor = true;
+            this.btnInspectDHC.Click += new System.EventHandler(this.btnInspectDHC_Click);
+            // 
+            // lblInspector
+            // 
+            this.lblInspector.AutoSize = true;
+            this.lblInspector.Location = new System.Drawing.Point(286, 11);
+            this.lblInspector.Name = "lblInspector";
+            this.lblInspector.Size = new System.Drawing.Size(73, 13);
+            this.lblInspector.TabIndex = 16;
+            this.lblInspector.Text = "labelInspector";
+            // 
             // btnInspectWorld
             // 
-            this.btnInspectWorld.Location = new System.Drawing.Point(205, 6);
+            this.btnInspectWorld.Location = new System.Drawing.Point(11, 35);
             this.btnInspectWorld.Name = "btnInspectWorld";
             this.btnInspectWorld.Size = new System.Drawing.Size(75, 23);
             this.btnInspectWorld.TabIndex = 15;
@@ -974,12 +1007,12 @@
             this.tlpInspector.ColumnCount = 2;
             this.tlpInspector.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpInspector.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpInspector.Location = new System.Drawing.Point(11, 35);
+            this.tlpInspector.Location = new System.Drawing.Point(116, 35);
             this.tlpInspector.Name = "tlpInspector";
             this.tlpInspector.RowCount = 2;
             this.tlpInspector.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpInspector.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpInspector.Size = new System.Drawing.Size(1841, 663);
+            this.tlpInspector.Size = new System.Drawing.Size(1354, 663);
             this.tlpInspector.TabIndex = 13;
             // 
             // txtInspectorAddress
@@ -997,13 +1030,13 @@
             this.txtOutput.Enabled = false;
             this.txtOutput.Location = new System.Drawing.Point(12, 774);
             this.txtOutput.Name = "txtOutput";
-            this.txtOutput.Size = new System.Drawing.Size(1863, 20);
+            this.txtOutput.Size = new System.Drawing.Size(1481, 20);
             this.txtOutput.TabIndex = 4;
             // 
             // btnDiscord
             // 
             this.btnDiscord.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDiscord.Location = new System.Drawing.Point(1796, 12);
+            this.btnDiscord.Location = new System.Drawing.Point(1414, 12);
             this.btnDiscord.Name = "btnDiscord";
             this.btnDiscord.Size = new System.Drawing.Size(75, 23);
             this.btnDiscord.TabIndex = 5;
@@ -1021,20 +1054,11 @@
             this.btnTest.UseVisualStyleBackColor = true;
             this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
             // 
-            // lblInspector
-            // 
-            this.lblInspector.AutoSize = true;
-            this.lblInspector.Location = new System.Drawing.Point(286, 11);
-            this.lblInspector.Name = "lblInspector";
-            this.lblInspector.Size = new System.Drawing.Size(73, 13);
-            this.lblInspector.TabIndex = 16;
-            this.lblInspector.Text = "labelInspector";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1887, 806);
+            this.ClientSize = new System.Drawing.Size(1505, 806);
             this.Controls.Add(this.btnTest);
             this.Controls.Add(this.btnDiscord);
             this.Controls.Add(this.txtOutput);
@@ -1168,6 +1192,8 @@
         private System.Windows.Forms.Button btnInspectorBack;
         private System.Windows.Forms.Button btnInspectWorld;
         private System.Windows.Forms.Label lblInspector;
+        private System.Windows.Forms.Button btnEnableConsole;
+        private System.Windows.Forms.Button btnInspectDHC;
     }
 }
 

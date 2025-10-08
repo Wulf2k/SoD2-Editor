@@ -53,6 +53,8 @@ namespace SoD2_Editor
                     {
                         tlpInspector.AutoScrollPosition = new Point(0, 0);
 
+                        foreach (Control c in tlpInspector.Controls)
+                            c.Dispose();
                         tlpInspector.Controls.Clear();
                         tlpInspector.ColumnStyles.Clear();
                         tlpInspector.RowStyles.Clear();
@@ -60,9 +62,9 @@ namespace SoD2_Editor
                         tlpInspector.RowCount = 0;
 
                         tlpInspector.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); // Address
-                        tlpInspector.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80)); // Offset
+                        tlpInspector.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); // Offset
                         tlpInspector.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); // Class
-                        tlpInspector.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200)); // Type
+                        tlpInspector.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); // Type
                         tlpInspector.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 30)); // Edit button
                         tlpInspector.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); // Name
                         tlpInspector.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize)); // Value
@@ -79,10 +81,10 @@ namespace SoD2_Editor
                         while (inspecting.BaseAddress != IntPtr.Zero)
                         {
                             fullClass += $"{inspecting.Name} (0x{inspecting.Size.ToString("X")})";
-                            if (inspecting.Interface.BaseAddress != IntPtr.Zero)
+                            if (inspecting.BaseClass.BaseAddress != IntPtr.Zero)
                                 fullClass += ":";
                             chain.Add(inspecting);
-                            inspecting = inspecting.Interface;
+                            inspecting = inspecting.BaseClass;
                         }
 
                         lblInspector.Text = $"{obj.BaseAddress.ToInt64():X16} {fullClass}";
@@ -93,47 +95,79 @@ namespace SoD2_Editor
                             var initprops = chain[i].GetProperties();
                             foreach (var p in initprops)
                             {
-                                tlpInspector.RowCount++;
-                                tlpInspector.RowStyles.Add(new RowStyle(SizeType.Absolute, 16));
-                                int rowIndex = tlpInspector.RowCount - 1;
-
-                                
-                                tlpInspector.Controls.Add(new Label { Text = $"{chain[i].Name}", AutoSize = true, Font = new Font("Consolas", 9) }, 2, rowIndex);
-                                tlpInspector.Controls.Add(new Label { Text = p.Type, AutoSize = true, Font = new Font("Consolas", 9) }, 3, rowIndex);
-                                tlpInspector.Controls.Add(new Label { Text = p.Name, AutoSize = true, Font = new Font("Consolas", 9) }, 5, rowIndex);
-
-
-
-                                Button btnInspect = new Button
+                                string labelName = $"val_{p.Name}";
+                                if (!tlpInspector.Controls.ContainsKey(labelName))
                                 {
-                                    Text = "Edit",
-                                    Tag = (p, obj.BaseAddress + p.Offset),
-                                    Width = 25,
-                                    Height = 10
-                                };
-                                btnInspect.Click += (s, f) =>
-                                {
-                                    var (prop, addrPtr) = ((UProperty, IntPtr))((Button)s).Tag;
+                                    tlpInspector.RowCount++;
+                                    tlpInspector.RowStyles.Add(new RowStyle(SizeType.Absolute, 16));
+                                    int rowIndex = tlpInspector.RowCount - 1;
 
-                                    txtInspectorAddress.Text = RIntPtr(addrPtr).ToString("X");
-                                };
+                                    //Class Name
+                                    //tlpInspector.Controls.Add(new Label { Text = $"{chain[i].Name}", AutoSize = true, Font = new Font("Consolas", 9) }, 2, rowIndex);
 
-                                //If it's an object, add the button to Inspect
-                                if (p.Type == "ObjectProperty")
-                                    tlpInspector.Controls.Add(btnInspect, 4, rowIndex);
+                                    //Type
+                                    //tlpInspector.Controls.Add(new Label { Text = p.Field.Type, AutoSize = true, Font = new Font("Consolas", 9) }, 3, rowIndex);
 
-                                //If it's a function, hide the offset and address
-                                if (p.Type != "Function")
-                                {
-                                    tlpInspector.Controls.Add(new Label { Text = $"{IntPtr.Add(obj.BaseAddress, p.Offset).ToString("X16")}", AutoSize = true, Font = new Font("Consolas", 9) }, 0, rowIndex);
-                                    tlpInspector.Controls.Add(new Label { Text = $"0x{p.Offset:X4}", AutoSize = true, Font = new Font("Consolas", 9) }, 1, rowIndex);
+                                    //Object Name
+                                    tlpInspector.Controls.Add(new Label { Text = p.Name, AutoSize = true, Font = new Font("Consolas", 9) }, 5, rowIndex);
+
+
+                                    Button btnInspectClassProperty = new Button
+                                    {
+                                        Text = "Edit",
+                                        Tag = (p, obj.BaseAddress + p.Offset),
+                                        Width = 25,
+                                        Height = 10
+                                    };
+                                    btnInspectClassProperty.Click += (s, f) =>
+                                    {
+                                        var (propTuple, addrPtr) = (((int Offset, string Name, UField Field), IntPtr))((Button)s).Tag;
+                                        txtInspectorAddress.Text = RIntPtr(RIntPtr(addrPtr)+0x100).ToString("X");
+                                    };
+                                    Button btnInspect = new Button
+                                    {
+                                        Text = "Edit",
+                                        Tag = (p, obj.BaseAddress + p.Offset),
+                                        Width = 25,
+                                        Height = 10
+                                    };
+                                    btnInspect.Click += (s, f) =>
+                                    {
+                                        var (propTuple, addrPtr) = (((int Offset, string Name, UField Field), IntPtr))((Button)s).Tag;
+                                        txtInspectorAddress.Text = RIntPtr(addrPtr).ToString("X");
+                                    };
+                                    if (p.Field.Type == "ClassProperty")
+                                        tlpInspector.Controls.Add(btnInspectClassProperty, 4, rowIndex);
+                                    //If it's an object, add the button to Inspect
+                                    if ((p.Field.Type == "ObjectProperty") || (p.Field.Type == "InterfaceProperty")) 
+                                        tlpInspector.Controls.Add(btnInspect, 4, rowIndex);
+
+                                    //If it's a function, hide the offset and address
+                                    if ((p.Field.Type != "Function") && (p.Field.Type != "DelegateFunction"))
+                                    {
+                                        //Address
+                                        IntPtr objaddr = obj.BaseAddress;
+                                        objaddr += p.Offset;
+                                        tlpInspector.Controls.Add(new Label { Text = $"{objaddr.ToString("X16")}", AutoSize = true, Font = new Font("Consolas", 9) }, 0, rowIndex);
+
+                                        //Offset
+                                        tlpInspector.Controls.Add(new Label { Text = $"0x{p.Offset:X4}", AutoSize = true, Font = new Font("Consolas", 9) }, 1, rowIndex);
+                                    }
+
+
+                                    //Value Label
+                                    //Label valLabel = new Label { AutoSize = true, Font = new Font("Consolas", 9), Name = $"val_{p.Field.BaseAddress}{p.Name}" };
+                                    Label valLabel = new Label { AutoSize = true, Font = new Font("Consolas", 9), Name = $"val_{p.Name}" };
+                                    tlpInspector.Controls.Add(valLabel, 6, rowIndex);
+                                    tlpInspector.RowStyles.Add(new RowStyle(SizeType.AutoSize, 16));
+
+
+                                    //Propdef pointer
+                                    //tlpInspector.Controls.Add(new Label { Text = $"0x{p.Field.BaseAddress.ToString("X16")}", AutoSize = true, Font = new Font("Consolas", 9) }, 7, rowIndex);
+                                    //Console.WriteLine($"{tlpInspector.RowCount} {p.Field.Name}");
+
+                                    //Console.WriteLine($"{p.Offset.ToString("X4")} {p.Field.Type,-25} {p.Name}");
                                 }
-                                Label valLabel = new Label { AutoSize = true, Font = new Font("Consolas", 9), Name = $"val_{p.BaseAddress}{p.Name}" };
-                                tlpInspector.Controls.Add(valLabel, 6, rowIndex);
-                                tlpInspector.RowStyles.Add(new RowStyle(SizeType.AutoSize, 16));
-
-                                tlpInspector.Controls.Add(new Label { Text = $"0x{p.BaseAddress.ToString("X16")}", AutoSize = true, Font = new Font("Consolas", 9) }, 7, rowIndex);
-                                Console.WriteLine($"{tlpInspector.RowCount} {p.Name}");
                             }//end foreach
                         }
                         
@@ -151,17 +185,53 @@ namespace SoD2_Editor
                             IntPtr valueAddr = obj.BaseAddress + p.Offset;
                             string valueStr;
 
-                            switch (p.Type)
+                            switch (p.Field.Type)
                             {
+                                case "AssetClassProperty":                                    
+                                    valueStr = GetObjFromObjId(RInt32(valueAddr)).Name;
+                                    break;
+                                case "ArrayProperty":
+                                    int num = RInt32(valueAddr + 0x8);
+                                    int maxnum = RInt32(valueAddr + 0xc);
+                                    UStruct arrprop = new UStruct(p.Field.BaseAddress).innerField;
+                                    arrprop = arrprop.innerField;
+                                    valueStr = $"{arrprop.Name}: {num}/{maxnum}";
+                                    break;
                                 case "BoolProperty":
                                 case "ByteProperty":
                                     valueStr = RUInt8(valueAddr).ToString();
                                     break;
                                 case "ClassProperty":
-                                    valueStr = (new UClass(RIntPtr(valueAddr))).Name;
+                                    //valueStr = (new UClass(RIntPtr(valueAddr))).Name;
+                                    IntPtr defptr = RIntPtr(RIntPtr(valueAddr) + 0x100);
+                                    if (defptr != IntPtr.Zero)
+                                    {
+                                        valueAddr = defptr;
+                                        UObject refObj = new UObject(defptr);
+                                        valueStr = $"0x{defptr.ToInt64():X16}   ({refObj.Name})";
+                                    }
+                                    else
+                                    {
+                                        valueStr = "null";
+                                    }
                                     break;
                                 case "FloatProperty":
                                     valueStr = RSingle(valueAddr).ToString();
+                                    break;
+                                case "Int8Property":
+                                    valueStr = RBytes(valueAddr, 1)[0].ToString();
+                                    break;
+                                case "InterfaceProperty":
+                                    IntPtr ptr = RIntPtr(valueAddr);
+                                    if (ptr != IntPtr.Zero)
+                                    {
+                                        UObject refObj = new UObject(ptr);
+                                        valueStr = $"0x{ptr.ToInt64():X16}   ({refObj.Name})";
+                                    }
+                                    else
+                                    {
+                                        valueStr = "null";
+                                    }
                                     break;
                                 case "IntProperty":
                                     valueStr = RInt32(valueAddr).ToString();
@@ -173,11 +243,11 @@ namespace SoD2_Editor
                                     valueStr = GetNameFromNameOffset(RInt32(valueAddr));
                                     break;
                                 case "ObjectProperty":
-                                    IntPtr ptr = RIntPtr(valueAddr);
-                                    if (ptr != IntPtr.Zero)
+                                    IntPtr objpropptr = RIntPtr(valueAddr);
+                                    if (objpropptr != IntPtr.Zero)
                                     {
-                                        UObject refObj = new UObject(ptr);
-                                        valueStr = $"0x{ptr.ToInt64():X16}   ({refObj.Class.BaseClass.Name}:{refObj.Name})";
+                                        UObject refObj = new UObject(objpropptr);
+                                        valueStr = $"0x{objpropptr.ToInt64():X16}   ({refObj.Name})";
                                     }
                                     else
                                     {
@@ -187,9 +257,15 @@ namespace SoD2_Editor
                                 case "StrProperty":
                                     valueStr = RUnicodeStr(RIntPtr(valueAddr));
                                     break;
+                                case "StructProperty":
+                                    valueStr = "";
+                                    break;
                                 case "TextProperty":
-                                    TextProperty tp = new TextProperty(RIntPtr(valueAddr));
+                                    FText tp = new FText(valueAddr);
                                     valueStr = tp.Value;
+                                    break;
+                                case "UInt16Property":
+                                    valueStr = RUInt16(valueAddr).ToString();
                                     break;
                                 case "UInt32Property":
                                     valueStr = RUInt32(valueAddr).ToString();
@@ -197,12 +273,18 @@ namespace SoD2_Editor
                                 case "UInt64Property":
                                     valueStr = RUInt64(valueAddr).ToString();
                                     break;
+                                case "WeakObjectProperty":
+                                    UObject o = GetObjFromObjId(obj.objId);
+                                    valueStr = o.Name;
+                                    break;
                                 default:
-                                    valueStr = "(unhandled)";
+                                    valueStr = $"(unhandled)";
                                     break;
                             }
+                            valueStr = $"{p.Field.Type,-25}: {valueStr}";
 
-                            var valControl = tlpInspector.Controls.Find($"val_{p.BaseAddress}{p.Name}", false).FirstOrDefault() as Label;
+                            //var valControl = tlpInspector.Controls.Find($"val_{p.Field.BaseAddress}{p.Name}", false).FirstOrDefault() as Label;
+                            var valControl = tlpInspector.Controls.Find($"val_{p.Name}", false).FirstOrDefault() as Label;
                             if (valControl != null && valControl.Text != valueStr)
                             {
                                 valControl.Text = valueStr;

@@ -77,8 +77,10 @@ namespace SoD2_Editor
         {
             newStringsPtr = IntPtr.Zero;
             newStringsOffset = 0;
+            addresses.Add("UConsoleClass", _ba + 0x045e30b8, _ba + 0x4731c38);
             addresses.Add("DaytonLocalPlayer", _ba + 0x045BDB10, _ba + 0x0470C690);
             addresses.Add("DaytonVehicleVtPtr", _ba + 0x03418E40, _ba + 0x034E8930);
+            addresses.Add("GameEngine", _ba + 0x045d59a0, _ba + 0x4724520);
             addresses.Add("GameLogPtr", _ba + 0x044243e0, _ba + 0x04572f60);
             addresses.Add("NamesTablePtr", _ba + 0x044DB248, _ba + 0x04629DC8);
             addresses.Add("ObjTablePtr", _ba + 0x044E3B30, _ba + 0x046326B0);
@@ -633,7 +635,7 @@ namespace SoD2_Editor
                 for (int i = 0; i < newCount; i++)
                 {
                     var link = (LinkLabel)flowEnclaveCharacters.Controls[i];
-                    string newName = $"{characters[i].CharacterRecord.FirstName} {characters[i].CharacterRecord.LastName}";
+                    string newName = $"{characters[i].CharacterRecord.FirstName.Value} {characters[i].CharacterRecord.LastName.Value}";
                     if (link.Text != newName)
                         link.Text = newName;
 
@@ -645,11 +647,11 @@ namespace SoD2_Editor
                     }
                         
 
-                    if (newName == $"{currDaytonCharacter.CharacterRecord.FirstName} {currDaytonCharacter.CharacterRecord.LastName}")
+                    if (newName == $"{currDaytonCharacter.CharacterRecord.FirstName.Value} {currDaytonCharacter.CharacterRecord.LastName.Value}")
                     {
                         link.BackColor = Color.DarkGreen;
                     } else {
-                        if ((selectedChar != null)  && (newName != $"{selectedChar.CharacterRecord.FirstName} {selectedChar.CharacterRecord.LastName}"))
+                        if ((selectedChar != null)  && (newName != $"{selectedChar.CharacterRecord.FirstName.Value} {selectedChar.CharacterRecord.LastName.Value}"))
                             link.BackColor = Color.Transparent;
                     }
                 }//end for
@@ -939,9 +941,9 @@ namespace SoD2_Editor
 
             AddRow("Enclave Name");
             AddRow("ID");
-            AddRow("First Name", editable: true, onEdit: v => { selectedChar.CharacterRecord.FirstName = v; });
-            AddRow("Last Name", editable: true, onEdit: v => { selectedChar.CharacterRecord.LastName = v; });
-            AddRow("Nickname", editable: true, onEdit: v => { selectedChar.CharacterRecord.NickName = v; });
+            AddRow("First Name");
+            AddRow("Last Name");
+            AddRow("Nickname");
             AddRow("Voice ID");
             AddRow("Cultural Background");
             AddRow("Human Definition");
@@ -982,10 +984,10 @@ namespace SoD2_Editor
                 InitializeCharacterTable();
 
             _characterDetailRows["ID"].ValueLabel.Text = chr.CharacterRecord.ID.ToString();
-            _characterDetailRows["First Name"].ValueLabel.Text = chr.CharacterRecord.FirstName;
-            _characterDetailRows["Last Name"].ValueLabel.Text = chr.CharacterRecord.LastName;
-            _characterDetailRows["Nickname"].ValueLabel.Text = chr.CharacterRecord.NickName;
-            _characterDetailRows["Voice ID"].ValueLabel.Text = chr.CharacterRecord.VoiceID.ToString();
+            _characterDetailRows["First Name"].ValueLabel.Text = chr.CharacterRecord.FirstName.Value;
+            _characterDetailRows["Last Name"].ValueLabel.Text = chr.CharacterRecord.LastName.Value;
+            _characterDetailRows["Nickname"].ValueLabel.Text = chr.CharacterRecord.NickName.Value;
+            _characterDetailRows["Voice ID"].ValueLabel.Text = chr.CharacterRecord.VoiceID;
             _characterDetailRows["Cultural Background"].ValueLabel.Text = chr.CharacterRecord.CulturalBackground;
             _characterDetailRows["Human Definition"].ValueLabel.Text = chr.CharacterRecord.HumanDefinition;
             _characterDetailRows["Philosophy"].ValueLabel.Text = chr.CharacterRecord.Philosophy1.ToString();
@@ -1662,7 +1664,6 @@ namespace SoD2_Editor
             }
             Console.WriteLine($"{za.GetPropertyAddress("ReactInfo").ToString("X")}");
             */
-            Console.WriteLine(currDaytonHumanCharacter.Path());
         }
 
         private void btnInspectorBack_Click(object sender, EventArgs e)
@@ -1678,6 +1679,19 @@ namespace SoD2_Editor
         private void btnInspectWorld_Click(object sender, EventArgs e)
         {
             txtInspectorAddress.Text = world.BaseAddress.ToString("X");
+        }
+
+        private void btnEnableConsole_Click(object sender, EventArgs e)
+        {
+            GameEngine eng = new GameEngine(RIntPtr(addresses.Get("GameEngine")));
+            UConsole con = new UConsole(RIntPtr(RIntPtr(addresses.Get("UConsoleClass")) + 0x100));
+            eng.GameViewport.ViewportConsole = con;
+            eng.GameViewport.ViewportConsole.ConsoleTargetPlayer = new DaytonLocalPlayer(RIntPtr(addresses.Get("DaytonLocalPlayer")));
+        }
+
+        private void btnInspectDHC_Click(object sender, EventArgs e)
+        {
+            txtInspectorAddress.Text = currDaytonHumanCharacter.BaseAddress.ToString("X");
         }
     }
 }
