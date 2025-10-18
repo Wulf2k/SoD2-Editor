@@ -48,7 +48,7 @@ namespace SoD2_Editor
                     WInt32(RIntPtr(RIntPtr(BaseAddress) + 0x8) + 0x8, value);
                 }
             }
-            public int Length2
+            public int MaxLength
             {
                 get
                 {
@@ -71,26 +71,22 @@ namespace SoD2_Editor
                     strPtr = RIntPtr(strPtr);
                     return RUnicodeStr(strPtr);
                 }
-                /*set  // fix baseaddress rint before restoring
+                set
                 {
                     if (BaseAddress != IntPtr.Zero)
                     {
-                        
-                        if (RInt64(BaseAddress + 0x0) == RInt64(BaseAddress + 0x40))
-                        {
-                            IntPtr newPtr = newString(value);
-                            WIntPtr(BaseAddress + 0x28, newPtr);
-                            WInt32(BaseAddress + 0x30, value.Length + 1);
-                            WInt32(BaseAddress + 0x34, value.Length + 1);
-                        }
-                        
+                        IntPtr newPtr = newString(value);
+                        IntPtr strPtr = RIntPtr(BaseAddress);
 
-                        IntPtr strPtr = RIntPtr(BaseAddress + 0x8);
-                        WIntPtr(strPtr, newString(value));
-                        Length = value.Length + 1;
-                        Length2 = value.Length + 1;
+                        if (newPtr != IntPtr.Zero)
+                        {
+                            strPtr = RIntPtr(strPtr + 0x8);
+                            WIntPtr(strPtr, newPtr);
+                            Length = value.Length + 1;
+                            MaxLength = value.Length + 1;
+                        }
                     }
-                }*/
+                }
             }
         }
         public class UArrayProperty : UProperty
@@ -118,7 +114,11 @@ namespace SoD2_Editor
             public int objId => RInt32(BaseAddress + 0xc);
             public UClass Class => new UClass(RIntPtr(BaseAddress + 0x10));
             public string Name => GetNameFromNameOffset(RInt32(BaseAddress + 0x18));
-            public UObject Outer => new UObject(RIntPtr(BaseAddress + 0x20));
+            public UObject Outer
+            {
+                get => new UObject(RIntPtr(BaseAddress + 0x20));
+                set => WIntPtr(BaseAddress + 0x20, value.BaseAddress);
+            } 
 
             public string Type => Class.Name;
 

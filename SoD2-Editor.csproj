@@ -64,6 +64,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -92,9 +93,6 @@
     <Compile Include="SoD2-Objs.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Updaters\ZombieDamagedAnalytics.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Updaters\Enclaves.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -102,6 +100,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Updaters\Inspector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Updaters\Community.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Updaters\_blank.cs">

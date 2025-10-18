@@ -10,6 +10,25 @@ namespace SoD2_Editor
 {
     public partial class Form1 : Form
     {
+        private void tabs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabs.SelectedTab.Name == "tabInspector")
+                return;
+
+            tlpInspector.SuspendLayout();
+            txtInspectorAddress.Text = "0";
+            lastInspected = IntPtr.Zero;
+            tlpInspector.AutoScrollPosition = new Point(0, 0);
+            foreach (Control c in tlpInspector.Controls)
+                c.Dispose();
+            lblInspector.Text = "None";
+            tlpInspector.Controls.Clear();
+            tlpInspector.ColumnStyles.Clear();
+            tlpInspector.RowStyles.Clear();
+            tlpInspector.ColumnCount = 8;
+            tlpInspector.RowCount = 0;
+            tlpInspector.ResumeLayout();
+        }
         public void UpdateInspector()
         {
 
@@ -51,7 +70,11 @@ namespace SoD2_Editor
 
                     if (init)
                     {
+                        lblInspector.Text = "Processing...";
+                        lblInspector.Refresh();
                         tlpInspector.AutoScrollPosition = new Point(0, 0);
+
+                        tlpInspector.Visible = false;
 
                         foreach (Control c in tlpInspector.Controls)
                             c.Dispose();
@@ -87,7 +110,7 @@ namespace SoD2_Editor
                             inspecting = inspecting.BaseClass;
                         }
 
-                        lblInspector.Text = $"{obj.BaseAddress.ToInt64():X16} {fullClass}";
+                        lblInspector.Text = $"{obj.Name} - {obj.BaseAddress.ToInt64():X16} - {fullClass}";
                         
                         //for (int i = chain.Count - 1; i >= 0; i--)
                         for (int i = 0; i < chain.Count - 1; i++)
@@ -112,6 +135,19 @@ namespace SoD2_Editor
                                     tlpInspector.Controls.Add(new Label { Text = p.Name, AutoSize = true, Font = new Font("Consolas", 9) }, 5, rowIndex);
 
 
+                                    Button btnInspectAssetClassProperty = new Button
+                                    {
+                                        Text = "Edit",
+                                        Tag = (p, obj.BaseAddress + p.Offset),
+                                        Width = 25,
+                                        Height = 10
+                                    };
+                                    btnInspectAssetClassProperty.Click += (s, f) =>
+                                    {
+                                        var (propTuple, addrPtr) = (((int Offset, string Name, UField Field), IntPtr))((Button)s).Tag;
+                                        txtInspectorAddress.Text = RIntPtr(GetObjFromObjId(RInt32(addrPtr)).BaseAddress + 0x100).ToString("X");
+                                        //valueStr = GetObjFromObjId(RInt32(valueAddr)).Name;
+                                    };
                                     Button btnInspectClassProperty = new Button
                                     {
                                         Text = "Edit",
@@ -136,8 +172,11 @@ namespace SoD2_Editor
                                         var (propTuple, addrPtr) = (((int Offset, string Name, UField Field), IntPtr))((Button)s).Tag;
                                         txtInspectorAddress.Text = RIntPtr(addrPtr).ToString("X");
                                     };
+                                    if(p.Field.Type == "AssetClassProperty")
+                                        tlpInspector.Controls.Add(btnInspectAssetClassProperty, 4, rowIndex);
                                     if (p.Field.Type == "ClassProperty")
                                         tlpInspector.Controls.Add(btnInspectClassProperty, 4, rowIndex);
+                                    //valueStr = GetObjFromObjId(RInt32(valueAddr)).Name;
                                     //If it's an object, add the button to Inspect
                                     if ((p.Field.Type == "ObjectProperty") || (p.Field.Type == "InterfaceProperty")) 
                                         tlpInspector.Controls.Add(btnInspect, 4, rowIndex);
@@ -148,7 +187,7 @@ namespace SoD2_Editor
                                         //Address
                                         IntPtr objaddr = obj.BaseAddress;
                                         objaddr += p.Offset;
-                                        tlpInspector.Controls.Add(new Label { Text = $"{objaddr.ToString("X16")}", AutoSize = true, Font = new Font("Consolas", 9) }, 0, rowIndex);
+                                        //tlpInspector.Controls.Add(new Label { Text = $"{objaddr.ToString("X16")}", AutoSize = true, Font = new Font("Consolas", 9) }, 0, rowIndex);
 
                                         //Offset
                                         tlpInspector.Controls.Add(new Label { Text = $"0x{p.Offset:X4}", AutoSize = true, Font = new Font("Consolas", 9) }, 1, rowIndex);
@@ -172,9 +211,8 @@ namespace SoD2_Editor
                         }
                         
                         tlpInspector.RowCount++;
-                        
-
-                    }
+                        tlpInspector.Visible = true;
+                    }//end if init
                     
                     void AddProps(UClass objClass)
                     {
@@ -278,10 +316,11 @@ namespace SoD2_Editor
                                     valueStr = o.Name;
                                     break;
                                 default:
-                                    valueStr = $"(unhandled)";
+                                    valueStr = $"{p.Field.Type} - (unhandled)";
                                     break;
                             }
                             valueStr = $"{p.Field.Type,-25}: {valueStr}";
+                            //valueStr = $"{valueStr}";
 
                             //var valControl = tlpInspector.Controls.Find($"val_{p.Field.BaseAddress}{p.Name}", false).FirstOrDefault() as Label;
                             var valControl = tlpInspector.Controls.Find($"val_{p.Name}", false).FirstOrDefault() as Label;
@@ -292,11 +331,41 @@ namespace SoD2_Editor
                         }
                     }//end AddProps
                     AddProps(obj.Class);
-                    
+                    tlpInspector.ResumeLayout();
                 }
-                tlpInspector.ResumeLayout();
+                
             }
-    }//end UpdateInspector
+        }//end UpdateInspector
+        private void btnInspectorBack_Click(object sender, EventArgs e)
+        {
+            if (inspectHistory.Count > 1)
+            {
+                inspectHistory.RemoveAt(inspectHistory.Count - 1);
+                IntPtr prevAddr = inspectHistory.Last();
+                txtInspectorAddress.Text = $"{prevAddr.ToString("X")}";
+            }
+        }
+        private void btnInspectController_Click(object sender, EventArgs e)
+        {
+            txtInspectorAddress.Text = localPlayer.DaytonPlayerController.BaseAddress.ToString("X");
+        }
 
+        private void btnInspectClosestEnemy_Click(object sender, EventArgs e)
+        {
+            txtInspectorAddress.Text = currDaytonHumanCharacter.ClosestEnemy.ToString("X");
+        }
+        private void btnInspectDHC_Click(object sender, EventArgs e)
+        {
+            txtInspectorAddress.Text = currDaytonHumanCharacter.BaseAddress.ToString("X");
+        }
+        private void btnInspectEngine_Click(object sender, EventArgs e)
+        {
+            txtInspectorAddress.Text = RIntPtr(addresses.Get("GameEngine")).ToString("X");
+        }
+        
+        private void btnInspectWorld_Click(object sender, EventArgs e)
+        {
+            txtInspectorAddress.Text = world.BaseAddress.ToString("X");
+        }
     }
 }

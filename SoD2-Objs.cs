@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -62,7 +63,6 @@ namespace SoD2_Editor
 
 
 
-
         
         public static class GameLog
         {
@@ -96,6 +96,26 @@ namespace SoD2_Editor
         {
             public BackpackItemInstance(IntPtr addr) : base(addr) { }
             public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x48));
+        }
+        public class CapsuleComponent : UObject
+        {
+            public CapsuleComponent(IntPtr addr) : base(addr) { }
+            public Vector3 WarpPos
+            {
+                get
+                {
+                    float x = RSingle(BaseAddress + 0x170);
+                    float y = RSingle(BaseAddress + 0x174);
+                    float z = RSingle(BaseAddress + 0x178);
+                    return new Vector3(x, y, z);
+                }
+                set
+                {
+                    WSingle(BaseAddress + 0x170, value.X);
+                    WSingle(BaseAddress + 0x174, value.Y);
+                    WSingle(BaseAddress + 0x178, value.Z);
+                }
+            }
         }
         public class CharacterSkillRecord
         {
@@ -143,10 +163,48 @@ namespace SoD2_Editor
             public float MinimumActionSpeedAdjustment => RSingle(BaseAddress + 0x198);
             public float MinimumInfluenceProductionMultiplier => RSingle(BaseAddress + 0x19c);
             public TimeOfDayComponent TimeOfDayComponent => new TimeOfDayComponent(RIntPtr(BaseAddress + 0x1a0));
+            public List<CommunityResourceBase> Resources
+            {
+                get
+                {
+                    var resources = new List<CommunityResourceBase>();
+                    int count = NumResources;
+                    if (count <= 0) return resources;
+
+                    IntPtr arrayPtr = RIntPtr(BaseAddress + 0x1160);
+                    for (int i = 0; i < count; i++)
+                    {
+                        IntPtr resPtr = RIntPtr(arrayPtr + i * IntPtr.Size);
+                        if (resPtr != IntPtr.Zero)
+                        {
+                            resources.Add(new CommunityResourceBase(resPtr));
+                        }
+                    }
+                    return resources;
+                }
+            }
+            public int NumResources => RInt32(BaseAddress + 0x1168);
             public float CommunityStandingHighWaterMark => RSingle(BaseAddress + 0x12f0);
             public float PlayTime => RSingle(BaseAddress + 0x1308);
         }
-        
+        public class CommunityResourceBase : UObject
+        {
+            public CommunityResourceBase(IntPtr addr) : base(addr) { }
+            public ECommunityResourceType ResourceType => (ECommunityResourceType)RUInt8(BaseAddress + 0x48);
+            public string DisplayName => (new FText(BaseAddress + 0x50)).Value;
+            public string Description => (new FText(BaseAddress + 0x68)).Value;
+            public float Supply
+            {
+                get => RSingle(BaseAddress + 0xf8);
+                set => WSingle(BaseAddress + 0xf8, value);
+            }
+            public float Accumulator
+            {
+                get => RSingle(BaseAddress + 0x100);
+                set => WSingle(BaseAddress + 0x100, value);
+            }
+
+        }
         public class ConsumableItemInstance : ItemInstance
         {
             public ConsumableItemInstance(IntPtr addr) : base(addr) { }
@@ -190,6 +248,16 @@ namespace SoD2_Editor
             public Enclave Enclave => new Enclave(RIntPtr(BaseAddress + 0xE28));
             public DaytonCharacterComponent CharacterComponent => new DaytonCharacterComponent(RIntPtr(BaseAddress + 0xE30));
 
+            public Vector3 Position
+            {
+                get
+                {
+                    float x = RSingle(BaseAddress + 0xff0);
+                    float y = RSingle(BaseAddress + 0xff4);
+                    float z = RSingle(BaseAddress + 0xff8);
+                    return new Vector3(x, y, z);
+                }
+            }
             public float XPos => RSingle(BaseAddress + 0xFF0);
 
             public float YPos => RSingle(BaseAddress + 0xFF4);
@@ -217,9 +285,21 @@ namespace SoD2_Editor
                 set => WInt32(BaseAddress + 0x0, value);
             }
 
-            public FText FirstName =>  new FText(BaseAddress + 0x18);
-            public FText LastName => new FText(BaseAddress + 0x30);
-            public FText NickName => new FText(BaseAddress + 0x48);
+            public string FirstName
+            {
+                get => new FText(BaseAddress + 0x18).Value;
+                set => new FText(BaseAddress + 0x18).Value = value;
+            }
+            public string LastName
+            {
+                get => new FText(BaseAddress + 0x30).Value;
+                set => new FText(BaseAddress + 0x30).Value = value;
+            }
+            public string NickName
+            {
+                get => new FText(BaseAddress + 0x48).Value;
+                set => new FText(BaseAddress + 0x48).Value = value;
+            }
 
             public string VoiceID => GetNameFromNameOffset(RInt32(BaseAddress + 0x60));
             public string CulturalBackground => GetNameFromNameOffset(RInt32(BaseAddress + 0x68));
@@ -350,6 +430,16 @@ namespace SoD2_Editor
                 set => WInt32(BaseAddress + 0x12C, value);
             }
         }
+        public class DaytonCheatManager : UObject
+        {
+            public DaytonCheatManager(IntPtr addr) : base(addr) { }
+
+            public bool bInvisibleToZombies
+            {
+                get => RUInt8(BaseAddress + 0x87) > 0;
+                set => WUInt8(BaseAddress + 0x87, Convert.ToByte(value));
+            }
+        }
         public class DaytonGameGameMode : UObject
         {
             public DaytonGameGameMode(IntPtr addr) : base(addr) { }
@@ -366,25 +456,54 @@ namespace SoD2_Editor
         public class DaytonGameInstance : GameInstance
         {
             public DaytonGameInstance(IntPtr addr) : base(addr) { }
+            public DaytonSaveManager SaveGameManager => new DaytonSaveManager(RIntPtr(BaseAddress + 0x910));
+            public ItemCatalogManager ItemCatalogManager => new ItemCatalogManager(RIntPtr(BaseAddress + 0xa18));
         }
         public class DaytonHumanCharacter : UObject
         {
             public DaytonHumanCharacter(IntPtr addr) : base(addr) { }
+            public CapsuleComponent CapsuleComponent => new CapsuleComponent(RIntPtr(BaseAddress + 0x1b0));
             public DaytonCharacterComponent CharacterComponent => new DaytonCharacterComponent(RIntPtr(BaseAddress + 0xBa0));
             public float MaxSickness => RSingle(BaseAddress + 0xc3c);
             public float CurrentEffectiveMaxHealth => RSingle(BaseAddress + 0xc58);
             public float CurrentHealth => RSingle(BaseAddress + 0xc5c);
             public byte bIsInCombat => RUInt8(BaseAddress + 0xc70);
+            public IntPtr ClosestEnemy => RIntPtr(BaseAddress + 0xe70);
         }
         public class DaytonLocalPlayer : UObject
         {
             public DaytonLocalPlayer(IntPtr addr) : base(addr) { }
             public DaytonPlayerController DaytonPlayerController => new DaytonPlayerController(RIntPtr(BaseAddress + 0x30));
         }
+        public class DaytonPlayerController : UObject
+        {
+            public DaytonPlayerController(IntPtr addr) : base(addr) { }
+            public DaytonCheatManager CheatManager
+            {
+                get => new DaytonCheatManager(RIntPtr(BaseAddress + 0x458));
+                set => WIntPtr(BaseAddress + 0x458, value.BaseAddress);
+            }
+            public IntPtr EnclaveTradeManagerPtr => RIntPtr(BaseAddress + 0x758);
+            public IntPtr FollowerManagerPtr => RIntPtr(BaseAddress + 0x7a8);
+            public float InfestationRangeToReportOnHUD => RSingle(BaseAddress + 0x8b4);
+            public float BloodPlagueRangeToReportOnHUD => RSingle(BaseAddress + 0x8b8);
+            public int ProximateZombieCount => RInt32(BaseAddress + 0x944);
+            public MapUI MapUI => new MapUI(RIntPtr(BaseAddress + 0x9b8));
+            public DaytonHumanCharacter AnalyticsPawn => new DaytonHumanCharacter(RIntPtr(BaseAddress + 0xb58));
+            public CommunityComponent CommunityComponent => new CommunityComponent(RIntPtr(BaseAddress + 0xb60));
+        }
+        public class DaytonSaveManager : UObject
+        {
+            public DaytonSaveManager(IntPtr addr) : base(addr) { }
+        }
         public class DynamicPawnSpawner : UObject
         {
             public DynamicPawnSpawner(IntPtr addr) : base(addr) { }
-            public byte Active => RUInt8(BaseAddress + 0x370);
+            public byte Active
+            {
+                get => RUInt8(BaseAddress + 0x370);
+                set => WUInt8(BaseAddress + 0x370, value);
+            } 
             public byte bIsUnlimitedSpawningEnabled => RUInt8(BaseAddress + 0x37c);
             public byte bIsOHKOZombiesEnabled => RUInt8(BaseAddress + 0x37d);
             public float MaxPopulationMultiplier => RSingle(BaseAddress + 0x460);
@@ -398,17 +517,6 @@ namespace SoD2_Editor
             public byte bIsNightTime => RUInt8(BaseAddress + 0x55c);
             public int numSpawnedPawns => RInt32(BaseAddress + 0x5f8);
             public int AmbientPopulationCapCount => RInt32(BaseAddress + 0x610);
-        }
-        public class DaytonPlayerController : UObject
-        {
-            public DaytonPlayerController(IntPtr addr) : base(addr) { }
-            public IntPtr EnclaveTradeManagerPtr => RIntPtr(BaseAddress + 0x758);
-            public IntPtr FollowerManagerPtr => RIntPtr(BaseAddress + 0x7a8);
-            public float InfestationRangeToReportOnHUD => RSingle(BaseAddress + 0x8b4);
-            public float BloodPlagueRangeToReportOnHUD => RSingle(BaseAddress + 0x8b8);
-            public int ProximateZombieCount => RInt32(BaseAddress + 0x944);
-            public DaytonHumanCharacter AnalyticsPawn => new DaytonHumanCharacter(RIntPtr(BaseAddress + 0xb58));
-            public CommunityComponent CommunityComponent => new CommunityComponent(RIntPtr(BaseAddress + 0xb60));
         }
         public class Enclave : UObject
         {
@@ -447,6 +555,16 @@ namespace SoD2_Editor
                 }
             }
             public int NumCharacters => RInt32(BaseAddress + 0x3A0);
+            public Vector3 BaseCenter
+            {
+                get
+                {
+                    float x = RSingle(BaseAddress + 0xae8);
+                    float y = RSingle(BaseAddress + 0xaec);
+                    float z = RSingle(BaseAddress + 0xaf0);
+                    return new Vector3(x, y, z);
+                }
+            }
         }
         public class EnclaveManager : UObject
         {
@@ -503,6 +621,7 @@ namespace SoD2_Editor
         {
             public GameEngine(IntPtr addr) : base(addr) { }
             public GameViewport GameViewport => new GameViewport(RIntPtr(BaseAddress + 0x6c8));
+            public DaytonGameInstance GameInstance => new DaytonGameInstance(RIntPtr(BaseAddress + 0xd40));
 
         }
         public class GameInstance : UObject
@@ -553,6 +672,61 @@ namespace SoD2_Editor
             }
             public int numSlots => RInt32(BaseAddress + 0x208);
         }
+        public class ItemCatalog : UObject
+        {
+            public ItemCatalog(IntPtr addr) : base(addr) { }
+            public string ID => GetNameFromNameOffset(RInt32(BaseAddress + 0x28));
+            public List<string> BountyItems
+            {
+                get
+                {
+                    IntPtr startPtr = RIntPtr(BaseAddress + 0x170);
+                    var bountyItems = new List<string>();
+                    for (int i = 0; i < numBountyItems; i++)
+                    {
+                        //worldItems.Add($"{GetObjFromObjId(RInt32(startPtr + i * 0x20)).Name}  {GetObjFromObjId(RInt32(startPtr + i * 0x20)).Type}");
+                        bountyItems.Add($"{RUnicodeStr(RIntPtr(startPtr + i * 0x50 + 0x10))}");
+                    }
+                    return bountyItems;
+                }
+            }
+            public int numBountyItems => RInt32(BaseAddress + 0x178);
+            public List<string> WorldItems
+            {
+                get
+                {
+                    IntPtr startPtr = RIntPtr(BaseAddress + 0x180);
+                    var worldItems = new List<string>();
+                    for (int i = 0; i < numWorldItems; i++)
+                    {
+                        //worldItems.Add($"{GetObjFromObjId(RInt32(startPtr + i * 0x20)).Name}  {GetObjFromObjId(RInt32(startPtr + i * 0x20)).Type}");
+                        worldItems.Add($"{RUnicodeStr(RIntPtr(startPtr + i * 0x20 + 0x10))}");
+                    }
+                    return worldItems;
+                }
+            }
+            public int numWorldItems => RInt32(BaseAddress + 0x188);
+        }
+        public class ItemCatalogManager : UObject
+        {
+            public ItemCatalogManager(IntPtr addr) : base(addr) { }
+            public List<ItemCatalog> Catalogs
+            {
+                get
+                {
+                    var catalogs = new List<ItemCatalog>();
+                    IntPtr arrPtr = RIntPtr(BaseAddress + 0x28);
+                    for (int i = 0; i < numCatalogs; i++)
+                    {
+                        IntPtr catalogPtr = RIntPtr(arrPtr + i * IntPtr.Size);
+                        if (catalogPtr != IntPtr.Zero)
+                            catalogs.Add(new ItemCatalog(catalogPtr));
+                    }//end for
+                    return catalogs;
+                } //end get
+            }
+            public int numCatalogs => RInt32(BaseAddress + 0x30);
+        }
         public class ItemInstance : UObject
         {
             public ItemInstance(IntPtr addr) : base(addr) { }
@@ -575,12 +749,75 @@ namespace SoD2_Editor
         public class MapStateComponent : UObject
         {
             public MapStateComponent(IntPtr addr) : base(addr) { }
+            public List<Vector2> WaypointPositions
+            {
+                get
+                {
+                    var wpPosList = new List<Vector2>();
+                    IntPtr posPtr = RIntPtr(BaseAddress + 0x278);
+                    for (int i = 0; i < numWaypointPositions; i++)
+                    {
+                        float x = RSingle(posPtr + i * 0x8);
+                        float y = RSingle(posPtr + i * 0x8 + 0x4);
+                        wpPosList.Add(new Vector2(x, y));
+                    }
+                    return wpPosList;
+                }
+            }
+            public int numWaypointPositions => RInt32(BaseAddress + 0x280);
+            public List<WaypointActor> WaypointActors
+            {
+                get
+                {
+                    var waypoints = new List<WaypointActor>();
+                    IntPtr arrPtr = RIntPtr(BaseAddress + 0x290);
+                    for(int i = 0; i < numWayPointActors; i++)
+                    {
+                        IntPtr wp = RIntPtr(arrPtr + i * IntPtr.Size);
+                        if (wp != IntPtr.Zero)
+                        {
+                            WaypointActor waypoint = new WaypointActor(wp);
+                            waypoints.Add(waypoint);
+                        }
+                    }
+                    return waypoints;
+                }
+            }
+            public int numWayPointActors => RInt32(BaseAddress + 0x298);
+        }
+        public class MapUI : UObject
+        {
+            public MapUI(IntPtr addr) : base(addr) { }
+            public Vector2 MapBoundsMin
+            {
+                get
+                {
+                    float x = RSingle(BaseAddress + 0x600);
+                    float y = RSingle(BaseAddress + 0x604);
+                    return new Vector2(x, y);
+                }
+            }
+            public Vector2 MapBoundsMax
+            {
+                get
+                {
+                    float x = RSingle(BaseAddress + 0x608);
+                    float y = RSingle(BaseAddress + 0x60c);
+                    return new Vector2(x, y);
+                }
+            }
+            public MapStateComponent MapState => new MapStateComponent(RIntPtr(BaseAddress + 0x968));
         }
         public class MeleeWeaponItemInstance : ItemInstance
         {
             public MeleeWeaponItemInstance(IntPtr addr) : base(addr) { }
             public MeleeWeaponResourceStats Stats => new MeleeWeaponResourceStats(RIntPtr(BaseAddress + 0xF8));
             public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x100));
+            public float Durability
+            {
+                get => RSingle(BaseAddress + 0x169c);
+                set => WSingle(BaseAddress + 0x169c, value);
+            }
 
         }
         public class MeleeWeaponResourceStats : UObject
@@ -721,16 +958,15 @@ namespace SoD2_Editor
             public RangedWeapon(IntPtr addr) : base(addr) { }
             public RangedWeaponResourceStats Stats => new RangedWeaponResourceStats(RIntPtr(BaseAddress + 0x28));
 
-            public class RangedWeaponItemInstance : UObject
-            {
-                public RangedWeaponItemInstance(IntPtr addr) : base(addr) { }
-                public RangedWeapon RangedWeapon => new RangedWeapon(RIntPtr(BaseAddress + 0x70));
-
-            }
         }
         public class RangedWeaponItemInstance : ItemInstance
         {
             public RangedWeaponItemInstance(IntPtr addr) : base(addr) { }
+            public float Durability
+            {
+                get => RSingle(BaseAddress + 0x60);
+                set => WSingle(BaseAddress + 0x60, value);
+            }
             public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x68));
             public RangedWeapon RangedWeapon => new RangedWeapon(RIntPtr(BaseAddress + 0x70));
             
@@ -767,6 +1003,11 @@ namespace SoD2_Editor
             {
                 get => RInt32(BaseAddress + 0x164);
                 set => WInt32(BaseAddress + 0x164, value);
+            }
+            public int AmmoConsumedPerShot
+            {
+                get => RInt32(BaseAddress + 0x174);
+                set => WInt32(BaseAddress + 0x174, value);
             }
             public float Impact
             {
@@ -828,6 +1069,16 @@ namespace SoD2_Editor
                 get => RSingle(BaseAddress + 0x2A0);
                 set => WSingle(BaseAddress + 0x2A0, value);
             }
+            public float DurabilityLossPerShotMin
+            {
+                get => RSingle(BaseAddress + 0x2A8);
+                set => WSingle(BaseAddress + 0x2A8, value);
+            }
+            public float DurabilityLossPerShotMax
+            {
+                get => RSingle(BaseAddress + 0x2B0);
+                set => WSingle(BaseAddress + 0x2B0, value);
+            }
             public float PerceptionLoudness
             {
                 get => RSingle(BaseAddress + 0x2D8);
@@ -888,15 +1139,18 @@ namespace SoD2_Editor
             public UConsole(IntPtr addr) : base(addr) { }
             public DaytonLocalPlayer ConsoleTargetPlayer
             {
-                get
-                {
-                    return new DaytonLocalPlayer(RIntPtr(BaseAddress + 0x38));
-                }
-                set
-                {
-                    WIntPtr(BaseAddress + 0x38, value.BaseAddress);
-                }
+                get => new DaytonLocalPlayer(RIntPtr(BaseAddress + 0x38));
+                set => WIntPtr(BaseAddress + 0x38, value.BaseAddress);
             }
+        }
+        public class WaypointActor : UObject
+        {
+            public WaypointActor(IntPtr addr) : base(addr) { }
+        }
+        public class WaypointIndicatorComponent : UObject
+        {
+            public WaypointIndicatorComponent(IntPtr addr) : base(addr) { }
+
         }
         public class World : UObject
         {

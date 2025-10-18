@@ -7,12 +7,15 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using static Iced.Intel.AssemblerRegisters;
 using static SoD2_Editor.Form1;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
@@ -37,8 +40,11 @@ namespace SoD2_Editor
         private static AddressBook funcs = new AddressBook();
         private static AddressBook hooks = new AddressBook();
         private World world = null;
+        private GameEngine eng = null;
+        private DaytonLocalPlayer localPlayer = null;
+        private DaytonGameInstance gameInstance = null;
+        private DaytonGameGameMode gameMode = null;
 
-        
 
         private void GameLogAdd(string name, IntPtr addr1, IntPtr addr2)
         {
@@ -56,12 +62,16 @@ namespace SoD2_Editor
             chkIsDemo.MouseUp += (s, e) => WUInt8(addresses.Get("ULIsDemo"), (byte)(1 - RUInt8(addresses.Get("ULIsDemo"))));
             chkIsDemo.KeyUp += (s, e) => WUInt8(addresses.Get("ULIsDemo"), (byte)(1 - RUInt8(addresses.Get("ULIsDemo"))));
 
+            chkBlindZombies.MouseUp += (s, e) => localPlayer.DaytonPlayerController.CheatManager.bInvisibleToZombies = !localPlayer.DaytonPlayerController.CheatManager.bInvisibleToZombies;
+            chkBlindZombies.KeyUp += (s, e) => localPlayer.DaytonPlayerController.CheatManager.bInvisibleToZombies = !localPlayer.DaytonPlayerController.CheatManager.bInvisibleToZombies;
+
+            chkSpawnerActive.MouseUp += (s, e) => gameMode.DynamicPawnSpawner.Active = (byte)(1 - gameMode.DynamicPawnSpawner.Active);
+            chkSpawnerActive.KeyUp += (s, e) => gameMode.DynamicPawnSpawner.Active = (byte)(1 - gameMode.DynamicPawnSpawner.Active);
+
             EnableDarkMode(this);
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            tabs.SelectedIndex = 1;
-            tabControlEnclaves.SelectedIndex = 1;
             lblCharacterTraits.Text = "";
             lblCharactersLabel.Text = "";
             lblEnclavesLabel.Text = "";
@@ -70,6 +80,7 @@ namespace SoD2_Editor
             lblRanged.Text = "";
             lblSidearm.Text = "";
             lblInventory.Text = "";
+            InitializeCommunityResourceGrid(dgvCommunityResources);
         }
 
         private List<string> logNames;
@@ -77,7 +88,8 @@ namespace SoD2_Editor
         {
             newStringsPtr = IntPtr.Zero;
             newStringsOffset = 0;
-            addresses.Add("UConsoleClass", _ba + 0x045e30b8, _ba + 0x4731c38);
+            addresses.Add("UConsoleClass", _ba + 0x045e30b8, _ba + 0x04731c38);
+            addresses.Add("UDaytonCheatManagerClass", _ba + 0x0440f260, _ba + 0x0455dde0);
             addresses.Add("DaytonLocalPlayer", _ba + 0x045BDB10, _ba + 0x0470C690);
             addresses.Add("DaytonVehicleVtPtr", _ba + 0x03418E40, _ba + 0x034E8930);
             addresses.Add("GameEngine", _ba + 0x045d59a0, _ba + 0x4724520);
@@ -93,8 +105,6 @@ namespace SoD2_Editor
             //funcs.Add("", _ba + 0x, _ba + 0x);
 
             //Hooks
-            hooks.Add("AnalyticsZombieDamagedHook", _ba + 0x251df00, _ba + 0x251f510);
-            hooks.Add("AnalyticsZombieDamagedReturn", _ba + 0x251df10, _ba + 0x251f520);
             //hooks.Add("", _ba + 0x, _ba + 0x);
 
 
@@ -156,6 +166,7 @@ namespace SoD2_Editor
             GameLogAdd("LogHardwareCaps", _ba + 0x045fcab0, _ba + 0x0474b630);
             GameLogAdd("LogHeartlandGameModeComponent", _ba + 0x043fec10, _ba + 0x0454d790);
             GameLogAdd("LogHelpTips", _ba + 0x043fbc08, _ba + 0x0454a788);
+            GameLogAdd("LogHUD", _ba + 0x045bc9b0, _ba + 0x0470b530);
             GameLogAdd("LogIggyAS", _ba + 0x045fd890, _ba + 0x0474c410);
             GameLogAdd("LogIggyEngine", _ba + 0x045fcd20, _ba + 0x0474b8a0);
             GameLogAdd("LogIggyFlush", _ba + 0x045fe158, _ba + 0x0474ccd8);
@@ -243,6 +254,8 @@ namespace SoD2_Editor
                 {
                     ctrl.BackColor = Color.FromArgb(45, 45, 45);
                     ctrl.ForeColor = Color.WhiteSmoke;
+                    ((Button)ctrl).FlatStyle = FlatStyle.Flat;
+                    ((Button)ctrl).FlatAppearance.BorderColor = Color.FromArgb(60, 60, 60);
                 }
                 else if (ctrl is Label)
                 {
@@ -252,6 +265,33 @@ namespace SoD2_Editor
                 {
                     ctrl.BackColor = Color.FromArgb(25, 25, 25);
                     ctrl.ForeColor = Color.WhiteSmoke;
+                }
+                else if (ctrl is DataGridView dgv)
+                {
+                    dgv.BackgroundColor = Color.FromArgb(25, 25, 25);
+                    dgv.BorderStyle = BorderStyle.None;
+                    dgv.EnableHeadersVisualStyles = false;
+                    dgv.GridColor = Color.FromArgb(50, 50, 50);
+
+                    dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(35, 35, 35);
+                    dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.WhiteSmoke;
+                    dgv.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(55, 55, 55);
+                    dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.WhiteSmoke;
+
+                    dgv.RowHeadersDefaultCellStyle.BackColor = Color.FromArgb(30, 30, 30);
+                    dgv.RowHeadersDefaultCellStyle.ForeColor = Color.WhiteSmoke;
+                    dgv.RowHeadersDefaultCellStyle.SelectionBackColor = Color.FromArgb(55, 55, 55);
+                    dgv.RowHeadersDefaultCellStyle.SelectionForeColor = Color.WhiteSmoke;
+
+                    dgv.DefaultCellStyle.BackColor = Color.FromArgb(30, 30, 30);
+                    dgv.DefaultCellStyle.ForeColor = Color.WhiteSmoke;
+                    dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(70, 70, 70);
+                    dgv.DefaultCellStyle.SelectionForeColor = Color.WhiteSmoke;
+
+                    dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(35, 35, 35);
+                    dgv.AlternatingRowsDefaultCellStyle.ForeColor = Color.WhiteSmoke;
+                    dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = Color.FromArgb(70, 70, 70);
+                    dgv.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.WhiteSmoke;
                 }
                 else
                 {
@@ -267,6 +307,7 @@ namespace SoD2_Editor
 
             parent.BackColor = Color.FromArgb(20, 20, 20);
         }
+
         public class AddressBook
         {
             private readonly Dictionary<string, (IntPtr MS, IntPtr Steam)> _map
@@ -297,10 +338,12 @@ namespace SoD2_Editor
         }
         private void btnConnect_Click(object sender, EventArgs e)
         {
+            Output("Attempting connection");
             string procName = "StateOfDecay2-Win64-Shipping";
             var process = Process.GetProcessesByName(procName).FirstOrDefault();
             if (process == null)
-            {
+            { 
+                Output($"Process {procName} not found.");
                 return;
             }
             _proc = OpenProcess(0x001F0FFF, false, process.Id);
@@ -309,12 +352,10 @@ namespace SoD2_Editor
             if (_proc == IntPtr.Zero)
             {
                 lblVer.Text = "Not found.";
-                Output("Connect Failed - Not found");
+                Output("Connect Failed - Unable to open process.");
             } else {
                 InitAddresses();
                 verIdent = RUInt32(_ba + 0xE8);
-
-
 
                 lblVer.Text = "Dunno";
                 if (verIdent == 0x49274E48) // MS version
@@ -336,6 +377,7 @@ namespace SoD2_Editor
                 else
                 {
                     refreshTimer.Stop();
+                    Output("Process found but unknown version.");
                 }
             }        
         }
@@ -379,16 +421,18 @@ namespace SoD2_Editor
                 if (tabs.SelectedTab == null)
                     return;
 
-                var gameMode = world.GameMode;
+                gameMode = world.GameMode;
                 var persistentLevel = world.PersistentLevel;
                 var worldSettings = persistentLevel.WorldSettings;
+                eng = new GameEngine(RIntPtr(addresses.Get("GameEngine")));
 
                 var enclaveManager = gameMode.EnclaveManager;
-                DaytonLocalPlayer localPlayer = new DaytonLocalPlayer(RIntPtr(addresses.Get("DaytonLocalPlayer")));
+                localPlayer = new DaytonLocalPlayer(RIntPtr(addresses.Get("DaytonLocalPlayer")));
 
                 currEnclave = localPlayer.DaytonPlayerController.AnalyticsPawn.CharacterComponent.DaytonCharacter.Enclave;
                 currDaytonHumanCharacter = localPlayer.DaytonPlayerController.AnalyticsPawn;
                 currDaytonCharacter = currDaytonHumanCharacter.CharacterComponent.DaytonCharacter;
+                gameInstance = eng.GameInstance;
 
 
 
@@ -400,6 +444,7 @@ namespace SoD2_Editor
                             lblWorldName.Text = newWorldLabel;
 
                         chkIsDemo.Checked = RUInt8(addresses.Get("ULIsDemo")) > 0;
+                        chkBlindZombies.Checked = localPlayer.DaytonPlayerController.CheatManager.bInvisibleToZombies;
 
                         string newTimeDilation = worldSettings.TimeDilation.ToString("F4");
                         if (newTimeDilation != txtTimeDilation.Text)
@@ -426,20 +471,36 @@ namespace SoD2_Editor
                         }
                         string result = string.Format("{0:D2}:{1:D2}:{2:D2}", hourPart, minutes, seconds);
                         lblWorldToD.Text = result;
+                        lblWorldDayLength.Text = localPlayer.DaytonPlayerController.CommunityComponent.TimeOfDayComponent.DayLength.ToString();
+
+
+                        txtConsoleAddress.Text = eng.GameViewport.ViewportConsole.BaseAddress.ToString("X");
+                        txtCheatManagerAddress.Text = localPlayer.DaytonPlayerController.CheatManager.BaseAddress.ToString("X");
+                        
+
 
                         break; //end tabWorld
 
+                    case "tabCommunity":
+                        UpdateCommunity();
+                        break;
                     case "tabEnclaves":
                         string newEnclavesLabel = $"{world.Name}\n{gameMode.Name}\n{enclaveManager.Name}";
                         if (newEnclavesLabel != lblEnclavesLabel.Text)
                             lblEnclavesLabel.Text = newEnclavesLabel;
 
-                        string newNumEnclaves = $"{enclaveManager.NumEnclaves} Enclaves";
-                        if (newNumEnclaves != lblNumEnclaves.Text)
-                            lblNumEnclaves.Text = newNumEnclaves;
+                        if (enclaveManager.Name == "EnclaveManagerBp")
+                        {
+                            string newNumEnclaves = $"{enclaveManager.NumEnclaves} Enclaves";
+                            if (newNumEnclaves != lblNumEnclaves.Text)
+                                lblNumEnclaves.Text = newNumEnclaves;
 
-                        UpdateEnclaveList(enclaveManager);
-                        UpdateCharacterList();
+                            UpdateEnclaveList(enclaveManager);
+                            UpdateCharacterList();
+                        }
+                        
+
+                        
                         if (long.TryParse(txtEnclaveAddress.Text, System.Globalization.NumberStyles.HexNumber, null, out long encaddr) && encaddr > 0)
                         {
                             IntPtr enclavePtr = new IntPtr(encaddr);
@@ -485,16 +546,16 @@ namespace SoD2_Editor
                                         switch (tabControlEnclavesCharactersEquipment.SelectedTab.Name)
                                         {
                                             case "tabControlEnclavesCharactersEquipmentMelee":
-                                                UpdateMeleeWeaponDetails(chr.CharacterRecord.Equipment.MeleeWeaponItemInstance.Stats);
-                                                lblMelee.Text = $"{chr.CharacterRecord.Equipment.MeleeWeaponItemInstance.Name}";
+                                                UpdateMeleeWeaponDetails(chr.CharacterRecord.Equipment.MeleeWeaponItemInstance);
+                                                lblMelee.Text = $"{chr.CharacterRecord.Equipment.MeleeWeaponItemInstance.ItemClass.Name}";
                                                 break;
                                             case "tabControlEnclavesCharactersEquipmentSideArm":
-                                                UpdateRangedWeaponDetails(tlpSideArmWeaponStats, chr.CharacterRecord.Equipment.SideArmRangedWeaponItemInstance.RangedWeapon.Stats);
-                                                lblSidearm.Text = $"{chr.CharacterRecord.Equipment.SideArmRangedWeaponItemInstance.Name}";
+                                                UpdateRangedWeaponDetails(tlpSideArmWeaponStats, chr.CharacterRecord.Equipment.SideArmRangedWeaponItemInstance);
+                                                lblSidearm.Text = $"{chr.CharacterRecord.Equipment.SideArmRangedWeaponItemInstance.ItemClass.Name}";
                                                 break;
                                             case "tabControlEnclavesCharactersEquipmentRanged":
-                                                UpdateRangedWeaponDetails(tlpRangedWeaponStats, chr.CharacterRecord.Equipment.RangedWeaponItemInstance.RangedWeapon.Stats);
-                                                lblRanged.Text = $"{chr.CharacterRecord.Equipment.MeleeWeaponItemInstance.Name}";
+                                                UpdateRangedWeaponDetails(tlpRangedWeaponStats, chr.CharacterRecord.Equipment.RangedWeaponItemInstance);
+                                                lblRanged.Text = $"{chr.CharacterRecord.Equipment.RangedWeaponItemInstance.ItemClass.Name}";
                                                 break;
                                         }
                                         lblEquipment.Text = $"{chr.CharacterRecord.Equipment.Name}";
@@ -526,7 +587,6 @@ namespace SoD2_Editor
                             lblSpawnerLabel.Text = newSpawnerLabel;
 
                         var spawnerdetails = new StringBuilder();
-                        spawnerdetails.AppendLine($"Active:                               {spawner.Active}");
                         spawnerdetails.AppendLine($"Unlimited Spawning Enabled:           {spawner.bIsUnlimitedSpawningEnabled}");
                         spawnerdetails.AppendLine($"OHKO Zombies Enabled:                 {spawner.bIsOHKOZombiesEnabled}");
                         spawnerdetails.AppendLine($"Max Population Multiplier:        {spawner.MaxPopulationMultiplier,10:F4}");
@@ -548,9 +608,6 @@ namespace SoD2_Editor
                     case "tabGameLog":
                         UpdateLog();
                         UpdateLogLevels();
-                        break;
-                    case "tabAnalytics":
-                        UpdateZombieDamagedAnalytics();
                         break;
                     case "tabInspector":
                         UpdateInspector();
@@ -635,7 +692,7 @@ namespace SoD2_Editor
                 for (int i = 0; i < newCount; i++)
                 {
                     var link = (LinkLabel)flowEnclaveCharacters.Controls[i];
-                    string newName = $"{characters[i].CharacterRecord.FirstName.Value} {characters[i].CharacterRecord.LastName.Value}";
+                    string newName = $"{characters[i].CharacterRecord.FirstName} {characters[i].CharacterRecord.LastName}";
                     if (link.Text != newName)
                         link.Text = newName;
 
@@ -647,11 +704,11 @@ namespace SoD2_Editor
                     }
                         
 
-                    if (newName == $"{currDaytonCharacter.CharacterRecord.FirstName.Value} {currDaytonCharacter.CharacterRecord.LastName.Value}")
+                    if (newName == $"{currDaytonCharacter.CharacterRecord.FirstName} {currDaytonCharacter.CharacterRecord.LastName}")
                     {
                         link.BackColor = Color.DarkGreen;
                     } else {
-                        if ((selectedChar != null)  && (newName != $"{selectedChar.CharacterRecord.FirstName.Value} {selectedChar.CharacterRecord.LastName.Value}"))
+                        if ((selectedChar != null)  && (newName != $"{selectedChar.CharacterRecord.FirstName} {selectedChar.CharacterRecord.LastName}"))
                             link.BackColor = Color.Transparent;
                     }
                 }//end for
@@ -941,13 +998,14 @@ namespace SoD2_Editor
 
             AddRow("Enclave Name");
             AddRow("ID");
-            AddRow("First Name");
-            AddRow("Last Name");
-            AddRow("Nickname");
+            AddRow("First Name", editable: true, onEdit: v => { selectedChar.CharacterRecord.FirstName = v; });
+            AddRow("Last Name", editable: true, onEdit: v => { selectedChar.CharacterRecord.LastName = v; });
+            AddRow("Nickname", editable: true, onEdit: v => { selectedChar.CharacterRecord.NickName = v; });
             AddRow("Voice ID");
             AddRow("Cultural Background");
             AddRow("Human Definition");
-            AddRow("Philosophy");
+            AddRow("Philosophy1");
+            AddRow("Philosophy2");
             AddRow("Hero Bonus");
             AddRow("Leader Type");
             AddRow("Zombies Killed");
@@ -984,13 +1042,14 @@ namespace SoD2_Editor
                 InitializeCharacterTable();
 
             _characterDetailRows["ID"].ValueLabel.Text = chr.CharacterRecord.ID.ToString();
-            _characterDetailRows["First Name"].ValueLabel.Text = chr.CharacterRecord.FirstName.Value;
-            _characterDetailRows["Last Name"].ValueLabel.Text = chr.CharacterRecord.LastName.Value;
-            _characterDetailRows["Nickname"].ValueLabel.Text = chr.CharacterRecord.NickName.Value;
+            _characterDetailRows["First Name"].ValueLabel.Text = chr.CharacterRecord.FirstName;
+            _characterDetailRows["Last Name"].ValueLabel.Text = chr.CharacterRecord.LastName;
+            _characterDetailRows["Nickname"].ValueLabel.Text = chr.CharacterRecord.NickName;
             _characterDetailRows["Voice ID"].ValueLabel.Text = chr.CharacterRecord.VoiceID;
             _characterDetailRows["Cultural Background"].ValueLabel.Text = chr.CharacterRecord.CulturalBackground;
             _characterDetailRows["Human Definition"].ValueLabel.Text = chr.CharacterRecord.HumanDefinition;
-            _characterDetailRows["Philosophy"].ValueLabel.Text = chr.CharacterRecord.Philosophy1.ToString();
+            _characterDetailRows["Philosophy1"].ValueLabel.Text = chr.CharacterRecord.Philosophy1.ToString();
+            _characterDetailRows["Philosophy2"].ValueLabel.Text = chr.CharacterRecord.Philosophy2.ToString();
             _characterDetailRows["Hero Bonus"].ValueLabel.Text = chr.CharacterRecord.HeroBonus;
             _characterDetailRows["Leader Type"].ValueLabel.Text = chr.CharacterRecord.LeaderType;
             _characterDetailRows["Zombies Killed"].ValueLabel.Text = chr.CharacterRecord.ZombiesKilled.ToString();
@@ -1242,7 +1301,7 @@ namespace SoD2_Editor
         private Dictionary<string, WeaponDetailRowEntry> _meleeWeaponDetailRows = new Dictionary<string, WeaponDetailRowEntry>();
         private Dictionary<string, WeaponDetailRowEntry> _rangedWeaponDetailRows = new Dictionary<string, WeaponDetailRowEntry>();
 
-        private void InitializeMeleeWeaponTable(MeleeWeaponResourceStats meleeStats)
+        private void InitializeMeleeWeaponTable(MeleeWeaponItemInstance meleeWeapon)
         {
             tlpMeleeWeaponStats.SuspendLayout();
             tlpMeleeWeaponStats.Controls.Clear();
@@ -1311,6 +1370,7 @@ namespace SoD2_Editor
                 _meleeWeaponDetailRows[fieldName] = new WeaponDetailRowEntry { ValueLabel = lblValue, EditButton = editButton };
             }
 
+            MeleeWeaponResourceStats meleeStats = meleeWeapon.Stats;
             AddRow("Weapon Name");
             AddRow("Weapon Type");
             AddRow("Weapon Desc");
@@ -1330,7 +1390,8 @@ namespace SoD2_Editor
             AddRow("SwingCost", editable: true, onEdit: v => { meleeStats.SwingCost = float.Parse(v); });
             AddRow("InfluenceValue", editable: true, onEdit: v => { meleeStats.InfluenceValue = float.Parse(v); });
             AddRow("PrestigeValue", editable: true, onEdit: v => { meleeStats.PrestigeValue = float.Parse(v); });
-            AddRow("Durability", editable: true, onEdit: v => { meleeStats.Durability = float.Parse(v); });
+            AddRow("Durability", editable: true, onEdit: v => { meleeWeapon.Durability = float.Parse(v); });
+            AddRow("DurabilityMax", editable: true, onEdit: v => { meleeStats.Durability = float.Parse(v); });
             AddRow("DurabilityLossPerHitMin", editable: true, onEdit: v => { meleeStats.DurabilityLossPerHitMin = float.Parse(v); });
             AddRow("DurabilityLossPerHitMax", editable: true, onEdit: v => { meleeStats.DurabilityLossPerHitMax = float.Parse(v); });
             AddRow("DurabilityLossPerFinisherMin", editable: true, onEdit: v => { meleeStats.DurabilityLossPerFinisherMin = float.Parse(v); });
@@ -1340,9 +1401,11 @@ namespace SoD2_Editor
 
             tlpMeleeWeaponStats.ResumeLayout();
         }
-        private void UpdateMeleeWeaponDetails(MeleeWeaponResourceStats weapon)
+        private void UpdateMeleeWeaponDetails(MeleeWeaponItemInstance weapon)
         {
-            string weaponName = weapon.WeaponName;
+
+            MeleeWeaponResourceStats weaponStats = weapon.Stats;
+            string weaponName = weaponStats.WeaponName;
             weaponName = weaponName.Replace("{!v}", "");
             weaponName = weaponName.Replace("{[0,+]'}", "");
             weaponName = weaponName.Replace("{[0,+]s}", "");
@@ -1365,38 +1428,39 @@ namespace SoD2_Editor
 
             
             _meleeWeaponDetailRows["Weapon Name"].ValueLabel.Text = weaponName;
-            _meleeWeaponDetailRows["Weapon Type"].ValueLabel.Text = weapon.WeaponType;
+            _meleeWeaponDetailRows["Weapon Type"].ValueLabel.Text = weaponStats.WeaponType;
 
-            string weaponDesc = weapon.WeaponDesc;
+            string weaponDesc = weaponStats.WeaponDesc;
             weaponDesc = weaponDesc.Replace("<br>", Environment.NewLine);
             weaponDesc = weaponDesc.Replace("{color}", "");
             weaponDesc = weaponDesc.Replace("{color:highlight}","");
             _meleeWeaponDetailRows["Weapon Desc"].ValueLabel.Text = weaponDesc;
             _meleeWeaponDetailRows["Weapon Desc"].ValueLabel.BorderStyle = BorderStyle.FixedSingle;
 
-            _meleeWeaponDetailRows["Melee Type"].ValueLabel.Text = weapon.MeleeType.ToString();
+            _meleeWeaponDetailRows["Melee Type"].ValueLabel.Text = weaponStats.MeleeType.ToString();
 
-            _meleeWeaponDetailRows["Dismember"].ValueLabel.Text = $"{weapon.Dismember,12:F4}";
-            _meleeWeaponDetailRows["DismemberDelta"].ValueLabel.Text = $"{weapon.DismemberDelta,12:F4}";
-            _meleeWeaponDetailRows["Impact"].ValueLabel.Text = $"{weapon.Impact,12:F4}";
-            _meleeWeaponDetailRows["ImpactDelta"].ValueLabel.Text = $"{weapon.ImpactDelta,12:F4}";
-            _meleeWeaponDetailRows["Knockdown"].ValueLabel.Text = $"{weapon.Knockdown,12:F4}";
-            _meleeWeaponDetailRows["KnockdownDelta"].ValueLabel.Text = $"{weapon.KnockdownDelta,12:F4}";
-            _meleeWeaponDetailRows["Lethality"].ValueLabel.Text = $"{weapon.Lethality,12:F4}";
-            _meleeWeaponDetailRows["LethalityDelta"].ValueLabel.Text = $"{weapon.LethalityDelta,12:F4}";
-            _meleeWeaponDetailRows["Weight"].ValueLabel.Text = $"{weapon.Weight,12:F4}";
-            _meleeWeaponDetailRows["PerceptionLoudness"].ValueLabel.Text = $"{weapon.PerceptionLoudness,12:F4}";
-            _meleeWeaponDetailRows["Speed"].ValueLabel.Text = $"{weapon.Speed,12:F4}";
-            _meleeWeaponDetailRows["SwingCost"].ValueLabel.Text = $"{weapon.SwingCost,12:F4}";
-            _meleeWeaponDetailRows["InfluenceValue"].ValueLabel.Text = $"{weapon.InfluenceValue,12:F4}";
-            _meleeWeaponDetailRows["PrestigeValue"].ValueLabel.Text = $"{weapon.PrestigeValue,12:F4}";
+            _meleeWeaponDetailRows["Dismember"].ValueLabel.Text = $"{weaponStats.Dismember,12:F4}";
+            _meleeWeaponDetailRows["DismemberDelta"].ValueLabel.Text = $"{weaponStats.DismemberDelta,12:F4}";
+            _meleeWeaponDetailRows["Impact"].ValueLabel.Text = $"{weaponStats.Impact,12:F4}";
+            _meleeWeaponDetailRows["ImpactDelta"].ValueLabel.Text = $"{weaponStats.ImpactDelta,12:F4}";
+            _meleeWeaponDetailRows["Knockdown"].ValueLabel.Text = $"{weaponStats.Knockdown,12:F4}";
+            _meleeWeaponDetailRows["KnockdownDelta"].ValueLabel.Text = $"{weaponStats.KnockdownDelta,12:F4}";
+            _meleeWeaponDetailRows["Lethality"].ValueLabel.Text = $"{weaponStats.Lethality,12:F4}";
+            _meleeWeaponDetailRows["LethalityDelta"].ValueLabel.Text = $"{weaponStats.LethalityDelta,12:F4}";
+            _meleeWeaponDetailRows["Weight"].ValueLabel.Text = $"{weaponStats.Weight,12:F4}";
+            _meleeWeaponDetailRows["PerceptionLoudness"].ValueLabel.Text = $"{weaponStats.PerceptionLoudness,12:F4}";
+            _meleeWeaponDetailRows["Speed"].ValueLabel.Text = $"{weaponStats.Speed,12:F4}";
+            _meleeWeaponDetailRows["SwingCost"].ValueLabel.Text = $"{weaponStats.SwingCost,12:F4}";
+            _meleeWeaponDetailRows["InfluenceValue"].ValueLabel.Text = $"{weaponStats.InfluenceValue,12:F4}";
+            _meleeWeaponDetailRows["PrestigeValue"].ValueLabel.Text = $"{weaponStats.PrestigeValue,12:F4}";
             _meleeWeaponDetailRows["Durability"].ValueLabel.Text = $"{weapon.Durability,12:F4}";
-            _meleeWeaponDetailRows["DurabilityLossPerHitMin"].ValueLabel.Text = $"{weapon.DurabilityLossPerHitMin,12:F4}";
-            _meleeWeaponDetailRows["DurabilityLossPerHitMax"].ValueLabel.Text = $"{weapon.DurabilityLossPerHitMax,12:F4}";
-            _meleeWeaponDetailRows["DurabilityLossPerFinisherMin"].ValueLabel.Text = $"{weapon.DurabilityLossPerFinisherMin,12:F4}";
-            _meleeWeaponDetailRows["DurabilityLossPerFinisherMax"].ValueLabel.Text = $"{weapon.DurabilityLossPerFinisherMax,12:F4}";
+            _meleeWeaponDetailRows["DurabilityMax"].ValueLabel.Text = $"{weaponStats.Durability,12:F4}";
+            _meleeWeaponDetailRows["DurabilityLossPerHitMin"].ValueLabel.Text = $"{weaponStats.DurabilityLossPerHitMin,12:F4}";
+            _meleeWeaponDetailRows["DurabilityLossPerHitMax"].ValueLabel.Text = $"{weaponStats.DurabilityLossPerHitMax,12:F4}";
+            _meleeWeaponDetailRows["DurabilityLossPerFinisherMin"].ValueLabel.Text = $"{weaponStats.DurabilityLossPerFinisherMin,12:F4}";
+            _meleeWeaponDetailRows["DurabilityLossPerFinisherMax"].ValueLabel.Text = $"{weaponStats.DurabilityLossPerFinisherMax,12:F4}";
         }
-        private void InitializeRangedWeaponTable(TableLayoutPanel tlp, RangedWeaponResourceStats rangedStats)
+        private void InitializeRangedWeaponTable(TableLayoutPanel tlp, RangedWeaponItemInstance rangedWeapon)
         {
             tlp.SuspendLayout();
             tlp.Controls.Clear();
@@ -1464,6 +1528,8 @@ namespace SoD2_Editor
                 _rangedWeaponDetailRows[fieldName] = new WeaponDetailRowEntry { ValueLabel = lblValue, EditButton = editButton };
             }
 
+            RangedWeaponResourceStats rangedStats = rangedWeapon.RangedWeapon.Stats;
+
             AddRow("Weapon Name");
             AddRow("Weapon Type");
             AddRow("Weapon Desc");
@@ -1471,6 +1537,7 @@ namespace SoD2_Editor
             AddRow("KickAngle", editable: true, onEdit: v => { rangedStats.KickAngle = float.Parse(v); });
             AddRow("ProjectileCount", editable: true, onEdit: v => { rangedStats.ProjectileCount = int.Parse(v); });
             AddRow("MagazineSize", editable: true, onEdit: v => { rangedStats.MagazineSize = int.Parse(v); });
+            AddRow("AmmoConsumedPerShot", editable: true, onEdit: v => { rangedStats.AmmoConsumedPerShot = int.Parse(v); });
             AddRow("Impact", editable: true, onEdit: v => { rangedStats.Impact = float.Parse(v); });
             AddRow("ImpactDelta", editable: true, onEdit: v => { rangedStats.ImpactDelta = float.Parse(v); });
             AddRow("Knockdown", editable: true, onEdit: v => { rangedStats.Knockdown = float.Parse(v); });
@@ -1482,7 +1549,10 @@ namespace SoD2_Editor
             AddRow("Weight", editable: true, onEdit: v => { rangedStats.Weight = float.Parse(v); });
             AddRow("InfluenceValue", editable: true, onEdit: v => { rangedStats.InfluenceValue = int.Parse(v); });
             AddRow("PrestigeValue", editable: true, onEdit: v => { rangedStats.PrestigeValue = int.Parse(v); });
-            AddRow("Durability", editable: true, onEdit: v => { rangedStats.Durability = float.Parse(v); });
+            AddRow("Durability", editable: true, onEdit: v => { rangedWeapon.Durability = float.Parse(v); });
+            AddRow("DurabilityMax", editable: true, onEdit: v => { rangedStats.Durability = float.Parse(v); });
+            AddRow("DurabilityLossPerShotMin", editable: true, onEdit: v => { rangedStats.DurabilityLossPerShotMin = float.Parse(v); });
+            AddRow("DurabilityLossPerShotMax", editable: true, onEdit: v => { rangedStats.DurabilityLossPerShotMax = float.Parse(v); });
             AddRow("PerceptionLoudness", editable: true, onEdit: v => { rangedStats.PerceptionLoudness = float.Parse(v); });
             AddRow("TracerSettings");
 
@@ -1490,9 +1560,12 @@ namespace SoD2_Editor
 
             tlp.ResumeLayout();
         }
-        private void UpdateRangedWeaponDetails(TableLayoutPanel tlp, RangedWeaponResourceStats weapon)
+        private void UpdateRangedWeaponDetails(TableLayoutPanel tlp, RangedWeaponItemInstance weapon)
         {
-            string weaponName = weapon.WeaponName;
+
+            RangedWeaponResourceStats rangedStats = weapon.RangedWeapon.Stats;
+
+            string weaponName = rangedStats.WeaponName;
             weaponName = weaponName.Replace("{!v}", "");
             weaponName = weaponName.Replace("{[0,+]'}", "");
             weaponName = weaponName.Replace("{[0,+]s}", "");
@@ -1514,32 +1587,36 @@ namespace SoD2_Editor
                 tlp.Visible = true;
 
             _rangedWeaponDetailRows["Weapon Name"].ValueLabel.Text = weaponName;
-            _rangedWeaponDetailRows["Weapon Type"].ValueLabel.Text = weapon.WeaponType;
+            _rangedWeaponDetailRows["Weapon Type"].ValueLabel.Text = rangedStats.WeaponType;
 
-            string weaponDesc = weapon.WeaponDesc;
+            string weaponDesc = rangedStats.WeaponDesc;
             weaponDesc = weaponDesc.Replace("<br>", Environment.NewLine);
             weaponDesc = weaponDesc.Replace("{/color}", "");
             weaponDesc = weaponDesc.Replace("{color:highlight}", "");
             _rangedWeaponDetailRows["Weapon Desc"].ValueLabel.Text = weaponDesc;
             _rangedWeaponDetailRows["Weapon Desc"].ValueLabel.BorderStyle = BorderStyle.FixedSingle;
 
-            _rangedWeaponDetailRows["KickAngle"].ValueLabel.Text = $"{weapon.KickAngle,12:F4}";
-            _rangedWeaponDetailRows["ProjectileCount"].ValueLabel.Text = $"{weapon.ProjectileCount,7}";
-            _rangedWeaponDetailRows["MagazineSize"].ValueLabel.Text = $"{weapon.MagazineSize,7}";
-            _rangedWeaponDetailRows["Impact"].ValueLabel.Text = $"{weapon.Impact,12:F4}";
-            _rangedWeaponDetailRows["ImpactDelta"].ValueLabel.Text = $"{weapon.ImpactDelta,12:F4}";
-            _rangedWeaponDetailRows["Knockdown"].ValueLabel.Text = $"{weapon.Knockdown,12:F4}";
-            _rangedWeaponDetailRows["KnockdownDelta"].ValueLabel.Text = $"{weapon.KnockdownDelta,12:F4}";
-            _rangedWeaponDetailRows["Dismember"].ValueLabel.Text = $"{weapon.Dismember,12:F4}";
-            _rangedWeaponDetailRows["DismemberDelta"].ValueLabel.Text = $"{weapon.DismemberDelta,12:F4}";
-            _rangedWeaponDetailRows["Penetration"].ValueLabel.Text = $"{weapon.Penetration,12:F4}";
-            _rangedWeaponDetailRows["Range"].ValueLabel.Text = $"{weapon.Range,12:F4}";
-            _rangedWeaponDetailRows["Weight"].ValueLabel.Text = $"{weapon.Weight,12:F4}";
-            _rangedWeaponDetailRows["InfluenceValue"].ValueLabel.Text = $"{weapon.InfluenceValue,7}";
-            _rangedWeaponDetailRows["PrestigeValue"].ValueLabel.Text = $"{weapon.PrestigeValue,7}";
+            _rangedWeaponDetailRows["KickAngle"].ValueLabel.Text = $"{rangedStats.KickAngle,12:F4}";
+            _rangedWeaponDetailRows["ProjectileCount"].ValueLabel.Text = $"{rangedStats.ProjectileCount,7}";
+            _rangedWeaponDetailRows["MagazineSize"].ValueLabel.Text = $"{rangedStats.MagazineSize,7}";
+            _rangedWeaponDetailRows["AmmoConsumedPerShot"].ValueLabel.Text = $"{rangedStats.AmmoConsumedPerShot,7}";
+            _rangedWeaponDetailRows["Impact"].ValueLabel.Text = $"{rangedStats.Impact,12:F4}";
+            _rangedWeaponDetailRows["ImpactDelta"].ValueLabel.Text = $"{rangedStats.ImpactDelta,12:F4}";
+            _rangedWeaponDetailRows["Knockdown"].ValueLabel.Text = $"{rangedStats.Knockdown,12:F4}";
+            _rangedWeaponDetailRows["KnockdownDelta"].ValueLabel.Text = $"{rangedStats.KnockdownDelta,12:F4}";
+            _rangedWeaponDetailRows["Dismember"].ValueLabel.Text = $"{rangedStats.Dismember,12:F4}";
+            _rangedWeaponDetailRows["DismemberDelta"].ValueLabel.Text = $"{rangedStats.DismemberDelta,12:F4}";
+            _rangedWeaponDetailRows["Penetration"].ValueLabel.Text = $"{rangedStats.Penetration,12:F4}";
+            _rangedWeaponDetailRows["Range"].ValueLabel.Text = $"{rangedStats.Range,12:F4}";
+            _rangedWeaponDetailRows["Weight"].ValueLabel.Text = $"{rangedStats.Weight,12:F4}";
+            _rangedWeaponDetailRows["InfluenceValue"].ValueLabel.Text = $"{rangedStats.InfluenceValue,7}";
+            _rangedWeaponDetailRows["PrestigeValue"].ValueLabel.Text = $"{rangedStats.PrestigeValue,7}";
             _rangedWeaponDetailRows["Durability"].ValueLabel.Text = $"{weapon.Durability,12:F4}";
-            _rangedWeaponDetailRows["PerceptionLoudness"].ValueLabel.Text = $"{weapon.PerceptionLoudness,12:F4}";
-            _rangedWeaponDetailRows["TracerSettings"].ValueLabel.Text = weapon.TracerSettings;
+            _rangedWeaponDetailRows["DurabilityMax"].ValueLabel.Text = $"{rangedStats.Durability,12:F4}";
+            _rangedWeaponDetailRows["DurabilityLossPerShotMin"].ValueLabel.Text = $"{rangedStats.DurabilityLossPerShotMin,12:F4}";
+            _rangedWeaponDetailRows["DurabilityLossPerShotMax"].ValueLabel.Text = $"{rangedStats.DurabilityLossPerShotMax,12:F4}";
+            _rangedWeaponDetailRows["PerceptionLoudness"].ValueLabel.Text = $"{rangedStats.PerceptionLoudness,12:F4}";
+            _rangedWeaponDetailRows["TracerSettings"].ValueLabel.Text = rangedStats.TracerSettings;
         }
 
 
@@ -1569,6 +1646,7 @@ namespace SoD2_Editor
         }
         private void btnGameLogClear_Click(object sender, EventArgs e)
         {
+            rtbGameLog.Text = string.Empty;
             int length = GameLog.LogEndOffset;
             if (length <= 0)
             { 
@@ -1593,27 +1671,7 @@ namespace SoD2_Editor
         }
         
 
-        private void btnEditDilation_Click(object sender, EventArgs e)
-        {
-            var gameMode = world.GameMode;
-            var persistentLevel = world.PersistentLevel;
-            var worldSettings = persistentLevel.WorldSettings;
-            string input = ShowNumericInputDialog("Edit Time Dilation", $"Enter new time dilation", worldSettings.TimeDilation.ToString(), isFloat: true);
-            if (!string.IsNullOrWhiteSpace(input))
-            {
-                worldSettings.TimeDilation = float.Parse(input);
-            }  
-        }
-
-        private void btnEditToD_Click(object sender, EventArgs e)
-        {
-            DaytonLocalPlayer localPlayer = new DaytonLocalPlayer(RIntPtr(addresses.Get("DaytonLocalPlayer")));
-            string input = ShowNumericInputDialog("Edit Time Dilation", $"Enter new time dilation", localPlayer.DaytonPlayerController.CommunityComponent.TimeOfDayComponent.TimeOfDay.ToString(), isFloat: true);
-            if (!string.IsNullOrWhiteSpace(input))
-            {
-                localPlayer.DaytonPlayerController.CommunityComponent.TimeOfDayComponent.TimeOfDay = float.Parse(input);
-            }
-        }
+        
 
         private void btnDiscord_Click(object sender, EventArgs e)
         {
@@ -1625,73 +1683,338 @@ namespace SoD2_Editor
             });
         }
 
-        private void btnTest_Click(object sender, EventArgs e)
-        {
-            //UClass obj = currDaytonCharacter.UClass;
-            /*UClass obj = (new UObject((IntPtr)0x0109A2D520)).UClass;
-            Console.WriteLine($"0x{obj.Size.ToString("X16")}   {obj.Name}");
-            */
-
-            /*Console.WriteLine($"{currDaytonHumanCharacter.Class.Name}  {currDaytonHumanCharacter.Class.BaseClass.Name}  {currDaytonHumanCharacter.Class.BaseClass.BaseClass.Name}");
-            UProperty prop = currDaytonHumanCharacter.Class.nextProp;
-
-            while (prop.BaseAddress != IntPtr.Zero)
-            {
-                IntPtr Offset = (IntPtr)prop.Offset;
-                if (prop.Class.Name == "Function")
-                {
-                    Offset = (new UFunction(prop.BaseAddress)).FunctionPtr;
-                }
-                //Console.WriteLine($"0x{prop.BaseAddress.ToString("X16")}   0x{Offset.ToString("X16")}   {prop.UClass.Name}   {prop.Name}");
-                Console.WriteLine($"0x{prop.BaseAddress.ToString("X16")}  {prop.Class.BaseClass.Name}  {prop.Type}     {prop.Name}");
-                prop = prop.nextProp;
-            }
-
-            //UClass obj = (new UObject((IntPtr)0x0109A2D520)).UClass;
-            //DaytonHumanCharacter dhc = new DaytonHumanCharacter((IntPtr)0x109a2d520);
-            */
-
-            /*
-            DaytonHumanCharacter dhc = currDaytonHumanCharacter;
-            UObject meleeTarget = new UObject(RIntPtr(dhc.GetPropertyAddress("MeleeTarget")));
-            ArrayProperty bcc = new ArrayProperty(meleeTarget.GetPropertyAddress("BlueprintCreatedComponents"));
-            
-            UObject za = new UObject((IntPtr)0);
-            foreach (UObject item in bcc.Entries)
-            {
-                if (item.Name == "ZombieAction")
-                    za = new UObject(item.BaseAddress);
-            }
-            Console.WriteLine($"{za.GetPropertyAddress("ReactInfo").ToString("X")}");
-            */
-        }
-
-        private void btnInspectorBack_Click(object sender, EventArgs e)
-        {
-            if (inspectHistory.Count > 1)
-            {
-                inspectHistory.RemoveAt(inspectHistory.Count - 1);
-                IntPtr prevAddr = inspectHistory.Last();
-                txtInspectorAddress.Text = $"{prevAddr.ToString("X")}";
-            }
-        }
-
-        private void btnInspectWorld_Click(object sender, EventArgs e)
-        {
-            txtInspectorAddress.Text = world.BaseAddress.ToString("X");
-        }
+        
+        
 
         private void btnEnableConsole_Click(object sender, EventArgs e)
         {
+            DaytonLocalPlayer localPlayer = new DaytonLocalPlayer(RIntPtr(addresses.Get("DaytonLocalPlayer")));
+
             GameEngine eng = new GameEngine(RIntPtr(addresses.Get("GameEngine")));
             UConsole con = new UConsole(RIntPtr(RIntPtr(addresses.Get("UConsoleClass")) + 0x100));
-            eng.GameViewport.ViewportConsole = con;
-            eng.GameViewport.ViewportConsole.ConsoleTargetPlayer = new DaytonLocalPlayer(RIntPtr(addresses.Get("DaytonLocalPlayer")));
+            if (con.BaseAddress != IntPtr.Zero)
+            {
+                eng.GameViewport.ViewportConsole = con;
+                eng.GameViewport.ViewportConsole.ConsoleTargetPlayer = localPlayer;
+                if (eng.GameViewport.ViewportConsole.ConsoleTargetPlayer.BaseAddress != IntPtr.Zero)
+                {
+                    Output("Console Enabled - Press Insert in-game to use");
+                }
+                else
+                {
+                    Output("Local Player not found.  Try again later, or report this issue.");
+                }
+            }
+            else
+            {
+                Output("Failed to Create Console.");
+            }
+
+
+
+            
         }
 
-        private void btnInspectDHC_Click(object sender, EventArgs e)
+        
+
+       
+
+        
+
+
+
+        IntPtr ItemFunc = IntPtr.Zero;
+        IntPtr Items = IntPtr.Zero;
+        private void btnTest_Click(object sender, EventArgs e)
         {
-            txtInspectorAddress.Text = currDaytonHumanCharacter.BaseAddress.ToString("X");
+            /*ulong inv = (ulong)currDaytonCharacter.CharacterRecord.Inventory.BaseAddress;
+            if (inv == 0)
+            {
+                Output("Inventory pointer not found.");
+                return;
+            }
+            int Quantity = 1;
+
+            //ulong ItemBP = 0x00000000775EB280;
+            ulong ItemBP = 0x2CCC6C80;
+            ulong FuncCreateItemInstance = (ulong)(_ba + 0x4efce0);
+            ulong FuncTryAddItem = (ulong)(_ba + 0x502010);
+
+            UObject testObj = new UObject((IntPtr)ItemBP);
+            if (testObj.Type != "BlueprintGeneratedClass")
+            {
+                Output("Provided object is not BlueprintGeneratedClass, aborting Add.");
+                return;
+            }
+
+            IntPtr CodeAddItem = Alloc(0x1000);
+            Iced.Intel.Assembler asm = new Iced.Intel.Assembler(bitness: 64);
+            
+            asm.sub(rsp, 0x1000);
+            asm.pushfq();
+
+
+            asm.mov(rcx, ItemBP);  //Item blueprintclass
+            asm.mov(rdx, Quantity);
+            asm.call(FuncCreateItemInstance);  //Create Item Instance
+
+            asm.mov(rcx, inv);
+            asm.mov(rdx, rax);
+            asm.mov(r8, 7);
+            asm.mov(r9, 1);
+            asm.mov(rax, rsp);
+            asm.add(rax, 0x20);
+            asm.mov(rbx, 1);
+            asm.mov(__[rax], rbx);
+            asm.call(FuncTryAddItem);
+
+
+            asm.popfq();
+            asm.add(rsp, 0x1000);
+            asm.ret();
+
+            var stream = new MemoryStream();
+            asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)CodeAddItem);
+            byte[] machineCode = stream.ToArray();
+            WBytes(CodeAddItem, machineCode);
+
+            Console.WriteLine(CodeAddItem.ToString("X"));
+            CreateRemoteThread(_proc, IntPtr.Zero, 0, CodeAddItem, IntPtr.Zero, 0, IntPtr.Zero);*/
+
+
+            if (ItemFunc == IntPtr.Zero)
+                ItemFunc = Alloc(0x1000);
+            if (Items == IntPtr.Zero)
+                Items = Alloc(0x1000);
+
+            Iced.Intel.Assembler asm = new Iced.Intel.Assembler(bitness: 64);
+
+            asm.sub(rsp, 0x1000);
+            asm.pushfq();
+            
+            
+            asm.mov(r8, (ulong)(_ba + 0x4f3ca0));   //ConsumableItems
+            asm.mov(rcx, (ulong)Items);
+            asm.call(r8);
+
+            asm.mov(r8, (ulong)(_ba + 0x4f3a00));   //CloseCombatItems
+            asm.mov(rcx, (ulong)Items);
+            asm.add(rcx, 0x10);
+            asm.call(r8);
+
+            asm.mov(r8, (ulong)(_ba + 0x51f550));   //MeleeWeaponItems
+            asm.mov(rcx, (ulong)Items);
+            asm.add(rcx, 0x20);
+            asm.call(r8);
+
+            asm.mov(r8, (ulong)(_ba + 0x51f820));   //RangedWeaponItems
+            asm.mov(rcx, (ulong)Items);
+            asm.add(rcx, 0x30);
+            asm.call(r8);
+
+            asm.popfq();
+            asm.add(rsp, 0x1000);
+            asm.ret();
+
+            var stream = new MemoryStream();
+            asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)ItemFunc);
+            byte[] machineCode = stream.ToArray();
+            WBytes(ItemFunc, machineCode);
+            Console.WriteLine(Items.ToString("X"));
+
+            CreateRemoteThread(_proc, IntPtr.Zero, 0, ItemFunc, IntPtr.Zero, 0, IntPtr.Zero); 
+        }
+
+
+
+
+        private void btnTest2_Click(object sender, EventArgs e)
+        {
+            /*
+            UObject obj = new UObject((IntPtr)0x775EB280);
+            Console.WriteLine(obj.Name);
+            Console.WriteLine(obj.Type);
+            Console.WriteLine(obj.Class.Name);
+            Console.WriteLine(obj.Class.Path());
+            Console.WriteLine(obj.Path());
+            */
+
+            
+            IntPtr objTablePtr = addresses.Get("ObjTablePtr");
+            int numobjs = RInt32(objTablePtr - 0x8);
+            objTablePtr = RIntPtr(objTablePtr);
+
+
+            List<UObject> ammo = new List<UObject>();
+            List<UObject> backpack = new List<UObject>();
+            List<UObject> ccw = new List<UObject>();
+            List<UObject> cons = new List<UObject>();
+            List<UObject> ranged = new List<UObject>();
+            List<UObject> facilitymods = new List<UObject>();
+            List<UObject> melee = new List<UObject>();
+            List<UObject> misc = new List<UObject>();
+            List<UObject> mods = new List<UObject>();
+            List<UObject> resource = new List<UObject>();
+
+            for (int i = 0; i < numobjs; i++)
+            {
+                UObject obj = new UObject(RIntPtr(objTablePtr + i * 0x30));
+                string path = obj.Path();
+                if (path.Contains("/Game/Item") && (obj.Type == "BlueprintGeneratedClass"))
+                //if (obj.Type == "BlueprintGeneratedClass")
+                {
+                    if (path.StartsWith("/Game/Items/BackpackItems"))
+                        backpack.Add(obj);
+                    else if (path.StartsWith("/Game/Items/MeleeWeapons"))
+                        melee.Add(obj);
+                    else if (path.StartsWith("/Game/Items/Mods"))
+                        mods.Add(obj);
+                    else if (path.StartsWith("/Game/Items/CloseCombatItems"))
+                        ccw.Add(obj);
+                    else if (path.StartsWith("/Game/Items/Consumables"))
+                        cons.Add(obj);
+                    else if (path.StartsWith("/Game/Items/RangedWeapons"))
+                        ranged.Add(obj);
+                    else if (path.StartsWith("/Game/Items/ResourceItems"))
+                        resource.Add(obj);
+                    else if (path.StartsWith("/Game/Items/MiscellaneousItems"))
+                        misc.Add(obj);
+                    else if (path.StartsWith("/Game/Items/FacilityModItems"))
+                        facilitymods.Add(obj);
+                    else if (path.StartsWith("/Game/Items/Ammo"))
+                        ammo.Add(obj);
+                    else
+                        Console.WriteLine($"{obj.Path()}   {obj.BaseAddress.ToString("X")} {obj.Type} - {path}");
+                }
+            }
+            
+            
+
+            foreach (UObject obj2 in backpack)
+                Console.WriteLine($"{obj2.BaseAddress.ToString("X")} - {obj2.Name}");
+
+            /*foreach (var catalog in gameInstance.ItemCatalogManager.Catalogs)
+            {
+                Console.WriteLine(catalog.ID);
+                foreach (var bi in catalog.BountyItems)
+                    Console.WriteLine($"BountyItem: {bi}");
+                foreach (var wi in catalog.WorldItems)
+                    Console.WriteLine($"WorldItem: {wi}");
+            }*/
+        }
+
+        private void btnEnableCheats_Click(object sender, EventArgs e)
+        {
+            IntPtr dcmcp = RIntPtr(addresses.Get("UDaytonCheatManagerClass"));
+            DaytonLocalPlayer localPlayer = new DaytonLocalPlayer(RIntPtr(addresses.Get("DaytonLocalPlayer")));
+            DaytonPlayerController dpc = localPlayer.DaytonPlayerController;
+
+            UClass dcmc = new UClass(dcmcp);
+            DaytonCheatManager dcm = new DaytonCheatManager(dcmc.ClassDefaultObject.BaseAddress);
+            dcm.Outer = dpc;
+            dpc.CheatManager = dcm;
+
+            if (dpc.CheatManager.BaseAddress != IntPtr.Zero)
+            {
+                Output("Cheat Manager Enabled - Press ] in-game to toggle menu.");
+            }
+            else
+            {
+                Output("Huh.  That didn't work for some reason.  Weird.");
+            }
+        }
+        private void btnEditDilation_Click(object sender, EventArgs e)
+        {
+            var gameMode = world.GameMode;
+            var persistentLevel = world.PersistentLevel;
+            var worldSettings = persistentLevel.WorldSettings;
+            string input = ShowNumericInputDialog("Edit Time Dilation", $"Enter new time dilation", worldSettings.TimeDilation.ToString(), isFloat: true);
+            if (!string.IsNullOrWhiteSpace(input))
+            {
+                worldSettings.TimeDilation = float.Parse(input);
+            }
+        }
+
+        private void btnEditToD_Click(object sender, EventArgs e)
+        {
+            DaytonLocalPlayer localPlayer = new DaytonLocalPlayer(RIntPtr(addresses.Get("DaytonLocalPlayer")));
+            string input = ShowNumericInputDialog("Edit Time Dilation", $"Enter new time dilation", localPlayer.DaytonPlayerController.CommunityComponent.TimeOfDayComponent.TimeOfDay.ToString(), isFloat: true);
+            if (!string.IsNullOrWhiteSpace(input))
+            {
+                localPlayer.DaytonPlayerController.CommunityComponent.TimeOfDayComponent.TimeOfDay = float.Parse(input);
+            }
+        }
+        private void btnEditDayLength_Click(object sender, EventArgs e)
+        {
+            DaytonLocalPlayer localPlayer = new DaytonLocalPlayer(RIntPtr(addresses.Get("DaytonLocalPlayer")));
+            string input = ShowNumericInputDialog("Edit Day Length", $"Enter new day length", localPlayer.DaytonPlayerController.CommunityComponent.TimeOfDayComponent.DayLength.ToString(), isFloat: true);
+            if (!string.IsNullOrWhiteSpace(input))
+            {
+                localPlayer.DaytonPlayerController.CommunityComponent.TimeOfDayComponent.DayLength = float.Parse(input);
+            }
+        }
+
+        private void btnWarpToEnclave_Click(object sender, EventArgs e)
+        {
+            Enclave _currentEnclave = null;
+            if (long.TryParse(txtEnclaveAddress.Text, System.Globalization.NumberStyles.HexNumber, null, out long encaddr) && encaddr > 0)
+            {
+                IntPtr encPtr = (IntPtr)encaddr;
+                _currentEnclave = new Enclave(encPtr);
+            }
+            else
+            {
+                Output("Failed to find enclave.");
+                return;
+            }
+                
+
+            if (_currentEnclave.Name == "Enclave")
+            {
+                currDaytonHumanCharacter.CapsuleComponent.WarpPos = _currentEnclave.BaseCenter;
+                Output("Warp successful.");
+            }
+            else
+                Output($"Aborting Warp - Enclave has incorrect name - {_currentEnclave.Name}");
+        }
+
+        private void btnEnclaveWarpToCharacter_Click(object sender, EventArgs e)
+        {
+            DaytonCharacter _currentCharacter = null;
+            if (long.TryParse(txtCharacterAddress.Text, System.Globalization.NumberStyles.HexNumber, null, out long chraddr) && chraddr > 0)
+            {
+                IntPtr chrPtr = (IntPtr)chraddr;
+                _currentCharacter = new DaytonCharacter(chrPtr);
+            }
+            else
+            {
+                Output("Failed to find character.");
+                return;
+            }    
+            if (_currentCharacter.Name == "DaytonCharacter")
+            {
+                currDaytonHumanCharacter.CapsuleComponent.WarpPos = _currentCharacter.Position;
+                Output("Warp successful.");
+            }
+            else
+                Output($"Aborting Warp - Character has incorrect name - {_currentCharacter.Name}");
+        }
+
+        private void btnWarpToWaypoint_Click(object sender, EventArgs e)
+        {
+            if (localPlayer.DaytonPlayerController.MapUI.MapState.numWaypointPositions > 0)
+            {
+                Vector2 wpPos = new Vector2();
+                wpPos = localPlayer.DaytonPlayerController.MapUI.MapState.WaypointPositions[0];
+                Vector2 mapMin = localPlayer.DaytonPlayerController.MapUI.MapBoundsMin;
+                Vector2 mapMax = localPlayer.DaytonPlayerController.MapUI.MapBoundsMax;
+                Vector2 normMapMax = new Vector2(Math.Abs(mapMax.X) + Math.Abs(mapMin.X), Math.Abs(mapMax.Y) + Math.Abs(mapMin.Y));
+                wpPos = wpPos * normMapMax;
+                wpPos = wpPos - (new Vector2(Math.Abs(mapMin.X), Math.Abs(mapMin.Y)));
+                currDaytonHumanCharacter.CapsuleComponent.WarpPos = new Vector3(wpPos.X, wpPos.Y, currDaytonHumanCharacter.CapsuleComponent.WarpPos.Z + 10000);
+            }
+            else
+                Output("No MapUI waypoints found");
         }
     }
 }

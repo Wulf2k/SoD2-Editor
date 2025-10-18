@@ -32,6 +32,14 @@
             this.lblVer = new System.Windows.Forms.Label();
             this.tabs = new System.Windows.Forms.TabControl();
             this.tabWorld = new System.Windows.Forms.TabPage();
+            this.btnEditDayLength = new System.Windows.Forms.Button();
+            this.lblWorldDayLength = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.chkBlindZombies = new System.Windows.Forms.CheckBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtCheatManagerAddress = new System.Windows.Forms.TextBox();
+            this.txtConsoleAddress = new System.Windows.Forms.TextBox();
+            this.btnEnableCheats = new System.Windows.Forms.Button();
             this.btnEnableConsole = new System.Windows.Forms.Button();
             this.btnEditToD = new System.Windows.Forms.Button();
             this.btnEditDilation = new System.Windows.Forms.Button();
@@ -43,12 +51,21 @@
             this.btnTimeDilationMinus = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.txtTimeDilation = new System.Windows.Forms.TextBox();
+            this.tabCommunity = new System.Windows.Forms.TabPage();
+            this.tabCommunityTabs = new System.Windows.Forms.TabControl();
+            this.tabCommunityResources = new System.Windows.Forms.TabPage();
+            this.lblCommunityResourceName = new System.Windows.Forms.Label();
+            this.dgvCommunityResources = new System.Windows.Forms.DataGridView();
+            this.txtCommunityNewVal = new System.Windows.Forms.TextBox();
+            this.btnCommunityResourceSetValue = new System.Windows.Forms.Button();
             this.tabEnclaves = new System.Windows.Forms.TabPage();
             this.tabControlEnclaves = new System.Windows.Forms.TabControl();
             this.tabEnclaveDetails = new System.Windows.Forms.TabPage();
+            this.btnWarpToEnclave = new System.Windows.Forms.Button();
             this.lblEnclaveDetails = new System.Windows.Forms.Label();
             this.txtEnclaveAddress = new System.Windows.Forms.TextBox();
             this.tabEnclaveCharacters = new System.Windows.Forms.TabPage();
+            this.btnEnclaveWarpToCharacter = new System.Windows.Forms.Button();
             this.lblCharactersLabel = new System.Windows.Forms.Label();
             this.tabControlEnclavesCharacters = new System.Windows.Forms.TabControl();
             this.tabEnclavesCharactersDetails = new System.Windows.Forms.TabPage();
@@ -81,8 +98,20 @@
             this.lblNumEnclaves = new System.Windows.Forms.Label();
             this.lblEnclavesLabel = new System.Windows.Forms.Label();
             this.tabSpawner = new System.Windows.Forms.TabPage();
+            this.chkSpawnerActive = new System.Windows.Forms.CheckBox();
             this.lblSpawnerDetails = new System.Windows.Forms.Label();
             this.lblSpawnerLabel = new System.Windows.Forms.Label();
+            this.tabInspector = new System.Windows.Forms.TabPage();
+            this.btnInspectClosestEnemy = new System.Windows.Forms.Button();
+            this.btnInspectController = new System.Windows.Forms.Button();
+            this.btnInspectEngine = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.btnInspectDHC = new System.Windows.Forms.Button();
+            this.lblInspector = new System.Windows.Forms.Label();
+            this.btnInspectWorld = new System.Windows.Forms.Button();
+            this.btnInspectorBack = new System.Windows.Forms.Button();
+            this.tlpInspector = new System.Windows.Forms.TableLayoutPanel();
+            this.txtInspectorAddress = new System.Windows.Forms.TextBox();
             this.tabGameLog = new System.Windows.Forms.TabPage();
             this.tabGameLogTabs = new System.Windows.Forms.TabControl();
             this.tabGameLogLogLevels = new System.Windows.Forms.TabPage();
@@ -92,24 +121,17 @@
             this.tabGameLogLog = new System.Windows.Forms.TabPage();
             this.btnGameLogClear = new System.Windows.Forms.Button();
             this.rtbGameLog = new System.Windows.Forms.RichTextBox();
-            this.tabAnalytics = new System.Windows.Forms.TabPage();
-            this.tabControlAnalytics = new System.Windows.Forms.TabControl();
-            this.tabControlAnalyticsZombieDamaged = new System.Windows.Forms.TabPage();
-            this.btnUnhookZombieDamagedAnalytics = new System.Windows.Forms.Button();
-            this.lblAnalyticsZombieDamagedDetail = new System.Windows.Forms.Label();
-            this.btnHookZombieDamagedAnalytics = new System.Windows.Forms.Button();
-            this.tabInspector = new System.Windows.Forms.TabPage();
-            this.btnInspectDHC = new System.Windows.Forms.Button();
-            this.lblInspector = new System.Windows.Forms.Label();
-            this.btnInspectWorld = new System.Windows.Forms.Button();
-            this.btnInspectorBack = new System.Windows.Forms.Button();
-            this.tlpInspector = new System.Windows.Forms.TableLayoutPanel();
-            this.txtInspectorAddress = new System.Windows.Forms.TextBox();
             this.txtOutput = new System.Windows.Forms.TextBox();
             this.btnDiscord = new System.Windows.Forms.Button();
             this.btnTest = new System.Windows.Forms.Button();
+            this.btnTest2 = new System.Windows.Forms.Button();
+            this.btnWarpToWaypoint = new System.Windows.Forms.Button();
             this.tabs.SuspendLayout();
             this.tabWorld.SuspendLayout();
+            this.tabCommunity.SuspendLayout();
+            this.tabCommunityTabs.SuspendLayout();
+            this.tabCommunityResources.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvCommunityResources)).BeginInit();
             this.tabEnclaves.SuspendLayout();
             this.tabControlEnclaves.SuspendLayout();
             this.tabEnclaveDetails.SuspendLayout();
@@ -125,14 +147,11 @@
             this.tabControlEnclavesCharactersEquipmentRanged.SuspendLayout();
             this.tabEnclavesCharactersInventory.SuspendLayout();
             this.tabSpawner.SuspendLayout();
+            this.tabInspector.SuspendLayout();
             this.tabGameLog.SuspendLayout();
             this.tabGameLogTabs.SuspendLayout();
             this.tabGameLogLogLevels.SuspendLayout();
             this.tabGameLogLog.SuspendLayout();
-            this.tabAnalytics.SuspendLayout();
-            this.tabControlAnalytics.SuspendLayout();
-            this.tabControlAnalyticsZombieDamaged.SuspendLayout();
-            this.tabInspector.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnConnect
@@ -160,19 +179,28 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabs.Controls.Add(this.tabWorld);
+            this.tabs.Controls.Add(this.tabCommunity);
             this.tabs.Controls.Add(this.tabEnclaves);
             this.tabs.Controls.Add(this.tabSpawner);
-            this.tabs.Controls.Add(this.tabGameLog);
-            this.tabs.Controls.Add(this.tabAnalytics);
             this.tabs.Controls.Add(this.tabInspector);
+            this.tabs.Controls.Add(this.tabGameLog);
             this.tabs.Location = new System.Drawing.Point(12, 41);
             this.tabs.Name = "tabs";
             this.tabs.SelectedIndex = 0;
-            this.tabs.Size = new System.Drawing.Size(1481, 727);
+            this.tabs.Size = new System.Drawing.Size(1130, 882);
             this.tabs.TabIndex = 3;
+            this.tabs.SelectedIndexChanged += new System.EventHandler(this.tabs_SelectedIndexChanged);
             // 
             // tabWorld
             // 
+            this.tabWorld.Controls.Add(this.btnEditDayLength);
+            this.tabWorld.Controls.Add(this.lblWorldDayLength);
+            this.tabWorld.Controls.Add(this.label7);
+            this.tabWorld.Controls.Add(this.chkBlindZombies);
+            this.tabWorld.Controls.Add(this.label5);
+            this.tabWorld.Controls.Add(this.txtCheatManagerAddress);
+            this.tabWorld.Controls.Add(this.txtConsoleAddress);
+            this.tabWorld.Controls.Add(this.btnEnableCheats);
             this.tabWorld.Controls.Add(this.btnEnableConsole);
             this.tabWorld.Controls.Add(this.btnEditToD);
             this.tabWorld.Controls.Add(this.btnEditDilation);
@@ -187,14 +215,89 @@
             this.tabWorld.Location = new System.Drawing.Point(4, 22);
             this.tabWorld.Name = "tabWorld";
             this.tabWorld.Padding = new System.Windows.Forms.Padding(3);
-            this.tabWorld.Size = new System.Drawing.Size(1473, 701);
+            this.tabWorld.Size = new System.Drawing.Size(1122, 856);
             this.tabWorld.TabIndex = 0;
             this.tabWorld.Text = "World";
             this.tabWorld.UseVisualStyleBackColor = true;
             // 
+            // btnEditDayLength
+            // 
+            this.btnEditDayLength.Location = new System.Drawing.Point(80, 95);
+            this.btnEditDayLength.Name = "btnEditDayLength";
+            this.btnEditDayLength.Size = new System.Drawing.Size(25, 10);
+            this.btnEditDayLength.TabIndex = 19;
+            this.btnEditDayLength.Text = "Edit";
+            this.btnEditDayLength.UseVisualStyleBackColor = true;
+            this.btnEditDayLength.Click += new System.EventHandler(this.btnEditDayLength_Click);
+            // 
+            // lblWorldDayLength
+            // 
+            this.lblWorldDayLength.AutoSize = true;
+            this.lblWorldDayLength.Location = new System.Drawing.Point(108, 92);
+            this.lblWorldDayLength.Name = "lblWorldDayLength";
+            this.lblWorldDayLength.Size = new System.Drawing.Size(51, 13);
+            this.lblWorldDayLength.TabIndex = 18;
+            this.lblWorldDayLength.Text = "unknown";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(6, 92);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(62, 13);
+            this.label7.TabIndex = 17;
+            this.label7.Text = "Day Length";
+            // 
+            // chkBlindZombies
+            // 
+            this.chkBlindZombies.AutoSize = true;
+            this.chkBlindZombies.Location = new System.Drawing.Point(183, 207);
+            this.chkBlindZombies.Name = "chkBlindZombies";
+            this.chkBlindZombies.Size = new System.Drawing.Size(92, 17);
+            this.chkBlindZombies.TabIndex = 16;
+            this.chkBlindZombies.Text = "Blind Zombies";
+            this.chkBlindZombies.UseVisualStyleBackColor = true;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(23, 191);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(383, 13);
+            this.label5.TabIndex = 15;
+            this.label5.Text = "(Cheat Manager will need to be re-enabled every time you change game modes)";
+            // 
+            // txtCheatManagerAddress
+            // 
+            this.txtCheatManagerAddress.Enabled = false;
+            this.txtCheatManagerAddress.Location = new System.Drawing.Point(183, 164);
+            this.txtCheatManagerAddress.Name = "txtCheatManagerAddress";
+            this.txtCheatManagerAddress.Size = new System.Drawing.Size(107, 20);
+            this.txtCheatManagerAddress.TabIndex = 14;
+            this.txtCheatManagerAddress.Text = "0";
+            // 
+            // txtConsoleAddress
+            // 
+            this.txtConsoleAddress.Enabled = false;
+            this.txtConsoleAddress.Location = new System.Drawing.Point(183, 138);
+            this.txtConsoleAddress.Name = "txtConsoleAddress";
+            this.txtConsoleAddress.Size = new System.Drawing.Size(107, 20);
+            this.txtConsoleAddress.TabIndex = 13;
+            this.txtConsoleAddress.Text = "0";
+            // 
+            // btnEnableCheats
+            // 
+            this.btnEnableCheats.Location = new System.Drawing.Point(20, 165);
+            this.btnEnableCheats.Name = "btnEnableCheats";
+            this.btnEnableCheats.Size = new System.Drawing.Size(157, 23);
+            this.btnEnableCheats.TabIndex = 12;
+            this.btnEnableCheats.Text = "Enable Cheats ( ] )";
+            this.btnEnableCheats.UseVisualStyleBackColor = true;
+            this.btnEnableCheats.Click += new System.EventHandler(this.btnEnableCheats_Click);
+            // 
             // btnEnableConsole
             // 
-            this.btnEnableConsole.Location = new System.Drawing.Point(111, 122);
+            this.btnEnableConsole.Location = new System.Drawing.Point(20, 136);
             this.btnEnableConsole.Name = "btnEnableConsole";
             this.btnEnableConsole.Size = new System.Drawing.Size(157, 23);
             this.btnEnableConsole.TabIndex = 11;
@@ -254,7 +357,7 @@
             // 
             this.lblWorldName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblWorldName.AutoSize = true;
-            this.lblWorldName.Location = new System.Drawing.Point(10, 656);
+            this.lblWorldName.Location = new System.Drawing.Point(6, 795);
             this.lblWorldName.Name = "lblWorldName";
             this.lblWorldName.Size = new System.Drawing.Size(58, 13);
             this.lblWorldName.TabIndex = 5;
@@ -296,6 +399,86 @@
             this.txtTimeDilation.Size = new System.Drawing.Size(100, 20);
             this.txtTimeDilation.TabIndex = 0;
             // 
+            // tabCommunity
+            // 
+            this.tabCommunity.Controls.Add(this.tabCommunityTabs);
+            this.tabCommunity.Location = new System.Drawing.Point(4, 22);
+            this.tabCommunity.Name = "tabCommunity";
+            this.tabCommunity.Size = new System.Drawing.Size(1122, 856);
+            this.tabCommunity.TabIndex = 6;
+            this.tabCommunity.Text = "Community";
+            this.tabCommunity.UseVisualStyleBackColor = true;
+            // 
+            // tabCommunityTabs
+            // 
+            this.tabCommunityTabs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabCommunityTabs.Controls.Add(this.tabCommunityResources);
+            this.tabCommunityTabs.Location = new System.Drawing.Point(4, 4);
+            this.tabCommunityTabs.Name = "tabCommunityTabs";
+            this.tabCommunityTabs.SelectedIndex = 0;
+            this.tabCommunityTabs.Size = new System.Drawing.Size(1116, 850);
+            this.tabCommunityTabs.TabIndex = 4;
+            // 
+            // tabCommunityResources
+            // 
+            this.tabCommunityResources.Controls.Add(this.lblCommunityResourceName);
+            this.tabCommunityResources.Controls.Add(this.dgvCommunityResources);
+            this.tabCommunityResources.Controls.Add(this.txtCommunityNewVal);
+            this.tabCommunityResources.Controls.Add(this.btnCommunityResourceSetValue);
+            this.tabCommunityResources.Location = new System.Drawing.Point(4, 22);
+            this.tabCommunityResources.Name = "tabCommunityResources";
+            this.tabCommunityResources.Padding = new System.Windows.Forms.Padding(3);
+            this.tabCommunityResources.Size = new System.Drawing.Size(1108, 824);
+            this.tabCommunityResources.TabIndex = 0;
+            this.tabCommunityResources.Text = "Resources";
+            this.tabCommunityResources.UseVisualStyleBackColor = true;
+            // 
+            // lblCommunityResourceName
+            // 
+            this.lblCommunityResourceName.AutoSize = true;
+            this.lblCommunityResourceName.Location = new System.Drawing.Point(168, 8);
+            this.lblCommunityResourceName.Name = "lblCommunityResourceName";
+            this.lblCommunityResourceName.Size = new System.Drawing.Size(53, 13);
+            this.lblCommunityResourceName.TabIndex = 3;
+            this.lblCommunityResourceName.Text = "Resource";
+            // 
+            // dgvCommunityResources
+            // 
+            this.dgvCommunityResources.AllowUserToAddRows = false;
+            this.dgvCommunityResources.AllowUserToDeleteRows = false;
+            this.dgvCommunityResources.AllowUserToResizeColumns = false;
+            this.dgvCommunityResources.AllowUserToResizeRows = false;
+            this.dgvCommunityResources.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvCommunityResources.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvCommunityResources.Location = new System.Drawing.Point(6, 31);
+            this.dgvCommunityResources.Name = "dgvCommunityResources";
+            this.dgvCommunityResources.ReadOnly = true;
+            this.dgvCommunityResources.RowHeadersVisible = false;
+            this.dgvCommunityResources.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.dgvCommunityResources.Size = new System.Drawing.Size(1096, 787);
+            this.dgvCommunityResources.TabIndex = 0;
+            // 
+            // txtCommunityNewVal
+            // 
+            this.txtCommunityNewVal.Location = new System.Drawing.Point(87, 5);
+            this.txtCommunityNewVal.Name = "txtCommunityNewVal";
+            this.txtCommunityNewVal.Size = new System.Drawing.Size(75, 20);
+            this.txtCommunityNewVal.TabIndex = 1;
+            // 
+            // btnCommunityResourceSetValue
+            // 
+            this.btnCommunityResourceSetValue.Location = new System.Drawing.Point(6, 3);
+            this.btnCommunityResourceSetValue.Name = "btnCommunityResourceSetValue";
+            this.btnCommunityResourceSetValue.Size = new System.Drawing.Size(75, 23);
+            this.btnCommunityResourceSetValue.TabIndex = 2;
+            this.btnCommunityResourceSetValue.Text = "Set";
+            this.btnCommunityResourceSetValue.UseVisualStyleBackColor = true;
+            this.btnCommunityResourceSetValue.Click += new System.EventHandler(this.btnCommunityResourceSetValue_Click);
+            // 
             // tabEnclaves
             // 
             this.tabEnclaves.Controls.Add(this.tabControlEnclaves);
@@ -305,7 +488,7 @@
             this.tabEnclaves.Location = new System.Drawing.Point(4, 22);
             this.tabEnclaves.Name = "tabEnclaves";
             this.tabEnclaves.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclaves.Size = new System.Drawing.Size(1473, 701);
+            this.tabEnclaves.Size = new System.Drawing.Size(1122, 856);
             this.tabEnclaves.TabIndex = 1;
             this.tabEnclaves.Text = "Enclaves";
             this.tabEnclaves.UseVisualStyleBackColor = true;
@@ -320,20 +503,31 @@
             this.tabControlEnclaves.Location = new System.Drawing.Point(144, 13);
             this.tabControlEnclaves.Name = "tabControlEnclaves";
             this.tabControlEnclaves.SelectedIndex = 0;
-            this.tabControlEnclaves.Size = new System.Drawing.Size(1196, 688);
+            this.tabControlEnclaves.Size = new System.Drawing.Size(972, 837);
             this.tabControlEnclaves.TabIndex = 11;
             // 
             // tabEnclaveDetails
             // 
+            this.tabEnclaveDetails.Controls.Add(this.btnWarpToEnclave);
             this.tabEnclaveDetails.Controls.Add(this.lblEnclaveDetails);
             this.tabEnclaveDetails.Controls.Add(this.txtEnclaveAddress);
             this.tabEnclaveDetails.Location = new System.Drawing.Point(4, 22);
             this.tabEnclaveDetails.Name = "tabEnclaveDetails";
             this.tabEnclaveDetails.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclaveDetails.Size = new System.Drawing.Size(1188, 662);
+            this.tabEnclaveDetails.Size = new System.Drawing.Size(964, 811);
             this.tabEnclaveDetails.TabIndex = 0;
             this.tabEnclaveDetails.Text = "Details";
             this.tabEnclaveDetails.UseVisualStyleBackColor = true;
+            // 
+            // btnWarpToEnclave
+            // 
+            this.btnWarpToEnclave.Location = new System.Drawing.Point(119, 4);
+            this.btnWarpToEnclave.Name = "btnWarpToEnclave";
+            this.btnWarpToEnclave.Size = new System.Drawing.Size(75, 23);
+            this.btnWarpToEnclave.TabIndex = 13;
+            this.btnWarpToEnclave.Text = "Warp To";
+            this.btnWarpToEnclave.UseVisualStyleBackColor = true;
+            this.btnWarpToEnclave.Click += new System.EventHandler(this.btnWarpToEnclave_Click);
             // 
             // lblEnclaveDetails
             // 
@@ -356,6 +550,7 @@
             // 
             // tabEnclaveCharacters
             // 
+            this.tabEnclaveCharacters.Controls.Add(this.btnEnclaveWarpToCharacter);
             this.tabEnclaveCharacters.Controls.Add(this.lblCharactersLabel);
             this.tabEnclaveCharacters.Controls.Add(this.tabControlEnclavesCharacters);
             this.tabEnclaveCharacters.Controls.Add(this.txtCharacterAddress);
@@ -364,16 +559,26 @@
             this.tabEnclaveCharacters.Location = new System.Drawing.Point(4, 22);
             this.tabEnclaveCharacters.Name = "tabEnclaveCharacters";
             this.tabEnclaveCharacters.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclaveCharacters.Size = new System.Drawing.Size(1188, 662);
+            this.tabEnclaveCharacters.Size = new System.Drawing.Size(964, 811);
             this.tabEnclaveCharacters.TabIndex = 1;
             this.tabEnclaveCharacters.Text = "Characters";
             this.tabEnclaveCharacters.UseVisualStyleBackColor = true;
+            // 
+            // btnEnclaveWarpToCharacter
+            // 
+            this.btnEnclaveWarpToCharacter.Location = new System.Drawing.Point(260, 7);
+            this.btnEnclaveWarpToCharacter.Name = "btnEnclaveWarpToCharacter";
+            this.btnEnclaveWarpToCharacter.Size = new System.Drawing.Size(75, 23);
+            this.btnEnclaveWarpToCharacter.TabIndex = 18;
+            this.btnEnclaveWarpToCharacter.Text = "Warp To";
+            this.btnEnclaveWarpToCharacter.UseVisualStyleBackColor = true;
+            this.btnEnclaveWarpToCharacter.Click += new System.EventHandler(this.btnEnclaveWarpToCharacter_Click);
             // 
             // lblCharactersLabel
             // 
             this.lblCharactersLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblCharactersLabel.AutoSize = true;
-            this.lblCharactersLabel.Location = new System.Drawing.Point(12, 642);
+            this.lblCharactersLabel.Location = new System.Drawing.Point(12, 791);
             this.lblCharactersLabel.Name = "lblCharactersLabel";
             this.lblCharactersLabel.Size = new System.Drawing.Size(83, 13);
             this.lblCharactersLabel.TabIndex = 17;
@@ -392,7 +597,7 @@
             this.tabControlEnclavesCharacters.Location = new System.Drawing.Point(147, 35);
             this.tabControlEnclavesCharacters.Name = "tabControlEnclavesCharacters";
             this.tabControlEnclavesCharacters.SelectedIndex = 0;
-            this.tabControlEnclavesCharacters.Size = new System.Drawing.Size(1035, 621);
+            this.tabControlEnclavesCharacters.Size = new System.Drawing.Size(811, 770);
             this.tabControlEnclavesCharacters.TabIndex = 16;
             // 
             // tabEnclavesCharactersDetails
@@ -402,7 +607,7 @@
             this.tabEnclavesCharactersDetails.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersDetails.Name = "tabEnclavesCharactersDetails";
             this.tabEnclavesCharactersDetails.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclavesCharactersDetails.Size = new System.Drawing.Size(1027, 595);
+            this.tabEnclavesCharactersDetails.Size = new System.Drawing.Size(803, 744);
             this.tabEnclavesCharactersDetails.TabIndex = 0;
             this.tabEnclavesCharactersDetails.Text = "Details";
             this.tabEnclavesCharactersDetails.UseVisualStyleBackColor = true;
@@ -411,7 +616,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 579);
+            this.label3.Location = new System.Drawing.Point(6, 728);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(394, 13);
             this.label3.TabIndex = 16;
@@ -431,9 +636,9 @@
             this.tlpEnclavesCharactersDetails.Location = new System.Drawing.Point(6, 6);
             this.tlpEnclavesCharactersDetails.Name = "tlpEnclavesCharactersDetails";
             this.tlpEnclavesCharactersDetails.RowCount = 1;
-            this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 631F));
-            this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 631F));
-            this.tlpEnclavesCharactersDetails.Size = new System.Drawing.Size(1015, 570);
+            this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 719F));
+            this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 719F));
+            this.tlpEnclavesCharactersDetails.Size = new System.Drawing.Size(791, 719);
             this.tlpEnclavesCharactersDetails.TabIndex = 15;
             // 
             // tabEnclavesCharactersSkills
@@ -442,7 +647,7 @@
             this.tabEnclavesCharactersSkills.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersSkills.Name = "tabEnclavesCharactersSkills";
             this.tabEnclavesCharactersSkills.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclavesCharactersSkills.Size = new System.Drawing.Size(1027, 595);
+            this.tabEnclavesCharactersSkills.Size = new System.Drawing.Size(803, 744);
             this.tabEnclavesCharactersSkills.TabIndex = 1;
             this.tabEnclavesCharactersSkills.Text = "Skills";
             this.tabEnclavesCharactersSkills.UseVisualStyleBackColor = true;
@@ -462,8 +667,8 @@
             this.tlpEnclavesCharactersSkills.Location = new System.Drawing.Point(6, 6);
             this.tlpEnclavesCharactersSkills.Name = "tlpEnclavesCharactersSkills";
             this.tlpEnclavesCharactersSkills.RowCount = 1;
-            this.tlpEnclavesCharactersSkills.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 599F));
-            this.tlpEnclavesCharactersSkills.Size = new System.Drawing.Size(1021, 599);
+            this.tlpEnclavesCharactersSkills.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 748F));
+            this.tlpEnclavesCharactersSkills.Size = new System.Drawing.Size(797, 748);
             this.tlpEnclavesCharactersSkills.TabIndex = 16;
             // 
             // tabEnclavesCharactersTraits
@@ -471,7 +676,7 @@
             this.tabEnclavesCharactersTraits.Controls.Add(this.lblCharacterTraits);
             this.tabEnclavesCharactersTraits.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersTraits.Name = "tabEnclavesCharactersTraits";
-            this.tabEnclavesCharactersTraits.Size = new System.Drawing.Size(1027, 595);
+            this.tabEnclavesCharactersTraits.Size = new System.Drawing.Size(803, 744);
             this.tabEnclavesCharactersTraits.TabIndex = 4;
             this.tabEnclavesCharactersTraits.Text = "Traits";
             this.tabEnclavesCharactersTraits.UseVisualStyleBackColor = true;
@@ -491,7 +696,7 @@
             this.tabEnclavesCharactersEquipment.Controls.Add(this.tabControlEnclavesCharactersEquipment);
             this.tabEnclavesCharactersEquipment.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersEquipment.Name = "tabEnclavesCharactersEquipment";
-            this.tabEnclavesCharactersEquipment.Size = new System.Drawing.Size(1027, 595);
+            this.tabEnclavesCharactersEquipment.Size = new System.Drawing.Size(803, 744);
             this.tabEnclavesCharactersEquipment.TabIndex = 2;
             this.tabEnclavesCharactersEquipment.Text = "Equipment";
             this.tabEnclavesCharactersEquipment.UseVisualStyleBackColor = true;
@@ -500,7 +705,7 @@
             // 
             this.lblEquipment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblEquipment.AutoSize = true;
-            this.lblEquipment.Location = new System.Drawing.Point(6, 575);
+            this.lblEquipment.Location = new System.Drawing.Point(6, 724);
             this.lblEquipment.Name = "lblEquipment";
             this.lblEquipment.Size = new System.Drawing.Size(82, 13);
             this.lblEquipment.TabIndex = 18;
@@ -517,7 +722,7 @@
             this.tabControlEnclavesCharactersEquipment.Location = new System.Drawing.Point(3, 3);
             this.tabControlEnclavesCharactersEquipment.Name = "tabControlEnclavesCharactersEquipment";
             this.tabControlEnclavesCharactersEquipment.SelectedIndex = 0;
-            this.tabControlEnclavesCharactersEquipment.Size = new System.Drawing.Size(1021, 569);
+            this.tabControlEnclavesCharactersEquipment.Size = new System.Drawing.Size(797, 718);
             this.tabControlEnclavesCharactersEquipment.TabIndex = 0;
             // 
             // tabControlEnclavesCharactersEquipmentMelee
@@ -527,7 +732,7 @@
             this.tabControlEnclavesCharactersEquipmentMelee.Location = new System.Drawing.Point(4, 22);
             this.tabControlEnclavesCharactersEquipmentMelee.Name = "tabControlEnclavesCharactersEquipmentMelee";
             this.tabControlEnclavesCharactersEquipmentMelee.Padding = new System.Windows.Forms.Padding(3);
-            this.tabControlEnclavesCharactersEquipmentMelee.Size = new System.Drawing.Size(1013, 543);
+            this.tabControlEnclavesCharactersEquipmentMelee.Size = new System.Drawing.Size(789, 692);
             this.tabControlEnclavesCharactersEquipmentMelee.TabIndex = 0;
             this.tabControlEnclavesCharactersEquipmentMelee.Text = "Melee";
             this.tabControlEnclavesCharactersEquipmentMelee.UseVisualStyleBackColor = true;
@@ -536,7 +741,7 @@
             // 
             this.lblMelee.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblMelee.AutoSize = true;
-            this.lblMelee.Location = new System.Drawing.Point(6, 524);
+            this.lblMelee.Location = new System.Drawing.Point(6, 673);
             this.lblMelee.Name = "lblMelee";
             this.lblMelee.Size = new System.Drawing.Size(61, 13);
             this.lblMelee.TabIndex = 19;
@@ -555,7 +760,7 @@
             this.tlpMeleeWeaponStats.RowCount = 2;
             this.tlpMeleeWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpMeleeWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpMeleeWeaponStats.Size = new System.Drawing.Size(1001, 513);
+            this.tlpMeleeWeaponStats.Size = new System.Drawing.Size(780, 666);
             this.tlpMeleeWeaponStats.TabIndex = 0;
             // 
             // tabControlEnclavesCharactersEquipmentSideArm
@@ -564,7 +769,7 @@
             this.tabControlEnclavesCharactersEquipmentSideArm.Controls.Add(this.tlpSideArmWeaponStats);
             this.tabControlEnclavesCharactersEquipmentSideArm.Location = new System.Drawing.Point(4, 22);
             this.tabControlEnclavesCharactersEquipmentSideArm.Name = "tabControlEnclavesCharactersEquipmentSideArm";
-            this.tabControlEnclavesCharactersEquipmentSideArm.Size = new System.Drawing.Size(1013, 543);
+            this.tabControlEnclavesCharactersEquipmentSideArm.Size = new System.Drawing.Size(789, 692);
             this.tabControlEnclavesCharactersEquipmentSideArm.TabIndex = 2;
             this.tabControlEnclavesCharactersEquipmentSideArm.Text = "SideArm";
             this.tabControlEnclavesCharactersEquipmentSideArm.UseVisualStyleBackColor = true;
@@ -573,7 +778,7 @@
             // 
             this.lblSidearm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblSidearm.AutoSize = true;
-            this.lblSidearm.Location = new System.Drawing.Point(6, 524);
+            this.lblSidearm.Location = new System.Drawing.Point(6, 673);
             this.lblSidearm.Name = "lblSidearm";
             this.lblSidearm.Size = new System.Drawing.Size(69, 13);
             this.lblSidearm.TabIndex = 19;
@@ -592,7 +797,7 @@
             this.tlpSideArmWeaponStats.RowCount = 2;
             this.tlpSideArmWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpSideArmWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpSideArmWeaponStats.Size = new System.Drawing.Size(1001, 513);
+            this.tlpSideArmWeaponStats.Size = new System.Drawing.Size(780, 666);
             this.tlpSideArmWeaponStats.TabIndex = 2;
             // 
             // tabControlEnclavesCharactersEquipmentRanged
@@ -602,7 +807,7 @@
             this.tabControlEnclavesCharactersEquipmentRanged.Location = new System.Drawing.Point(4, 22);
             this.tabControlEnclavesCharactersEquipmentRanged.Name = "tabControlEnclavesCharactersEquipmentRanged";
             this.tabControlEnclavesCharactersEquipmentRanged.Padding = new System.Windows.Forms.Padding(3);
-            this.tabControlEnclavesCharactersEquipmentRanged.Size = new System.Drawing.Size(1013, 543);
+            this.tabControlEnclavesCharactersEquipmentRanged.Size = new System.Drawing.Size(789, 692);
             this.tabControlEnclavesCharactersEquipmentRanged.TabIndex = 1;
             this.tabControlEnclavesCharactersEquipmentRanged.Text = "Ranged";
             this.tabControlEnclavesCharactersEquipmentRanged.UseVisualStyleBackColor = true;
@@ -611,7 +816,7 @@
             // 
             this.lblRanged.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblRanged.AutoSize = true;
-            this.lblRanged.Location = new System.Drawing.Point(6, 524);
+            this.lblRanged.Location = new System.Drawing.Point(6, 673);
             this.lblRanged.Name = "lblRanged";
             this.lblRanged.Size = new System.Drawing.Size(66, 13);
             this.lblRanged.TabIndex = 19;
@@ -630,7 +835,7 @@
             this.tlpRangedWeaponStats.RowCount = 2;
             this.tlpRangedWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpRangedWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpRangedWeaponStats.Size = new System.Drawing.Size(1001, 513);
+            this.tlpRangedWeaponStats.Size = new System.Drawing.Size(780, 666);
             this.tlpRangedWeaponStats.TabIndex = 1;
             // 
             // tabEnclavesCharactersInventory
@@ -640,7 +845,7 @@
             this.tabEnclavesCharactersInventory.Controls.Add(this.tlpEnclaveCharactersInventory);
             this.tabEnclavesCharactersInventory.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersInventory.Name = "tabEnclavesCharactersInventory";
-            this.tabEnclavesCharactersInventory.Size = new System.Drawing.Size(1027, 595);
+            this.tabEnclavesCharactersInventory.Size = new System.Drawing.Size(803, 744);
             this.tabEnclavesCharactersInventory.TabIndex = 3;
             this.tabEnclavesCharactersInventory.Text = "Inventory";
             this.tabEnclavesCharactersInventory.UseVisualStyleBackColor = true;
@@ -649,7 +854,7 @@
             // 
             this.lblInventory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblInventory.AutoSize = true;
-            this.lblInventory.Location = new System.Drawing.Point(6, 575);
+            this.lblInventory.Location = new System.Drawing.Point(6, 724);
             this.lblInventory.Name = "lblInventory";
             this.lblInventory.Size = new System.Drawing.Size(76, 13);
             this.lblInventory.TabIndex = 18;
@@ -677,7 +882,7 @@
             this.tlpEnclaveCharactersInventory.RowCount = 1;
             this.tlpEnclaveCharactersInventory.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpEnclaveCharactersInventory.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpEnclaveCharactersInventory.Size = new System.Drawing.Size(1021, 545);
+            this.tlpEnclaveCharactersInventory.Size = new System.Drawing.Size(797, 694);
             this.tlpEnclaveCharactersInventory.TabIndex = 11;
             // 
             // txtCharacterAddress
@@ -697,7 +902,7 @@
             this.flowEnclaveCharacters.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowEnclaveCharacters.Location = new System.Drawing.Point(9, 28);
             this.flowEnclaveCharacters.Name = "flowEnclaveCharacters";
-            this.flowEnclaveCharacters.Size = new System.Drawing.Size(132, 611);
+            this.flowEnclaveCharacters.Size = new System.Drawing.Size(132, 760);
             this.flowEnclaveCharacters.TabIndex = 9;
             // 
             // lblEnclavesNumCharacters
@@ -741,14 +946,25 @@
             // 
             // tabSpawner
             // 
+            this.tabSpawner.Controls.Add(this.chkSpawnerActive);
             this.tabSpawner.Controls.Add(this.lblSpawnerDetails);
             this.tabSpawner.Controls.Add(this.lblSpawnerLabel);
             this.tabSpawner.Location = new System.Drawing.Point(4, 22);
             this.tabSpawner.Name = "tabSpawner";
-            this.tabSpawner.Size = new System.Drawing.Size(1473, 701);
+            this.tabSpawner.Size = new System.Drawing.Size(1122, 856);
             this.tabSpawner.TabIndex = 2;
             this.tabSpawner.Text = "Spawner";
             this.tabSpawner.UseVisualStyleBackColor = true;
+            // 
+            // chkSpawnerActive
+            // 
+            this.chkSpawnerActive.AutoSize = true;
+            this.chkSpawnerActive.Location = new System.Drawing.Point(131, 39);
+            this.chkSpawnerActive.Name = "chkSpawnerActive";
+            this.chkSpawnerActive.Size = new System.Drawing.Size(101, 17);
+            this.chkSpawnerActive.TabIndex = 17;
+            this.chkSpawnerActive.Text = "Spawner Active";
+            this.chkSpawnerActive.UseVisualStyleBackColor = true;
             // 
             // lblSpawnerDetails
             // 
@@ -764,18 +980,144 @@
             // 
             this.lblSpawnerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblSpawnerLabel.AutoSize = true;
-            this.lblSpawnerLabel.Location = new System.Drawing.Point(10, 656);
+            this.lblSpawnerLabel.Location = new System.Drawing.Point(6, 795);
             this.lblSpawnerLabel.Name = "lblSpawnerLabel";
             this.lblSpawnerLabel.Size = new System.Drawing.Size(73, 13);
             this.lblSpawnerLabel.TabIndex = 6;
             this.lblSpawnerLabel.Text = "spawnerLabel";
+            // 
+            // tabInspector
+            // 
+            this.tabInspector.Controls.Add(this.btnInspectClosestEnemy);
+            this.tabInspector.Controls.Add(this.btnInspectController);
+            this.tabInspector.Controls.Add(this.btnInspectEngine);
+            this.tabInspector.Controls.Add(this.label4);
+            this.tabInspector.Controls.Add(this.btnInspectDHC);
+            this.tabInspector.Controls.Add(this.lblInspector);
+            this.tabInspector.Controls.Add(this.btnInspectWorld);
+            this.tabInspector.Controls.Add(this.btnInspectorBack);
+            this.tabInspector.Controls.Add(this.tlpInspector);
+            this.tabInspector.Controls.Add(this.txtInspectorAddress);
+            this.tabInspector.Location = new System.Drawing.Point(4, 22);
+            this.tabInspector.Name = "tabInspector";
+            this.tabInspector.Size = new System.Drawing.Size(1122, 856);
+            this.tabInspector.TabIndex = 5;
+            this.tabInspector.Text = "Inspector";
+            this.tabInspector.UseVisualStyleBackColor = true;
+            // 
+            // btnInspectClosestEnemy
+            // 
+            this.btnInspectClosestEnemy.Location = new System.Drawing.Point(11, 151);
+            this.btnInspectClosestEnemy.Name = "btnInspectClosestEnemy";
+            this.btnInspectClosestEnemy.Size = new System.Drawing.Size(75, 23);
+            this.btnInspectClosestEnemy.TabIndex = 21;
+            this.btnInspectClosestEnemy.Text = "Close NME";
+            this.btnInspectClosestEnemy.UseVisualStyleBackColor = true;
+            this.btnInspectClosestEnemy.Click += new System.EventHandler(this.btnInspectClosestEnemy_Click);
+            // 
+            // btnInspectController
+            // 
+            this.btnInspectController.Location = new System.Drawing.Point(11, 122);
+            this.btnInspectController.Name = "btnInspectController";
+            this.btnInspectController.Size = new System.Drawing.Size(75, 23);
+            this.btnInspectController.TabIndex = 20;
+            this.btnInspectController.Text = "Controller";
+            this.btnInspectController.UseVisualStyleBackColor = true;
+            this.btnInspectController.Click += new System.EventHandler(this.btnInspectController_Click);
+            // 
+            // btnInspectEngine
+            // 
+            this.btnInspectEngine.Location = new System.Drawing.Point(11, 35);
+            this.btnInspectEngine.Name = "btnInspectEngine";
+            this.btnInspectEngine.Size = new System.Drawing.Size(75, 23);
+            this.btnInspectEngine.TabIndex = 19;
+            this.btnInspectEngine.Text = "Engine";
+            this.btnInspectEngine.UseVisualStyleBackColor = true;
+            this.btnInspectEngine.Click += new System.EventHandler(this.btnInspectEngine_Click);
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(121, 840);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(457, 13);
+            this.label4.TabIndex = 18;
+            this.label4.Text = "NOTE:  Inspector is inefficient as hell, and will freeze the progam while it refr" +
+    "eshes large objects.";
+            // 
+            // btnInspectDHC
+            // 
+            this.btnInspectDHC.Location = new System.Drawing.Point(11, 93);
+            this.btnInspectDHC.Name = "btnInspectDHC";
+            this.btnInspectDHC.Size = new System.Drawing.Size(75, 23);
+            this.btnInspectDHC.TabIndex = 17;
+            this.btnInspectDHC.Text = "Human";
+            this.btnInspectDHC.UseVisualStyleBackColor = true;
+            this.btnInspectDHC.Click += new System.EventHandler(this.btnInspectDHC_Click);
+            // 
+            // lblInspector
+            // 
+            this.lblInspector.AutoSize = true;
+            this.lblInspector.Location = new System.Drawing.Point(286, 11);
+            this.lblInspector.Name = "lblInspector";
+            this.lblInspector.Size = new System.Drawing.Size(73, 13);
+            this.lblInspector.TabIndex = 16;
+            this.lblInspector.Text = "labelInspector";
+            // 
+            // btnInspectWorld
+            // 
+            this.btnInspectWorld.Location = new System.Drawing.Point(11, 64);
+            this.btnInspectWorld.Name = "btnInspectWorld";
+            this.btnInspectWorld.Size = new System.Drawing.Size(75, 23);
+            this.btnInspectWorld.TabIndex = 15;
+            this.btnInspectWorld.Text = "World";
+            this.btnInspectWorld.UseVisualStyleBackColor = true;
+            this.btnInspectWorld.Click += new System.EventHandler(this.btnInspectWorld_Click);
+            // 
+            // btnInspectorBack
+            // 
+            this.btnInspectorBack.Enabled = false;
+            this.btnInspectorBack.Location = new System.Drawing.Point(124, 6);
+            this.btnInspectorBack.Name = "btnInspectorBack";
+            this.btnInspectorBack.Size = new System.Drawing.Size(75, 23);
+            this.btnInspectorBack.TabIndex = 14;
+            this.btnInspectorBack.Text = "Back";
+            this.btnInspectorBack.UseVisualStyleBackColor = true;
+            this.btnInspectorBack.Click += new System.EventHandler(this.btnInspectorBack_Click);
+            // 
+            // tlpInspector
+            // 
+            this.tlpInspector.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tlpInspector.AutoScroll = true;
+            this.tlpInspector.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tlpInspector.ColumnCount = 2;
+            this.tlpInspector.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpInspector.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpInspector.Location = new System.Drawing.Point(116, 35);
+            this.tlpInspector.Name = "tlpInspector";
+            this.tlpInspector.RowCount = 2;
+            this.tlpInspector.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpInspector.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tlpInspector.Size = new System.Drawing.Size(1003, 802);
+            this.tlpInspector.TabIndex = 13;
+            // 
+            // txtInspectorAddress
+            // 
+            this.txtInspectorAddress.Location = new System.Drawing.Point(11, 8);
+            this.txtInspectorAddress.Name = "txtInspectorAddress";
+            this.txtInspectorAddress.Size = new System.Drawing.Size(107, 20);
+            this.txtInspectorAddress.TabIndex = 12;
+            this.txtInspectorAddress.Text = "0";
             // 
             // tabGameLog
             // 
             this.tabGameLog.Controls.Add(this.tabGameLogTabs);
             this.tabGameLog.Location = new System.Drawing.Point(4, 22);
             this.tabGameLog.Name = "tabGameLog";
-            this.tabGameLog.Size = new System.Drawing.Size(1473, 701);
+            this.tabGameLog.Size = new System.Drawing.Size(1122, 856);
             this.tabGameLog.TabIndex = 3;
             this.tabGameLog.Text = "GameLog";
             this.tabGameLog.UseVisualStyleBackColor = true;
@@ -790,7 +1132,7 @@
             this.tabGameLogTabs.Location = new System.Drawing.Point(3, 3);
             this.tabGameLogTabs.Name = "tabGameLogTabs";
             this.tabGameLogTabs.SelectedIndex = 0;
-            this.tabGameLogTabs.Size = new System.Drawing.Size(1340, 701);
+            this.tabGameLogTabs.Size = new System.Drawing.Size(1116, 850);
             this.tabGameLogTabs.TabIndex = 0;
             // 
             // tabGameLogLogLevels
@@ -803,7 +1145,7 @@
             this.tabGameLogLogLevels.Location = new System.Drawing.Point(4, 22);
             this.tabGameLogLogLevels.Name = "tabGameLogLogLevels";
             this.tabGameLogLogLevels.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGameLogLogLevels.Size = new System.Drawing.Size(1332, 675);
+            this.tabGameLogLogLevels.Size = new System.Drawing.Size(1108, 824);
             this.tabGameLogLogLevels.TabIndex = 0;
             this.tabGameLogLogLevels.Text = "LogLevels";
             this.tabGameLogLogLevels.UseVisualStyleBackColor = true;
@@ -821,7 +1163,7 @@
             this.tlpGameLogLogLevels.RowCount = 2;
             this.tlpGameLogLogLevels.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpGameLogLogLevels.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpGameLogLogLevels.Size = new System.Drawing.Size(844, 65535);
+            this.tlpGameLogLogLevels.Size = new System.Drawing.Size(688, 65535);
             this.tlpGameLogLogLevels.TabIndex = 0;
             // 
             // btnGameLogLogLevelsMin
@@ -851,7 +1193,7 @@
             this.tabGameLogLog.Location = new System.Drawing.Point(4, 22);
             this.tabGameLogLog.Name = "tabGameLogLog";
             this.tabGameLogLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGameLogLog.Size = new System.Drawing.Size(1332, 675);
+            this.tabGameLogLog.Size = new System.Drawing.Size(1108, 824);
             this.tabGameLogLog.TabIndex = 1;
             this.tabGameLogLog.Text = "Log";
             this.tabGameLogLog.UseVisualStyleBackColor = true;
@@ -859,7 +1201,7 @@
             // btnGameLogClear
             // 
             this.btnGameLogClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGameLogClear.Location = new System.Drawing.Point(1251, 646);
+            this.btnGameLogClear.Location = new System.Drawing.Point(1027, 795);
             this.btnGameLogClear.Name = "btnGameLogClear";
             this.btnGameLogClear.Size = new System.Drawing.Size(75, 23);
             this.btnGameLogClear.TabIndex = 1;
@@ -874,169 +1216,24 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.rtbGameLog.Location = new System.Drawing.Point(3, 6);
             this.rtbGameLog.Name = "rtbGameLog";
-            this.rtbGameLog.Size = new System.Drawing.Size(1323, 634);
+            this.rtbGameLog.Size = new System.Drawing.Size(1099, 783);
             this.rtbGameLog.TabIndex = 0;
             this.rtbGameLog.Text = "";
-            // 
-            // tabAnalytics
-            // 
-            this.tabAnalytics.Controls.Add(this.tabControlAnalytics);
-            this.tabAnalytics.Location = new System.Drawing.Point(4, 22);
-            this.tabAnalytics.Name = "tabAnalytics";
-            this.tabAnalytics.Size = new System.Drawing.Size(1473, 701);
-            this.tabAnalytics.TabIndex = 4;
-            this.tabAnalytics.Text = "Analytics";
-            this.tabAnalytics.UseVisualStyleBackColor = true;
-            // 
-            // tabControlAnalytics
-            // 
-            this.tabControlAnalytics.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControlAnalytics.Controls.Add(this.tabControlAnalyticsZombieDamaged);
-            this.tabControlAnalytics.Location = new System.Drawing.Point(3, 3);
-            this.tabControlAnalytics.Name = "tabControlAnalytics";
-            this.tabControlAnalytics.SelectedIndex = 0;
-            this.tabControlAnalytics.Size = new System.Drawing.Size(1339, 701);
-            this.tabControlAnalytics.TabIndex = 0;
-            // 
-            // tabControlAnalyticsZombieDamaged
-            // 
-            this.tabControlAnalyticsZombieDamaged.Controls.Add(this.btnUnhookZombieDamagedAnalytics);
-            this.tabControlAnalyticsZombieDamaged.Controls.Add(this.lblAnalyticsZombieDamagedDetail);
-            this.tabControlAnalyticsZombieDamaged.Controls.Add(this.btnHookZombieDamagedAnalytics);
-            this.tabControlAnalyticsZombieDamaged.Location = new System.Drawing.Point(4, 22);
-            this.tabControlAnalyticsZombieDamaged.Name = "tabControlAnalyticsZombieDamaged";
-            this.tabControlAnalyticsZombieDamaged.Padding = new System.Windows.Forms.Padding(3);
-            this.tabControlAnalyticsZombieDamaged.Size = new System.Drawing.Size(1331, 675);
-            this.tabControlAnalyticsZombieDamaged.TabIndex = 0;
-            this.tabControlAnalyticsZombieDamaged.Text = "ZombieDamaged";
-            this.tabControlAnalyticsZombieDamaged.UseVisualStyleBackColor = true;
-            // 
-            // btnUnhookZombieDamagedAnalytics
-            // 
-            this.btnUnhookZombieDamagedAnalytics.Location = new System.Drawing.Point(154, 6);
-            this.btnUnhookZombieDamagedAnalytics.Name = "btnUnhookZombieDamagedAnalytics";
-            this.btnUnhookZombieDamagedAnalytics.Size = new System.Drawing.Size(142, 23);
-            this.btnUnhookZombieDamagedAnalytics.TabIndex = 7;
-            this.btnUnhookZombieDamagedAnalytics.Text = "Unhook ZombieDamaged";
-            this.btnUnhookZombieDamagedAnalytics.UseVisualStyleBackColor = true;
-            this.btnUnhookZombieDamagedAnalytics.Click += new System.EventHandler(this.btnUnhookZombieDamagedAnalytics_Click);
-            // 
-            // lblAnalyticsZombieDamagedDetail
-            // 
-            this.lblAnalyticsZombieDamagedDetail.AutoSize = true;
-            this.lblAnalyticsZombieDamagedDetail.Font = new System.Drawing.Font("Consolas", 9F);
-            this.lblAnalyticsZombieDamagedDetail.Location = new System.Drawing.Point(6, 32);
-            this.lblAnalyticsZombieDamagedDetail.Name = "lblAnalyticsZombieDamagedDetail";
-            this.lblAnalyticsZombieDamagedDetail.Size = new System.Drawing.Size(63, 14);
-            this.lblAnalyticsZombieDamagedDetail.TabIndex = 6;
-            this.lblAnalyticsZombieDamagedDetail.Text = "Unhooked";
-            // 
-            // btnHookZombieDamagedAnalytics
-            // 
-            this.btnHookZombieDamagedAnalytics.Location = new System.Drawing.Point(6, 6);
-            this.btnHookZombieDamagedAnalytics.Name = "btnHookZombieDamagedAnalytics";
-            this.btnHookZombieDamagedAnalytics.Size = new System.Drawing.Size(142, 23);
-            this.btnHookZombieDamagedAnalytics.TabIndex = 5;
-            this.btnHookZombieDamagedAnalytics.Text = "Hook ZombieDamaged";
-            this.btnHookZombieDamagedAnalytics.UseVisualStyleBackColor = true;
-            this.btnHookZombieDamagedAnalytics.Click += new System.EventHandler(this.btnHookZombieDamagedAnalytics_Click);
-            // 
-            // tabInspector
-            // 
-            this.tabInspector.Controls.Add(this.btnInspectDHC);
-            this.tabInspector.Controls.Add(this.lblInspector);
-            this.tabInspector.Controls.Add(this.btnInspectWorld);
-            this.tabInspector.Controls.Add(this.btnInspectorBack);
-            this.tabInspector.Controls.Add(this.tlpInspector);
-            this.tabInspector.Controls.Add(this.txtInspectorAddress);
-            this.tabInspector.Location = new System.Drawing.Point(4, 22);
-            this.tabInspector.Name = "tabInspector";
-            this.tabInspector.Size = new System.Drawing.Size(1473, 701);
-            this.tabInspector.TabIndex = 5;
-            this.tabInspector.Text = "Inspector";
-            this.tabInspector.UseVisualStyleBackColor = true;
-            // 
-            // btnInspectDHC
-            // 
-            this.btnInspectDHC.Location = new System.Drawing.Point(11, 64);
-            this.btnInspectDHC.Name = "btnInspectDHC";
-            this.btnInspectDHC.Size = new System.Drawing.Size(75, 23);
-            this.btnInspectDHC.TabIndex = 17;
-            this.btnInspectDHC.Text = "Human";
-            this.btnInspectDHC.UseVisualStyleBackColor = true;
-            this.btnInspectDHC.Click += new System.EventHandler(this.btnInspectDHC_Click);
-            // 
-            // lblInspector
-            // 
-            this.lblInspector.AutoSize = true;
-            this.lblInspector.Location = new System.Drawing.Point(286, 11);
-            this.lblInspector.Name = "lblInspector";
-            this.lblInspector.Size = new System.Drawing.Size(73, 13);
-            this.lblInspector.TabIndex = 16;
-            this.lblInspector.Text = "labelInspector";
-            // 
-            // btnInspectWorld
-            // 
-            this.btnInspectWorld.Location = new System.Drawing.Point(11, 35);
-            this.btnInspectWorld.Name = "btnInspectWorld";
-            this.btnInspectWorld.Size = new System.Drawing.Size(75, 23);
-            this.btnInspectWorld.TabIndex = 15;
-            this.btnInspectWorld.Text = "World";
-            this.btnInspectWorld.UseVisualStyleBackColor = true;
-            this.btnInspectWorld.Click += new System.EventHandler(this.btnInspectWorld_Click);
-            // 
-            // btnInspectorBack
-            // 
-            this.btnInspectorBack.Enabled = false;
-            this.btnInspectorBack.Location = new System.Drawing.Point(124, 6);
-            this.btnInspectorBack.Name = "btnInspectorBack";
-            this.btnInspectorBack.Size = new System.Drawing.Size(75, 23);
-            this.btnInspectorBack.TabIndex = 14;
-            this.btnInspectorBack.Text = "Back";
-            this.btnInspectorBack.UseVisualStyleBackColor = true;
-            this.btnInspectorBack.Click += new System.EventHandler(this.btnInspectorBack_Click);
-            // 
-            // tlpInspector
-            // 
-            this.tlpInspector.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tlpInspector.AutoScroll = true;
-            this.tlpInspector.ColumnCount = 2;
-            this.tlpInspector.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpInspector.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpInspector.Location = new System.Drawing.Point(116, 35);
-            this.tlpInspector.Name = "tlpInspector";
-            this.tlpInspector.RowCount = 2;
-            this.tlpInspector.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpInspector.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpInspector.Size = new System.Drawing.Size(1354, 663);
-            this.tlpInspector.TabIndex = 13;
-            // 
-            // txtInspectorAddress
-            // 
-            this.txtInspectorAddress.Location = new System.Drawing.Point(11, 8);
-            this.txtInspectorAddress.Name = "txtInspectorAddress";
-            this.txtInspectorAddress.Size = new System.Drawing.Size(107, 20);
-            this.txtInspectorAddress.TabIndex = 12;
-            this.txtInspectorAddress.Text = "0";
             // 
             // txtOutput
             // 
             this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOutput.Enabled = false;
-            this.txtOutput.Location = new System.Drawing.Point(12, 774);
+            this.txtOutput.Location = new System.Drawing.Point(12, 929);
             this.txtOutput.Name = "txtOutput";
-            this.txtOutput.Size = new System.Drawing.Size(1481, 20);
+            this.txtOutput.Size = new System.Drawing.Size(1130, 20);
             this.txtOutput.TabIndex = 4;
             // 
             // btnDiscord
             // 
             this.btnDiscord.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDiscord.Location = new System.Drawing.Point(1414, 12);
+            this.btnDiscord.Location = new System.Drawing.Point(1063, 12);
             this.btnDiscord.Name = "btnDiscord";
             this.btnDiscord.Size = new System.Drawing.Size(75, 23);
             this.btnDiscord.TabIndex = 5;
@@ -1046,19 +1243,41 @@
             // 
             // btnTest
             // 
-            this.btnTest.Location = new System.Drawing.Point(408, 17);
+            this.btnTest.Location = new System.Drawing.Point(474, 12);
             this.btnTest.Name = "btnTest";
             this.btnTest.Size = new System.Drawing.Size(75, 23);
             this.btnTest.TabIndex = 6;
-            this.btnTest.Text = "Test Button";
+            this.btnTest.Text = "Test";
             this.btnTest.UseVisualStyleBackColor = true;
             this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+            // 
+            // btnTest2
+            // 
+            this.btnTest2.Location = new System.Drawing.Point(555, 12);
+            this.btnTest2.Name = "btnTest2";
+            this.btnTest2.Size = new System.Drawing.Size(75, 23);
+            this.btnTest2.TabIndex = 7;
+            this.btnTest2.Text = "Test 2";
+            this.btnTest2.UseVisualStyleBackColor = true;
+            this.btnTest2.Click += new System.EventHandler(this.btnTest2_Click);
+            // 
+            // btnWarpToWaypoint
+            // 
+            this.btnWarpToWaypoint.Location = new System.Drawing.Point(636, 12);
+            this.btnWarpToWaypoint.Name = "btnWarpToWaypoint";
+            this.btnWarpToWaypoint.Size = new System.Drawing.Size(75, 23);
+            this.btnWarpToWaypoint.TabIndex = 8;
+            this.btnWarpToWaypoint.Text = "Warp to WP";
+            this.btnWarpToWaypoint.UseVisualStyleBackColor = true;
+            this.btnWarpToWaypoint.Click += new System.EventHandler(this.btnWarpToWaypoint_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1505, 806);
+            this.ClientSize = new System.Drawing.Size(1154, 961);
+            this.Controls.Add(this.btnWarpToWaypoint);
+            this.Controls.Add(this.btnTest2);
             this.Controls.Add(this.btnTest);
             this.Controls.Add(this.btnDiscord);
             this.Controls.Add(this.txtOutput);
@@ -1071,6 +1290,11 @@
             this.tabs.ResumeLayout(false);
             this.tabWorld.ResumeLayout(false);
             this.tabWorld.PerformLayout();
+            this.tabCommunity.ResumeLayout(false);
+            this.tabCommunityTabs.ResumeLayout(false);
+            this.tabCommunityResources.ResumeLayout(false);
+            this.tabCommunityResources.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvCommunityResources)).EndInit();
             this.tabEnclaves.ResumeLayout(false);
             this.tabEnclaves.PerformLayout();
             this.tabControlEnclaves.ResumeLayout(false);
@@ -1097,16 +1321,12 @@
             this.tabEnclavesCharactersInventory.PerformLayout();
             this.tabSpawner.ResumeLayout(false);
             this.tabSpawner.PerformLayout();
+            this.tabInspector.ResumeLayout(false);
+            this.tabInspector.PerformLayout();
             this.tabGameLog.ResumeLayout(false);
             this.tabGameLogTabs.ResumeLayout(false);
             this.tabGameLogLogLevels.ResumeLayout(false);
             this.tabGameLogLog.ResumeLayout(false);
-            this.tabAnalytics.ResumeLayout(false);
-            this.tabControlAnalytics.ResumeLayout(false);
-            this.tabControlAnalyticsZombieDamaged.ResumeLayout(false);
-            this.tabControlAnalyticsZombieDamaged.PerformLayout();
-            this.tabInspector.ResumeLayout(false);
-            this.tabInspector.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1164,12 +1384,6 @@
         private System.Windows.Forms.Label lblWorldToD;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtOutput;
-        private System.Windows.Forms.TabPage tabAnalytics;
-        private System.Windows.Forms.TabControl tabControlAnalytics;
-        private System.Windows.Forms.TabPage tabControlAnalyticsZombieDamaged;
-        private System.Windows.Forms.Button btnHookZombieDamagedAnalytics;
-        private System.Windows.Forms.Label lblAnalyticsZombieDamagedDetail;
-        private System.Windows.Forms.Button btnUnhookZombieDamagedAnalytics;
         private System.Windows.Forms.Button btnEditDilation;
         private System.Windows.Forms.TabPage tabEnclavesCharactersInventory;
         private System.Windows.Forms.TableLayoutPanel tlpEnclaveCharactersInventory;
@@ -1185,7 +1399,6 @@
         private System.Windows.Forms.Label lblSidearm;
         private System.Windows.Forms.Label lblRanged;
         private System.Windows.Forms.Label lblInventory;
-        private System.Windows.Forms.Button btnTest;
         private System.Windows.Forms.TabPage tabInspector;
         private System.Windows.Forms.TextBox txtInspectorAddress;
         private System.Windows.Forms.TableLayoutPanel tlpInspector;
@@ -1194,6 +1407,31 @@
         private System.Windows.Forms.Label lblInspector;
         private System.Windows.Forms.Button btnEnableConsole;
         private System.Windows.Forms.Button btnInspectDHC;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button btnInspectEngine;
+        private System.Windows.Forms.TabPage tabCommunity;
+        private System.Windows.Forms.DataGridView dgvCommunityResources;
+        private System.Windows.Forms.TextBox txtCommunityNewVal;
+        private System.Windows.Forms.Label lblCommunityResourceName;
+        private System.Windows.Forms.Button btnCommunityResourceSetValue;
+        private System.Windows.Forms.TabControl tabCommunityTabs;
+        private System.Windows.Forms.TabPage tabCommunityResources;
+        private System.Windows.Forms.Button btnTest;
+        private System.Windows.Forms.Button btnTest2;
+        private System.Windows.Forms.TextBox txtCheatManagerAddress;
+        private System.Windows.Forms.TextBox txtConsoleAddress;
+        private System.Windows.Forms.Button btnEnableCheats;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox chkBlindZombies;
+        private System.Windows.Forms.Button btnInspectController;
+        private System.Windows.Forms.Button btnInspectClosestEnemy;
+        private System.Windows.Forms.Button btnEditDayLength;
+        private System.Windows.Forms.Label lblWorldDayLength;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.CheckBox chkSpawnerActive;
+        private System.Windows.Forms.Button btnWarpToEnclave;
+        private System.Windows.Forms.Button btnEnclaveWarpToCharacter;
+        private System.Windows.Forms.Button btnWarpToWaypoint;
     }
 }
 
