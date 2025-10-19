@@ -143,6 +143,7 @@ namespace SoD2_Editor
                 get => RSingle(BaseAddress + 0xC);
                 set => WSingle(BaseAddress + 0xC, value);
             }
+            public string GrantingTrait => GetNameFromNameOffset(RInt32(BaseAddress + 0x10));
         }
         public class CloseCombatItemInstance : ItemInstance
         {

@@ -59,12 +59,14 @@
             this.txtCommunityNewVal = new System.Windows.Forms.TextBox();
             this.btnCommunityResourceSetValue = new System.Windows.Forms.Button();
             this.tabEnclaves = new System.Windows.Forms.TabPage();
+            this.dgvEnclaves = new System.Windows.Forms.DataGridView();
             this.tabControlEnclaves = new System.Windows.Forms.TabControl();
             this.tabEnclaveDetails = new System.Windows.Forms.TabPage();
             this.btnWarpToEnclave = new System.Windows.Forms.Button();
             this.lblEnclaveDetails = new System.Windows.Forms.Label();
             this.txtEnclaveAddress = new System.Windows.Forms.TextBox();
             this.tabEnclaveCharacters = new System.Windows.Forms.TabPage();
+            this.dgvEnclaveCharacters = new System.Windows.Forms.DataGridView();
             this.btnEnclaveWarpToCharacter = new System.Windows.Forms.Button();
             this.lblCharactersLabel = new System.Windows.Forms.Label();
             this.tabControlEnclavesCharacters = new System.Windows.Forms.TabControl();
@@ -72,7 +74,10 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tlpEnclavesCharactersDetails = new System.Windows.Forms.TableLayoutPanel();
             this.tabEnclavesCharactersSkills = new System.Windows.Forms.TabPage();
-            this.tlpEnclavesCharactersSkills = new System.Windows.Forms.TableLayoutPanel();
+            this.lblCharacterSkillValue = new System.Windows.Forms.Label();
+            this.txtSkillValue = new System.Windows.Forms.TextBox();
+            this.btnSetSkillValue = new System.Windows.Forms.Button();
+            this.dgvCharacterSkills = new System.Windows.Forms.DataGridView();
             this.tabEnclavesCharactersTraits = new System.Windows.Forms.TabPage();
             this.lblCharacterTraits = new System.Windows.Forms.Label();
             this.tabEnclavesCharactersEquipment = new System.Windows.Forms.TabPage();
@@ -92,9 +97,7 @@
             this.txtEnclavesCharactersInventoryAddress = new System.Windows.Forms.TextBox();
             this.tlpEnclaveCharactersInventory = new System.Windows.Forms.TableLayoutPanel();
             this.txtCharacterAddress = new System.Windows.Forms.TextBox();
-            this.flowEnclaveCharacters = new System.Windows.Forms.FlowLayoutPanel();
             this.lblEnclavesNumCharacters = new System.Windows.Forms.Label();
-            this.flowEnclaves = new System.Windows.Forms.FlowLayoutPanel();
             this.lblNumEnclaves = new System.Windows.Forms.Label();
             this.lblEnclavesLabel = new System.Windows.Forms.Label();
             this.tabSpawner = new System.Windows.Forms.TabPage();
@@ -133,12 +136,15 @@
             this.tabCommunityResources.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCommunityResources)).BeginInit();
             this.tabEnclaves.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvEnclaves)).BeginInit();
             this.tabControlEnclaves.SuspendLayout();
             this.tabEnclaveDetails.SuspendLayout();
             this.tabEnclaveCharacters.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvEnclaveCharacters)).BeginInit();
             this.tabControlEnclavesCharacters.SuspendLayout();
             this.tabEnclavesCharactersDetails.SuspendLayout();
             this.tabEnclavesCharactersSkills.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvCharacterSkills)).BeginInit();
             this.tabEnclavesCharactersTraits.SuspendLayout();
             this.tabEnclavesCharactersEquipment.SuspendLayout();
             this.tabControlEnclavesCharactersEquipment.SuspendLayout();
@@ -187,7 +193,7 @@
             this.tabs.Location = new System.Drawing.Point(12, 41);
             this.tabs.Name = "tabs";
             this.tabs.SelectedIndex = 0;
-            this.tabs.Size = new System.Drawing.Size(1130, 882);
+            this.tabs.Size = new System.Drawing.Size(1130, 808);
             this.tabs.TabIndex = 3;
             this.tabs.SelectedIndexChanged += new System.EventHandler(this.tabs_SelectedIndexChanged);
             // 
@@ -481,17 +487,29 @@
             // 
             // tabEnclaves
             // 
+            this.tabEnclaves.Controls.Add(this.dgvEnclaves);
             this.tabEnclaves.Controls.Add(this.tabControlEnclaves);
-            this.tabEnclaves.Controls.Add(this.flowEnclaves);
             this.tabEnclaves.Controls.Add(this.lblNumEnclaves);
             this.tabEnclaves.Controls.Add(this.lblEnclavesLabel);
             this.tabEnclaves.Location = new System.Drawing.Point(4, 22);
             this.tabEnclaves.Name = "tabEnclaves";
             this.tabEnclaves.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclaves.Size = new System.Drawing.Size(1122, 856);
+            this.tabEnclaves.Size = new System.Drawing.Size(1122, 782);
             this.tabEnclaves.TabIndex = 1;
             this.tabEnclaves.Text = "Enclaves";
             this.tabEnclaves.UseVisualStyleBackColor = true;
+            // 
+            // dgvEnclaves
+            // 
+            this.dgvEnclaves.AllowUserToResizeRows = false;
+            this.dgvEnclaves.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.dgvEnclaves.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvEnclaves.Location = new System.Drawing.Point(7, 29);
+            this.dgvEnclaves.Name = "dgvEnclaves";
+            this.dgvEnclaves.Size = new System.Drawing.Size(171, 550);
+            this.dgvEnclaves.TabIndex = 12;
+            this.dgvEnclaves.SelectionChanged += new System.EventHandler(this.dgvEnclaves_SelectionChanged);
             // 
             // tabControlEnclaves
             // 
@@ -500,10 +518,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControlEnclaves.Controls.Add(this.tabEnclaveDetails);
             this.tabControlEnclaves.Controls.Add(this.tabEnclaveCharacters);
-            this.tabControlEnclaves.Location = new System.Drawing.Point(144, 13);
+            this.tabControlEnclaves.Location = new System.Drawing.Point(184, 13);
             this.tabControlEnclaves.Name = "tabControlEnclaves";
             this.tabControlEnclaves.SelectedIndex = 0;
-            this.tabControlEnclaves.Size = new System.Drawing.Size(972, 837);
+            this.tabControlEnclaves.Size = new System.Drawing.Size(932, 763);
             this.tabControlEnclaves.TabIndex = 11;
             // 
             // tabEnclaveDetails
@@ -514,7 +532,7 @@
             this.tabEnclaveDetails.Location = new System.Drawing.Point(4, 22);
             this.tabEnclaveDetails.Name = "tabEnclaveDetails";
             this.tabEnclaveDetails.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclaveDetails.Size = new System.Drawing.Size(964, 811);
+            this.tabEnclaveDetails.Size = new System.Drawing.Size(924, 811);
             this.tabEnclaveDetails.TabIndex = 0;
             this.tabEnclaveDetails.Text = "Details";
             this.tabEnclaveDetails.UseVisualStyleBackColor = true;
@@ -550,23 +568,35 @@
             // 
             // tabEnclaveCharacters
             // 
+            this.tabEnclaveCharacters.Controls.Add(this.dgvEnclaveCharacters);
             this.tabEnclaveCharacters.Controls.Add(this.btnEnclaveWarpToCharacter);
             this.tabEnclaveCharacters.Controls.Add(this.lblCharactersLabel);
             this.tabEnclaveCharacters.Controls.Add(this.tabControlEnclavesCharacters);
             this.tabEnclaveCharacters.Controls.Add(this.txtCharacterAddress);
-            this.tabEnclaveCharacters.Controls.Add(this.flowEnclaveCharacters);
             this.tabEnclaveCharacters.Controls.Add(this.lblEnclavesNumCharacters);
             this.tabEnclaveCharacters.Location = new System.Drawing.Point(4, 22);
             this.tabEnclaveCharacters.Name = "tabEnclaveCharacters";
             this.tabEnclaveCharacters.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclaveCharacters.Size = new System.Drawing.Size(964, 811);
+            this.tabEnclaveCharacters.Size = new System.Drawing.Size(924, 737);
             this.tabEnclaveCharacters.TabIndex = 1;
             this.tabEnclaveCharacters.Text = "Characters";
             this.tabEnclaveCharacters.UseVisualStyleBackColor = true;
             // 
+            // dgvEnclaveCharacters
+            // 
+            this.dgvEnclaveCharacters.AllowUserToResizeRows = false;
+            this.dgvEnclaveCharacters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.dgvEnclaveCharacters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvEnclaveCharacters.Location = new System.Drawing.Point(8, 32);
+            this.dgvEnclaveCharacters.Name = "dgvEnclaveCharacters";
+            this.dgvEnclaveCharacters.Size = new System.Drawing.Size(161, 680);
+            this.dgvEnclaveCharacters.TabIndex = 19;
+            this.dgvEnclaveCharacters.SelectionChanged += new System.EventHandler(this.dgvEnclaveCharacters_SelectionChanged);
+            // 
             // btnEnclaveWarpToCharacter
             // 
-            this.btnEnclaveWarpToCharacter.Location = new System.Drawing.Point(260, 7);
+            this.btnEnclaveWarpToCharacter.Location = new System.Drawing.Point(288, 4);
             this.btnEnclaveWarpToCharacter.Name = "btnEnclaveWarpToCharacter";
             this.btnEnclaveWarpToCharacter.Size = new System.Drawing.Size(75, 23);
             this.btnEnclaveWarpToCharacter.TabIndex = 18;
@@ -578,7 +608,7 @@
             // 
             this.lblCharactersLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblCharactersLabel.AutoSize = true;
-            this.lblCharactersLabel.Location = new System.Drawing.Point(12, 791);
+            this.lblCharactersLabel.Location = new System.Drawing.Point(12, 717);
             this.lblCharactersLabel.Name = "lblCharactersLabel";
             this.lblCharactersLabel.Size = new System.Drawing.Size(83, 13);
             this.lblCharactersLabel.TabIndex = 17;
@@ -594,10 +624,10 @@
             this.tabControlEnclavesCharacters.Controls.Add(this.tabEnclavesCharactersTraits);
             this.tabControlEnclavesCharacters.Controls.Add(this.tabEnclavesCharactersEquipment);
             this.tabControlEnclavesCharacters.Controls.Add(this.tabEnclavesCharactersInventory);
-            this.tabControlEnclavesCharacters.Location = new System.Drawing.Point(147, 35);
+            this.tabControlEnclavesCharacters.Location = new System.Drawing.Point(175, 29);
             this.tabControlEnclavesCharacters.Name = "tabControlEnclavesCharacters";
             this.tabControlEnclavesCharacters.SelectedIndex = 0;
-            this.tabControlEnclavesCharacters.Size = new System.Drawing.Size(811, 770);
+            this.tabControlEnclavesCharacters.Size = new System.Drawing.Size(743, 703);
             this.tabControlEnclavesCharacters.TabIndex = 16;
             // 
             // tabEnclavesCharactersDetails
@@ -607,7 +637,7 @@
             this.tabEnclavesCharactersDetails.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersDetails.Name = "tabEnclavesCharactersDetails";
             this.tabEnclavesCharactersDetails.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclavesCharactersDetails.Size = new System.Drawing.Size(803, 744);
+            this.tabEnclavesCharactersDetails.Size = new System.Drawing.Size(735, 751);
             this.tabEnclavesCharactersDetails.TabIndex = 0;
             this.tabEnclavesCharactersDetails.Text = "Details";
             this.tabEnclavesCharactersDetails.UseVisualStyleBackColor = true;
@@ -616,7 +646,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 728);
+            this.label3.Location = new System.Drawing.Point(6, 735);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(394, 13);
             this.label3.TabIndex = 16;
@@ -632,51 +662,74 @@
             this.tlpEnclavesCharactersDetails.ColumnCount = 3;
             this.tlpEnclavesCharactersDetails.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpEnclavesCharactersDetails.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpEnclavesCharactersDetails.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 21F));
+            this.tlpEnclavesCharactersDetails.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 23F));
             this.tlpEnclavesCharactersDetails.Location = new System.Drawing.Point(6, 6);
             this.tlpEnclavesCharactersDetails.Name = "tlpEnclavesCharactersDetails";
             this.tlpEnclavesCharactersDetails.RowCount = 1;
-            this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 719F));
-            this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 719F));
-            this.tlpEnclavesCharactersDetails.Size = new System.Drawing.Size(791, 719);
+            this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 726F));
+            this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 726F));
+            this.tlpEnclavesCharactersDetails.Size = new System.Drawing.Size(723, 726);
             this.tlpEnclavesCharactersDetails.TabIndex = 15;
             // 
             // tabEnclavesCharactersSkills
             // 
-            this.tabEnclavesCharactersSkills.Controls.Add(this.tlpEnclavesCharactersSkills);
+            this.tabEnclavesCharactersSkills.Controls.Add(this.lblCharacterSkillValue);
+            this.tabEnclavesCharactersSkills.Controls.Add(this.txtSkillValue);
+            this.tabEnclavesCharactersSkills.Controls.Add(this.btnSetSkillValue);
+            this.tabEnclavesCharactersSkills.Controls.Add(this.dgvCharacterSkills);
             this.tabEnclavesCharactersSkills.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersSkills.Name = "tabEnclavesCharactersSkills";
             this.tabEnclavesCharactersSkills.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclavesCharactersSkills.Size = new System.Drawing.Size(803, 744);
+            this.tabEnclavesCharactersSkills.Size = new System.Drawing.Size(735, 677);
             this.tabEnclavesCharactersSkills.TabIndex = 1;
             this.tabEnclavesCharactersSkills.Text = "Skills";
             this.tabEnclavesCharactersSkills.UseVisualStyleBackColor = true;
             // 
-            // tlpEnclavesCharactersSkills
+            // lblCharacterSkillValue
             // 
-            this.tlpEnclavesCharactersSkills.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.lblCharacterSkillValue.AutoSize = true;
+            this.lblCharacterSkillValue.Location = new System.Drawing.Point(169, 11);
+            this.lblCharacterSkillValue.Name = "lblCharacterSkillValue";
+            this.lblCharacterSkillValue.Size = new System.Drawing.Size(34, 13);
+            this.lblCharacterSkillValue.TabIndex = 20;
+            this.lblCharacterSkillValue.Text = "Value";
+            // 
+            // txtSkillValue
+            // 
+            this.txtSkillValue.Location = new System.Drawing.Point(88, 8);
+            this.txtSkillValue.Name = "txtSkillValue";
+            this.txtSkillValue.Size = new System.Drawing.Size(75, 20);
+            this.txtSkillValue.TabIndex = 18;
+            // 
+            // btnSetSkillValue
+            // 
+            this.btnSetSkillValue.Location = new System.Drawing.Point(7, 6);
+            this.btnSetSkillValue.Name = "btnSetSkillValue";
+            this.btnSetSkillValue.Size = new System.Drawing.Size(75, 23);
+            this.btnSetSkillValue.TabIndex = 19;
+            this.btnSetSkillValue.Text = "Set";
+            this.btnSetSkillValue.UseVisualStyleBackColor = true;
+            this.btnSetSkillValue.Click += new System.EventHandler(this.btnSetSkillValue_Click);
+            // 
+            // dgvCharacterSkills
+            // 
+            this.dgvCharacterSkills.AllowUserToResizeRows = false;
+            this.dgvCharacterSkills.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tlpEnclavesCharactersSkills.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tlpEnclavesCharactersSkills.ColumnCount = 5;
-            this.tlpEnclavesCharactersSkills.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpEnclavesCharactersSkills.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpEnclavesCharactersSkills.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpEnclavesCharactersSkills.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tlpEnclavesCharactersSkills.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 489F));
-            this.tlpEnclavesCharactersSkills.Location = new System.Drawing.Point(6, 6);
-            this.tlpEnclavesCharactersSkills.Name = "tlpEnclavesCharactersSkills";
-            this.tlpEnclavesCharactersSkills.RowCount = 1;
-            this.tlpEnclavesCharactersSkills.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 748F));
-            this.tlpEnclavesCharactersSkills.Size = new System.Drawing.Size(797, 748);
-            this.tlpEnclavesCharactersSkills.TabIndex = 16;
+            this.dgvCharacterSkills.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvCharacterSkills.Location = new System.Drawing.Point(7, 34);
+            this.dgvCharacterSkills.Name = "dgvCharacterSkills";
+            this.dgvCharacterSkills.Size = new System.Drawing.Size(722, 637);
+            this.dgvCharacterSkills.TabIndex = 17;
+            this.dgvCharacterSkills.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCharacterSkills_CellClick);
             // 
             // tabEnclavesCharactersTraits
             // 
             this.tabEnclavesCharactersTraits.Controls.Add(this.lblCharacterTraits);
             this.tabEnclavesCharactersTraits.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersTraits.Name = "tabEnclavesCharactersTraits";
-            this.tabEnclavesCharactersTraits.Size = new System.Drawing.Size(803, 744);
+            this.tabEnclavesCharactersTraits.Size = new System.Drawing.Size(735, 677);
             this.tabEnclavesCharactersTraits.TabIndex = 4;
             this.tabEnclavesCharactersTraits.Text = "Traits";
             this.tabEnclavesCharactersTraits.UseVisualStyleBackColor = true;
@@ -696,7 +749,7 @@
             this.tabEnclavesCharactersEquipment.Controls.Add(this.tabControlEnclavesCharactersEquipment);
             this.tabEnclavesCharactersEquipment.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersEquipment.Name = "tabEnclavesCharactersEquipment";
-            this.tabEnclavesCharactersEquipment.Size = new System.Drawing.Size(803, 744);
+            this.tabEnclavesCharactersEquipment.Size = new System.Drawing.Size(735, 677);
             this.tabEnclavesCharactersEquipment.TabIndex = 2;
             this.tabEnclavesCharactersEquipment.Text = "Equipment";
             this.tabEnclavesCharactersEquipment.UseVisualStyleBackColor = true;
@@ -705,7 +758,7 @@
             // 
             this.lblEquipment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblEquipment.AutoSize = true;
-            this.lblEquipment.Location = new System.Drawing.Point(6, 724);
+            this.lblEquipment.Location = new System.Drawing.Point(6, 657);
             this.lblEquipment.Name = "lblEquipment";
             this.lblEquipment.Size = new System.Drawing.Size(82, 13);
             this.lblEquipment.TabIndex = 18;
@@ -722,7 +775,7 @@
             this.tabControlEnclavesCharactersEquipment.Location = new System.Drawing.Point(3, 3);
             this.tabControlEnclavesCharactersEquipment.Name = "tabControlEnclavesCharactersEquipment";
             this.tabControlEnclavesCharactersEquipment.SelectedIndex = 0;
-            this.tabControlEnclavesCharactersEquipment.Size = new System.Drawing.Size(797, 718);
+            this.tabControlEnclavesCharactersEquipment.Size = new System.Drawing.Size(729, 651);
             this.tabControlEnclavesCharactersEquipment.TabIndex = 0;
             // 
             // tabControlEnclavesCharactersEquipmentMelee
@@ -732,7 +785,7 @@
             this.tabControlEnclavesCharactersEquipmentMelee.Location = new System.Drawing.Point(4, 22);
             this.tabControlEnclavesCharactersEquipmentMelee.Name = "tabControlEnclavesCharactersEquipmentMelee";
             this.tabControlEnclavesCharactersEquipmentMelee.Padding = new System.Windows.Forms.Padding(3);
-            this.tabControlEnclavesCharactersEquipmentMelee.Size = new System.Drawing.Size(789, 692);
+            this.tabControlEnclavesCharactersEquipmentMelee.Size = new System.Drawing.Size(721, 699);
             this.tabControlEnclavesCharactersEquipmentMelee.TabIndex = 0;
             this.tabControlEnclavesCharactersEquipmentMelee.Text = "Melee";
             this.tabControlEnclavesCharactersEquipmentMelee.UseVisualStyleBackColor = true;
@@ -741,7 +794,7 @@
             // 
             this.lblMelee.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblMelee.AutoSize = true;
-            this.lblMelee.Location = new System.Drawing.Point(6, 673);
+            this.lblMelee.Location = new System.Drawing.Point(6, 680);
             this.lblMelee.Name = "lblMelee";
             this.lblMelee.Size = new System.Drawing.Size(61, 13);
             this.lblMelee.TabIndex = 19;
@@ -760,7 +813,7 @@
             this.tlpMeleeWeaponStats.RowCount = 2;
             this.tlpMeleeWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpMeleeWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpMeleeWeaponStats.Size = new System.Drawing.Size(780, 666);
+            this.tlpMeleeWeaponStats.Size = new System.Drawing.Size(709, 673);
             this.tlpMeleeWeaponStats.TabIndex = 0;
             // 
             // tabControlEnclavesCharactersEquipmentSideArm
@@ -769,7 +822,7 @@
             this.tabControlEnclavesCharactersEquipmentSideArm.Controls.Add(this.tlpSideArmWeaponStats);
             this.tabControlEnclavesCharactersEquipmentSideArm.Location = new System.Drawing.Point(4, 22);
             this.tabControlEnclavesCharactersEquipmentSideArm.Name = "tabControlEnclavesCharactersEquipmentSideArm";
-            this.tabControlEnclavesCharactersEquipmentSideArm.Size = new System.Drawing.Size(789, 692);
+            this.tabControlEnclavesCharactersEquipmentSideArm.Size = new System.Drawing.Size(721, 699);
             this.tabControlEnclavesCharactersEquipmentSideArm.TabIndex = 2;
             this.tabControlEnclavesCharactersEquipmentSideArm.Text = "SideArm";
             this.tabControlEnclavesCharactersEquipmentSideArm.UseVisualStyleBackColor = true;
@@ -797,7 +850,7 @@
             this.tlpSideArmWeaponStats.RowCount = 2;
             this.tlpSideArmWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpSideArmWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpSideArmWeaponStats.Size = new System.Drawing.Size(780, 666);
+            this.tlpSideArmWeaponStats.Size = new System.Drawing.Size(712, 666);
             this.tlpSideArmWeaponStats.TabIndex = 2;
             // 
             // tabControlEnclavesCharactersEquipmentRanged
@@ -807,7 +860,7 @@
             this.tabControlEnclavesCharactersEquipmentRanged.Location = new System.Drawing.Point(4, 22);
             this.tabControlEnclavesCharactersEquipmentRanged.Name = "tabControlEnclavesCharactersEquipmentRanged";
             this.tabControlEnclavesCharactersEquipmentRanged.Padding = new System.Windows.Forms.Padding(3);
-            this.tabControlEnclavesCharactersEquipmentRanged.Size = new System.Drawing.Size(789, 692);
+            this.tabControlEnclavesCharactersEquipmentRanged.Size = new System.Drawing.Size(721, 625);
             this.tabControlEnclavesCharactersEquipmentRanged.TabIndex = 1;
             this.tabControlEnclavesCharactersEquipmentRanged.Text = "Ranged";
             this.tabControlEnclavesCharactersEquipmentRanged.UseVisualStyleBackColor = true;
@@ -816,7 +869,7 @@
             // 
             this.lblRanged.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblRanged.AutoSize = true;
-            this.lblRanged.Location = new System.Drawing.Point(6, 673);
+            this.lblRanged.Location = new System.Drawing.Point(6, 599);
             this.lblRanged.Name = "lblRanged";
             this.lblRanged.Size = new System.Drawing.Size(66, 13);
             this.lblRanged.TabIndex = 19;
@@ -835,7 +888,7 @@
             this.tlpRangedWeaponStats.RowCount = 2;
             this.tlpRangedWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpRangedWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpRangedWeaponStats.Size = new System.Drawing.Size(780, 666);
+            this.tlpRangedWeaponStats.Size = new System.Drawing.Size(709, 592);
             this.tlpRangedWeaponStats.TabIndex = 1;
             // 
             // tabEnclavesCharactersInventory
@@ -845,7 +898,7 @@
             this.tabEnclavesCharactersInventory.Controls.Add(this.tlpEnclaveCharactersInventory);
             this.tabEnclavesCharactersInventory.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersInventory.Name = "tabEnclavesCharactersInventory";
-            this.tabEnclavesCharactersInventory.Size = new System.Drawing.Size(803, 744);
+            this.tabEnclavesCharactersInventory.Size = new System.Drawing.Size(735, 677);
             this.tabEnclavesCharactersInventory.TabIndex = 3;
             this.tabEnclavesCharactersInventory.Text = "Inventory";
             this.tabEnclavesCharactersInventory.UseVisualStyleBackColor = true;
@@ -854,7 +907,7 @@
             // 
             this.lblInventory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblInventory.AutoSize = true;
-            this.lblInventory.Location = new System.Drawing.Point(6, 724);
+            this.lblInventory.Location = new System.Drawing.Point(6, 657);
             this.lblInventory.Name = "lblInventory";
             this.lblInventory.Size = new System.Drawing.Size(76, 13);
             this.lblInventory.TabIndex = 18;
@@ -882,48 +935,26 @@
             this.tlpEnclaveCharactersInventory.RowCount = 1;
             this.tlpEnclaveCharactersInventory.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpEnclaveCharactersInventory.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpEnclaveCharactersInventory.Size = new System.Drawing.Size(797, 694);
+            this.tlpEnclaveCharactersInventory.Size = new System.Drawing.Size(902, 627);
             this.tlpEnclaveCharactersInventory.TabIndex = 11;
             // 
             // txtCharacterAddress
             // 
             this.txtCharacterAddress.Enabled = false;
-            this.txtCharacterAddress.Location = new System.Drawing.Point(147, 9);
+            this.txtCharacterAddress.Location = new System.Drawing.Point(175, 6);
             this.txtCharacterAddress.Name = "txtCharacterAddress";
             this.txtCharacterAddress.Size = new System.Drawing.Size(107, 20);
             this.txtCharacterAddress.TabIndex = 13;
             this.txtCharacterAddress.Text = "0";
             // 
-            // flowEnclaveCharacters
-            // 
-            this.flowEnclaveCharacters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.flowEnclaveCharacters.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.flowEnclaveCharacters.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowEnclaveCharacters.Location = new System.Drawing.Point(9, 28);
-            this.flowEnclaveCharacters.Name = "flowEnclaveCharacters";
-            this.flowEnclaveCharacters.Size = new System.Drawing.Size(132, 760);
-            this.flowEnclaveCharacters.TabIndex = 9;
-            // 
             // lblEnclavesNumCharacters
             // 
             this.lblEnclavesNumCharacters.AutoSize = true;
-            this.lblEnclavesNumCharacters.Location = new System.Drawing.Point(12, 12);
+            this.lblEnclavesNumCharacters.Location = new System.Drawing.Point(12, 14);
             this.lblEnclavesNumCharacters.Name = "lblEnclavesNumCharacters";
             this.lblEnclavesNumCharacters.Size = new System.Drawing.Size(66, 13);
             this.lblEnclavesNumCharacters.TabIndex = 8;
             this.lblEnclavesNumCharacters.Text = "x Characters";
-            // 
-            // flowEnclaves
-            // 
-            this.flowEnclaves.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.flowEnclaves.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.flowEnclaves.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowEnclaves.Location = new System.Drawing.Point(6, 29);
-            this.flowEnclaves.Name = "flowEnclaves";
-            this.flowEnclaves.Size = new System.Drawing.Size(132, 624);
-            this.flowEnclaves.TabIndex = 8;
             // 
             // lblNumEnclaves
             // 
@@ -938,7 +969,7 @@
             // 
             this.lblEnclavesLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblEnclavesLabel.AutoSize = true;
-            this.lblEnclavesLabel.Location = new System.Drawing.Point(10, 656);
+            this.lblEnclavesLabel.Location = new System.Drawing.Point(10, 582);
             this.lblEnclavesLabel.Name = "lblEnclavesLabel";
             this.lblEnclavesLabel.Size = new System.Drawing.Size(76, 13);
             this.lblEnclavesLabel.TabIndex = 6;
@@ -1163,7 +1194,7 @@
             this.tlpGameLogLogLevels.RowCount = 2;
             this.tlpGameLogLogLevels.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpGameLogLogLevels.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpGameLogLogLevels.Size = new System.Drawing.Size(688, 65535);
+            this.tlpGameLogLogLevels.Size = new System.Drawing.Size(518, 65535);
             this.tlpGameLogLogLevels.TabIndex = 0;
             // 
             // btnGameLogLogLevelsMin
@@ -1225,7 +1256,7 @@
             this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOutput.Enabled = false;
-            this.txtOutput.Location = new System.Drawing.Point(12, 929);
+            this.txtOutput.Location = new System.Drawing.Point(12, 855);
             this.txtOutput.Name = "txtOutput";
             this.txtOutput.Size = new System.Drawing.Size(1130, 20);
             this.txtOutput.TabIndex = 4;
@@ -1275,7 +1306,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1154, 961);
+            this.ClientSize = new System.Drawing.Size(1154, 887);
             this.Controls.Add(this.btnWarpToWaypoint);
             this.Controls.Add(this.btnTest2);
             this.Controls.Add(this.btnTest);
@@ -1297,15 +1328,19 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvCommunityResources)).EndInit();
             this.tabEnclaves.ResumeLayout(false);
             this.tabEnclaves.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvEnclaves)).EndInit();
             this.tabControlEnclaves.ResumeLayout(false);
             this.tabEnclaveDetails.ResumeLayout(false);
             this.tabEnclaveDetails.PerformLayout();
             this.tabEnclaveCharacters.ResumeLayout(false);
             this.tabEnclaveCharacters.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvEnclaveCharacters)).EndInit();
             this.tabControlEnclavesCharacters.ResumeLayout(false);
             this.tabEnclavesCharactersDetails.ResumeLayout(false);
             this.tabEnclavesCharactersDetails.PerformLayout();
             this.tabEnclavesCharactersSkills.ResumeLayout(false);
+            this.tabEnclavesCharactersSkills.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvCharacterSkills)).EndInit();
             this.tabEnclavesCharactersTraits.ResumeLayout(false);
             this.tabEnclavesCharactersTraits.PerformLayout();
             this.tabEnclavesCharactersEquipment.ResumeLayout(false);
@@ -1346,14 +1381,12 @@
         private System.Windows.Forms.Label lblWorldName;
         private System.Windows.Forms.Label lblEnclavesLabel;
         private System.Windows.Forms.Label lblNumEnclaves;
-        private System.Windows.Forms.FlowLayoutPanel flowEnclaves;
         private System.Windows.Forms.TabControl tabControlEnclaves;
         private System.Windows.Forms.TabPage tabEnclaveDetails;
         private System.Windows.Forms.Label lblEnclaveDetails;
         private System.Windows.Forms.TextBox txtEnclaveAddress;
         private System.Windows.Forms.TabPage tabEnclaveCharacters;
         private System.Windows.Forms.TextBox txtCharacterAddress;
-        private System.Windows.Forms.FlowLayoutPanel flowEnclaveCharacters;
         private System.Windows.Forms.Label lblEnclavesNumCharacters;
         private System.Windows.Forms.CheckBox chkIsDemo;
         private System.Windows.Forms.TabPage tabSpawner;
@@ -1363,7 +1396,6 @@
         private System.Windows.Forms.TabControl tabControlEnclavesCharacters;
         private System.Windows.Forms.TabPage tabEnclavesCharactersDetails;
         private System.Windows.Forms.TabPage tabEnclavesCharactersSkills;
-        private System.Windows.Forms.TableLayoutPanel tlpEnclavesCharactersSkills;
         private System.Windows.Forms.TabPage tabGameLog;
         private System.Windows.Forms.TabControl tabGameLogTabs;
         private System.Windows.Forms.TabPage tabGameLogLogLevels;
@@ -1432,6 +1464,12 @@
         private System.Windows.Forms.Button btnWarpToEnclave;
         private System.Windows.Forms.Button btnEnclaveWarpToCharacter;
         private System.Windows.Forms.Button btnWarpToWaypoint;
+        private System.Windows.Forms.DataGridView dgvEnclaves;
+        private System.Windows.Forms.DataGridView dgvEnclaveCharacters;
+        private System.Windows.Forms.DataGridView dgvCharacterSkills;
+        private System.Windows.Forms.Label lblCharacterSkillValue;
+        private System.Windows.Forms.TextBox txtSkillValue;
+        private System.Windows.Forms.Button btnSetSkillValue;
     }
 }
 

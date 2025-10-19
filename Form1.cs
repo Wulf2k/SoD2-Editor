@@ -80,6 +80,9 @@ namespace SoD2_Editor
             lblRanged.Text = "";
             lblSidearm.Text = "";
             lblInventory.Text = "";
+            InitEnclaveTable();
+            InitEnclaveCharactersTable();
+            InitCharacterSkillsTable();
             InitializeCommunityResourceGrid(dgvCommunityResources);
         }
 
@@ -413,6 +416,11 @@ namespace SoD2_Editor
                 tlpEnclavesCharactersDetails.Controls.Clear();
                 txtCharacterAddress.Text = "0";
                 txtEnclaveAddress.Text = "0";
+                _enclaveTable.Rows.Clear();
+                _enclaveCharactersTable.Rows.Clear();
+
+
+
                 lblVer.Text = "Not connected.";
             }
             else
@@ -445,6 +453,7 @@ namespace SoD2_Editor
 
                         chkIsDemo.Checked = RUInt8(addresses.Get("ULIsDemo")) > 0;
                         chkBlindZombies.Checked = localPlayer.DaytonPlayerController.CheatManager.bInvisibleToZombies;
+                        chkSpawnerActive.Checked = gameMode.DynamicPawnSpawner.Active > 0;
 
                         string newTimeDilation = worldSettings.TimeDilation.ToString("F4");
                         if (newTimeDilation != txtTimeDilation.Text)
@@ -496,7 +505,7 @@ namespace SoD2_Editor
                                 lblNumEnclaves.Text = newNumEnclaves;
 
                             UpdateEnclaveList(enclaveManager);
-                            UpdateCharacterList();
+                            UpdateEnclaveCharacterList();
                         }
                         
 
@@ -623,97 +632,7 @@ namespace SoD2_Editor
 
         
 
-        private LinkLabel _selectedCharacterLink = null;
-
-        private void UpdateCharacterList()
-        {
-            Enclave _currentEnclave = null;
-            if (long.TryParse(txtEnclaveAddress.Text, System.Globalization.NumberStyles.HexNumber, null, out long encaddr) && encaddr > 0)
-            {
-                IntPtr encPtr = (IntPtr)encaddr;
-                _currentEnclave = new Enclave(encPtr);
-            }
-
-            if (_currentEnclave != null)
-            {
-                var characters = _currentEnclave.Characters;
-                int currentCount = flowEnclaveCharacters.Controls.Count;
-                int newCount = characters.Count;
-
-                while (currentCount < newCount)
-                {
-                    var link = new LinkLabel
-                    {
-                        AutoSize = true,
-                        LinkColor = Color.LightBlue,
-                        Margin = new Padding(3),
-                        Cursor = Cursors.Hand,
-                        BackColor = Color.Transparent
-                    };
-
-                    int capturedIndex = currentCount;
-
-                    link.Click += (s, e) =>
-                    {
-                        if (_selectedCharacterLink != null)
-                            _selectedCharacterLink.BackColor = Color.Transparent;
-
-                        link.BackColor = Color.DarkRed;
-                        _selectedCharacterLink = link;
-                        _characterSkillRows.Clear();
-                        _meleeWeaponDetailRows.Clear();
-                        //This redeclares because of weird caching.
-                        if (long.TryParse(txtEnclaveAddress.Text, System.Globalization.NumberStyles.HexNumber, null, out long encaddr2) && encaddr2 > 0)
-                        {
-                            IntPtr encPtr = (IntPtr)encaddr2;
-                            _currentEnclave = new Enclave(encPtr);
-                        }
-
-                        if (_currentEnclave != null && capturedIndex < _currentEnclave.Characters.Count)
-                        {
-                            txtCharacterAddress.Text = _currentEnclave.Characters[capturedIndex].BaseAddress.ToString("X");
-                        }
-                        else
-                        {
-                            txtCharacterAddress.Text = "";
-                        }
-                    };//end link.click
-
-                    flowEnclaveCharacters.Controls.Add(link);
-                    currentCount++;
-                }//end while curr < new
-
-                while (currentCount > newCount)
-                {
-                    flowEnclaveCharacters.Controls.RemoveAt(currentCount - 1);
-                    currentCount--;
-                }
-
-                for (int i = 0; i < newCount; i++)
-                {
-                    var link = (LinkLabel)flowEnclaveCharacters.Controls[i];
-                    string newName = $"{characters[i].CharacterRecord.FirstName} {characters[i].CharacterRecord.LastName}";
-                    if (link.Text != newName)
-                        link.Text = newName;
-
-                    if (_selectedCharacterLink != link)
-                    {
-                        link.BackColor = Color.Transparent;
-                    } else {
-                        link.BackColor = Color.DarkRed;
-                    }
-                        
-
-                    if (newName == $"{currDaytonCharacter.CharacterRecord.FirstName} {currDaytonCharacter.CharacterRecord.LastName}")
-                    {
-                        link.BackColor = Color.DarkGreen;
-                    } else {
-                        if ((selectedChar != null)  && (newName != $"{selectedChar.CharacterRecord.FirstName} {selectedChar.CharacterRecord.LastName}"))
-                            link.BackColor = Color.Transparent;
-                    }
-                }//end for
-            }//end ifnot null
-        }
+        
         private class InventoryRowEntry
         {
             public Label NameLabel { get; set; }
@@ -1076,131 +995,6 @@ namespace SoD2_Editor
             _characterDetailRows["Position Z"].ValueLabel.Text = $"{chr.ZPos,12:F4}";   
         }
 
-        
-
-        private class CharacterSkillRowEntry
-        {
-            public Label LevelLabel { get; set; }
-            public Label XpLabel { get; set; }
-            public Button EditLevelButton { get; set; }
-            public Button EditXpButton { get; set; }
-        }
-        private Dictionary<string, CharacterSkillRowEntry> _characterSkillRows = new Dictionary<string, CharacterSkillRowEntry>();
-        private void InitializeSkillTable()
-        {
-            tlpEnclavesCharactersSkills.Controls.Clear();
-            tlpEnclavesCharactersSkills.RowStyles.Clear();
-            tlpEnclavesCharactersSkills.RowCount = 0;
-            tlpEnclavesCharactersSkills.ColumnStyles.Clear();
-            _characterSkillRows.Clear();
-
-            tlpEnclavesCharactersSkills.ColumnCount = 5;
-            tlpEnclavesCharactersSkills.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 200)); // Name
-            tlpEnclavesCharactersSkills.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 30));  // Edit Level
-            tlpEnclavesCharactersSkills.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));  // Level
-            tlpEnclavesCharactersSkills.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 30));  // Edit XP
-            tlpEnclavesCharactersSkills.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));  // XP
-            tlpEnclavesCharactersSkills.AutoScroll = true;
-        }
-        private void UpdateCharacterSkills(DaytonCharacter chr)
-        {
-            tlpEnclavesCharactersSkills.SuspendLayout();
-
-            if (_characterSkillRows.Count == 0)
-                InitializeSkillTable();
-            
-            
-
-            foreach (var skill in chr.CharacterRecord.Skills)
-            {
-                if (!_characterSkillRows.TryGetValue(skill.Name, out var row))
-                {
-                    int rowIndex = tlpEnclavesCharactersSkills.RowCount++;
-
-                    var lblName = new Label
-                    {
-                        Text = skill.Name,
-                        AutoSize = true,
-                        Anchor = AnchorStyles.Left,
-                        Font = new Font("Consolas", 9)
-                    };
-
-                    var lblLevel = new Label
-                    {
-                        Text = skill.CurrentLevel.ToString(),
-                        AutoSize = true,
-                        Anchor = AnchorStyles.Left,
-                        Font = new Font("Consolas", 9)
-                    };
-
-                    var lblXp = new Label
-                    {
-                        Text = $"{skill.CurrentXp:F4}",
-                        AutoSize = true,
-                        Anchor = AnchorStyles.Left,
-                        Font = new Font("Consolas", 9),
-                        TextAlign = ContentAlignment.MiddleRight
-                    };
-
-                    var btnEditLevel = new Button
-                    {
-                        Text = "Edit",
-                        Width = 25,
-                        Height = 20
-                    };
-                    btnEditLevel.Click += (s, e) =>
-                    {
-                        string input = ShowNumericInputDialog("Edit Skill Level", $"Enter new level for {skill.Name}", skill.CurrentLevel.ToString(), isFloat: false);
-                        if (!string.IsNullOrWhiteSpace(input))
-                        {
-                            skill.CurrentLevel = byte.Parse(input);
-                            lblLevel.Text = input;
-                        }
-                    };
-
-                    var btnEditXp = new Button
-                    {
-                        Text = "Edit",
-                        Width = 25,
-                        Height = 20
-                    };
-                    btnEditXp.Click += (s, e) =>
-                    {
-                        string input = ShowNumericInputDialog("Edit Skill XP", $"Enter new XP for {skill.Name}", skill.CurrentXp.ToString("F4"), isFloat: true);
-                        if (!string.IsNullOrWhiteSpace(input))
-                        {
-                            skill.CurrentXp = float.Parse(input);
-                            lblXp.Text = $"{skill.CurrentXp:F4}";
-                        }
-                    };
-
-                    tlpEnclavesCharactersSkills.Controls.Add(lblName, 0, rowIndex);
-                    tlpEnclavesCharactersSkills.Controls.Add(btnEditLevel, 1, rowIndex);
-                    tlpEnclavesCharactersSkills.Controls.Add(lblLevel, 2, rowIndex);
-                    tlpEnclavesCharactersSkills.Controls.Add(btnEditXp, 3, rowIndex);
-                    tlpEnclavesCharactersSkills.Controls.Add(lblXp, 4, rowIndex);
-
-                    tlpEnclavesCharactersSkills.RowStyles.Add(new RowStyle(SizeType.Absolute, 16));
-
-                    row = new CharacterSkillRowEntry
-                    {
-                        LevelLabel = lblLevel,
-                        XpLabel = lblXp,
-                        EditLevelButton = btnEditLevel,
-                        EditXpButton = btnEditXp
-                    };
-                    _characterSkillRows[skill.Name] = row;
-                }
-                else
-                {
-                    row.LevelLabel.Text = skill.CurrentLevel.ToString();
-                    row.XpLabel.Text = $"{skill.CurrentXp,10:F4}";
-                }
-            }
-            tlpEnclavesCharactersSkills.RowCount++;
-            tlpEnclavesCharactersSkills.ResumeLayout();
-        }
-        
         
 
 
@@ -1830,6 +1624,19 @@ namespace SoD2_Editor
 
         private void btnTest2_Click(object sender, EventArgs e)
         {
+            IntPtr ptr = (IntPtr)0x6b785b40;
+            int num = 0x69;
+
+            for (int i = 0; i < num; i++)
+            {
+                IntPtr itemPtr = RIntPtr(ptr + i * IntPtr.Size);
+                UObject obj = new UObject(itemPtr);
+                FText DisplayName = new FText(itemPtr + 0x28);
+                float infVal = RInt32(itemPtr + 0xf4);
+
+                Console.WriteLine($"{infVal}    {DisplayName.Value.Replace("{[0,+]s}", "")}");
+            }
+            
             /*
             UObject obj = new UObject((IntPtr)0x775EB280);
             Console.WriteLine(obj.Name);
@@ -1839,7 +1646,7 @@ namespace SoD2_Editor
             Console.WriteLine(obj.Path());
             */
 
-            
+            /*
             IntPtr objTablePtr = addresses.Get("ObjTablePtr");
             int numobjs = RInt32(objTablePtr - 0x8);
             objTablePtr = RIntPtr(objTablePtr);
@@ -1891,7 +1698,7 @@ namespace SoD2_Editor
             
 
             foreach (UObject obj2 in backpack)
-                Console.WriteLine($"{obj2.BaseAddress.ToString("X")} - {obj2.Name}");
+                Console.WriteLine($"{obj2.BaseAddress.ToString("X")} - {obj2.Name}");*/
 
             /*foreach (var catalog in gameInstance.ItemCatalogManager.Catalogs)
             {
@@ -2016,5 +1823,7 @@ namespace SoD2_Editor
             else
                 Output("No MapUI waypoints found");
         }
+
+        
     }
 }

@@ -78,9 +78,9 @@ namespace SoD2_Editor
             dgv.Columns["Accumulator"].Width = 100;
             dgv.Columns["Description"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
 
-            dgvCommunityResources.CellClick += DgvCommunityResources_CellClick;
+            dgvCommunityResources.CellClick += dgvCommunityResources_CellClick;
         }
-        private void DgvCommunityResources_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void dgvCommunityResources_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0)
                 return;

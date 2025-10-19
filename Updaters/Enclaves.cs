@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -10,66 +11,69 @@ namespace SoD2_Editor
 {
     public partial class Form1 : Form
     {
-        private LinkLabel _selectedEnclaveLink = null;
+
+        private DataTable _enclaveTable;
+        private EnclaveManager _enclaveManagerRef;
+
+        private void InitEnclaveTable()
+        {
+            _enclaveTable = new DataTable();
+            _enclaveTable.Columns.Add("Addr", typeof(string));
+            _enclaveTable.Columns.Add("Name", typeof(string));
+            _enclaveTable.PrimaryKey = new[] { _enclaveTable.Columns["Addr"] };
+
+            dgvEnclaves.DataSource = _enclaveTable;
+            dgvEnclaves.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvEnclaves.MultiSelect = false;
+            dgvEnclaves.ReadOnly = true;
+            dgvEnclaves.AllowUserToAddRows = false;
+            dgvEnclaves.AllowUserToDeleteRows = false;
+            dgvEnclaves.RowHeadersVisible = false;
+
+            dgvEnclaves.Columns["Addr"].Visible = false;
+            dgvEnclaves.Columns["Name"].HeaderText = "Name";
+            dgvEnclaves.Columns["Name"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        }
         private void UpdateEnclaveList(EnclaveManager enclaveManager)
         {
-            int currentCount = flowEnclaves.Controls.Count;
-            int newCount = enclaveManager.NumEnclaves;
+            _enclaveManagerRef = enclaveManager;
+            if (_enclaveManagerRef.Name != "EnclaveManagerBp")
+                return;
 
-            while (currentCount < newCount)
+            foreach (var enclave in enclaveManager.Enclaves)
             {
-                var link = new LinkLabel
+                string hexAddr = enclave.BaseAddress.ToString("X");
+
+                DataRow row = _enclaveTable.Rows.Find(hexAddr);
+                if (row == null)
                 {
-                    AutoSize = true,
-                    LinkColor = Color.LightBlue,
-                    Margin = new Padding(3),
-                    Cursor = Cursors.Hand,
-                    BackColor = flowEnclaves.BackColor
-                };
-                int index = currentCount;
-                link.Click += (s, e) => OnEnclaveLinkClicked((LinkLabel)s, enclaveManager.Enclaves[index]);
-                flowEnclaves.Controls.Add(link);
-                currentCount++;
-            }
-
-            while (currentCount > newCount)
-            {
-                flowEnclaves.Controls.RemoveAt(currentCount - 1);
-                currentCount--;
-            }
-
-            for (int i = 0; i < newCount; i++)
-            {
-                try
-                {
-                    var link = (LinkLabel)flowEnclaves.Controls[i];
-                    string newName = enclaveManager.Enclaves[i].DisplayName;
-
-                    if (link.Text != newName)
-                        link.Text = newName;
-
-                    if (link == _selectedEnclaveLink)
-                        link.BackColor = Color.DarkRed;
-                    else
-                        link.BackColor = flowEnclaves.BackColor;
-
-                    if (newName == currEnclave.DisplayName)
-                        link.BackColor = Color.DarkGreen;
+                    row = _enclaveTable.NewRow();
+                    row["Addr"] = hexAddr;
+                    row["Name"] = enclave.DisplayName;
+                    _enclaveTable.Rows.Add(row);
                 }
-                catch (Exception ex) { Console.WriteLine($@"UpdateEnclaveList:  {ex}"); }
+                else
+                {
+                    row["Name"] = enclave.DisplayName;
+                }
+            }
+
+            for (int i = _enclaveTable.Rows.Count - 1; i >= 0; i--)
+            {
+                string hexAddr = _enclaveTable.Rows[i]["Addr"].ToString();
+                if (!enclaveManager.Enclaves.Any(e => e.BaseAddress.ToString("X") == hexAddr))
+                    _enclaveTable.Rows[i].Delete();
             }
         }
-
-        private void OnEnclaveLinkClicked(LinkLabel clickedLink, Enclave enclave)
+        private void dgvEnclaves_SelectionChanged(object sender, EventArgs e)
         {
-            if (_selectedEnclaveLink != null && _selectedEnclaveLink != clickedLink)
-            {
-                _selectedEnclaveLink.BackColor = flowEnclaves.BackColor;
-            }
+            if (dgvEnclaves.SelectedRows.Count == 0)
+                return;
 
-            clickedLink.BackColor = Color.DarkRed;
-            _selectedEnclaveLink = clickedLink;
-            txtEnclaveAddress.Text = enclave.BaseAddress.ToString("X");
+            string hexAddr = dgvEnclaves.SelectedRows[0].Cells["Addr"].Value.ToString();
+            txtEnclaveAddress.Text = hexAddr;
+
+
 
             txtCharacterAddress.Text = "0";
             lblInventory.Text = "";
@@ -80,33 +84,19 @@ namespace SoD2_Editor
             lblMelee.Text = "";
             lblRanged.Text = "";
             lblSidearm.Text = "";
-            lblInventory.Text = "";
 
             _characterDetailRows.Clear();
-            _characterSkillRows.Clear();
+            _characterSkillsTable.Clear();
             _inventoryRows.Clear();
             _meleeWeaponDetailRows.Clear();
             _rangedWeaponDetailRows.Clear();
 
             tlpEnclavesCharactersDetails.Controls.Clear();
-
             txtEnclavesCharactersInventoryAddress.Text = "0";
             tlpEnclaveCharactersInventory.Controls.Clear();
-            tlpEnclavesCharactersSkills.RowCount = 0;
             tlpMeleeWeaponStats.Controls.Clear();
             tlpRangedWeaponStats.Controls.Clear();
             tlpSideArmWeaponStats.Controls.Clear();
-
-
-
-            foreach (Control ctrl in flowEnclaveCharacters.Controls)
-            {
-                if (ctrl is LinkLabel link)
-                {
-                    link.BackColor = Color.Transparent;
-                }
-            }
         }
-
     }
 }

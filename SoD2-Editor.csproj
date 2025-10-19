@@ -105,6 +105,12 @@
     <Compile Include="Updaters\Community.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Updaters\EnclaveCharacters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Updaters\EnclaveCharactersSkills.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Updaters\_blank.cs">
       <SubType>Form</SubType>
     </Compile>
