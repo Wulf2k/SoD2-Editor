@@ -238,8 +238,6 @@ namespace SoD2_Editor
             GameLogAdd("LogWindows", _ba + 0x04455a08, _ba + 0x045a4588);
             GameLogAdd("LogWorld", _ba + 0x045d7c30, _ba + 0x047267b0);
             GameLogAdd("LogWwiseBankManager", _ba + 0x04603790, _ba + 0x04752310);
-
-            logNames.Add("");
             //GameLogAdd("LogDaytonGameCharacter", _ba + 0x0, _ba + 0x0);
 
             //TODO:  Try add to rowcount instead of just adding an empty row
@@ -385,30 +383,7 @@ namespace SoD2_Editor
                 }
             }        
         }
-        private int _lastLogEnd = 0;
-
-        private void UpdateLog()
-        {
-            int newLogEnd = GameLog.LogEndOffset;
-            if (newLogEnd == _lastLogEnd)
-                return;
-
-            if (newLogEnd > _lastLogEnd)
-            { 
-                string diff = RAsciiStr(GameLog.GameLogTextPtr + _lastLogEnd, newLogEnd - _lastLogEnd);
-                rtbGameLog.AppendText(diff);
-            }
-            else
-            {
-                if (RInt64(GameLog.BaseAddress) > 0)
-                    rtbGameLog.Text = RAsciiStr(GameLog.GameLogTextPtr, newLogEnd);
-            }
-
-            rtbGameLog.SelectionStart = rtbGameLog.Text.Length;
-            rtbGameLog.ScrollToCaret();
-
-            _lastLogEnd = newLogEnd;
-        }
+        
         private void RefreshTimer_Tick(object sender, EventArgs e)
         {
             if (RUInt32(_ba + 0xE8) == 0)
@@ -1000,92 +975,9 @@ namespace SoD2_Editor
 
 
 
-        private class LogLevelRowEntry
-        {
-            public Label NameLabel { get; set; }
-            public NumericUpDown ValueControl { get; set; }
-        }
-        private Dictionary<string, LogLevelRowEntry> _logLevelRows = new Dictionary<string, LogLevelRowEntry>();
-        private void InitializeLogLevelTable(List<string> fieldNames)
-        {
-            tlpGameLogLogLevels.SuspendLayout();
-            tlpGameLogLogLevels.Controls.Clear();
-            tlpGameLogLogLevels.RowStyles.Clear();
-            tlpGameLogLogLevels.RowCount = 0;
-            tlpGameLogLogLevels.ColumnStyles.Clear();
-            _logLevelRows.Clear();
-
-            tlpGameLogLogLevels.ColumnCount = 2;
-            tlpGameLogLogLevels.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-            tlpGameLogLogLevels.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); 
-
-            void AddRow(string fieldName)
-            {
-                int rowIndex = tlpGameLogLogLevels.RowCount++;
-
-                var lblName = new Label
-                {
-                    Text = fieldName,
-                    AutoSize = true,
-                    Anchor = AnchorStyles.Left,
-                    Font = new Font("Consolas", 9),
-                    TextAlign = ContentAlignment.MiddleRight
-                };
-
-                var numValue = new NumericUpDown
-                {
-                    Minimum = 0,
-                    Maximum = 255,
-                    Value = 0,
-                    Width = 80,
-                    ReadOnly = true,
-                    Anchor = AnchorStyles.Left
-                };
-                if (fieldName.Length < 1)
-                    numValue.Visible = false;
+        
 
 
-                numValue.ValueChanged += (s, e) =>
-                {
-                    IntPtr addr = gamelogs.Get(fieldName);
-                    WUInt8(addr, (byte)numValue.Value);
-                };
-
-                tlpGameLogLogLevels.Controls.Add(lblName, 0, rowIndex);
-                tlpGameLogLogLevels.Controls.Add(numValue, 1, rowIndex);
-
-                _logLevelRows[fieldName] = new LogLevelRowEntry
-                {
-                    NameLabel = lblName,
-                    ValueControl = numValue
-                };
-            }
-
-            foreach (var name in fieldNames)
-                AddRow(name);
-
-            tlpGameLogLogLevels.ResumeLayout();
-        }
-        private void UpdateLogLevels()
-        {
-            if (_logLevelRows.Count < 1)
-            {
-                InitializeLogLevelTable(logNames);
-            }
-            foreach (var kvp in _logLevelRows)
-            {
-                string name = kvp.Key;
-                var entry = kvp.Value;
-
-                IntPtr addr = gamelogs.Get(name);
-                byte value = RUInt8(addr);
-
-                if (entry.ValueControl.Value != value)
-                {
-                    entry.ValueControl.Value = value;
-                }
-            }
-        }
 
         private class WeaponDetailRowEntry
         {
@@ -1870,5 +1762,7 @@ namespace SoD2_Editor
             }
             Output("LogLevels loaded from HKCU\\Software\\Wulf\\SoDEaD\\LogLevels");
         }
+
+        
     }
 }

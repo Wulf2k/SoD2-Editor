@@ -118,9 +118,12 @@
             this.tabGameLog = new System.Windows.Forms.TabPage();
             this.tabGameLogTabs = new System.Windows.Forms.TabControl();
             this.tabGameLogLogLevels = new System.Windows.Forms.TabPage();
+            this.lblLogLevel = new System.Windows.Forms.Label();
+            this.txtLogLevelValue = new System.Windows.Forms.TextBox();
+            this.btnSetLogLevel = new System.Windows.Forms.Button();
+            this.dgvLogLevels = new System.Windows.Forms.DataGridView();
             this.btnGameLogLevelsSave = new System.Windows.Forms.Button();
             this.btnGameLogLevelsLoad = new System.Windows.Forms.Button();
-            this.tlpGameLogLogLevels = new System.Windows.Forms.TableLayoutPanel();
             this.btnGameLogLogLevelsMin = new System.Windows.Forms.Button();
             this.btnGameLogLogLevelMax = new System.Windows.Forms.Button();
             this.tabGameLogLog = new System.Windows.Forms.TabPage();
@@ -159,6 +162,7 @@
             this.tabGameLog.SuspendLayout();
             this.tabGameLogTabs.SuspendLayout();
             this.tabGameLogLogLevels.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvLogLevels)).BeginInit();
             this.tabGameLogLog.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -426,7 +430,7 @@
             this.tabCommunityTabs.Location = new System.Drawing.Point(4, 4);
             this.tabCommunityTabs.Name = "tabCommunityTabs";
             this.tabCommunityTabs.SelectedIndex = 0;
-            this.tabCommunityTabs.Size = new System.Drawing.Size(1116, 850);
+            this.tabCommunityTabs.Size = new System.Drawing.Size(1116, 775);
             this.tabCommunityTabs.TabIndex = 4;
             // 
             // tabCommunityResources
@@ -438,7 +442,7 @@
             this.tabCommunityResources.Location = new System.Drawing.Point(4, 22);
             this.tabCommunityResources.Name = "tabCommunityResources";
             this.tabCommunityResources.Padding = new System.Windows.Forms.Padding(3);
-            this.tabCommunityResources.Size = new System.Drawing.Size(1108, 824);
+            this.tabCommunityResources.Size = new System.Drawing.Size(1108, 749);
             this.tabCommunityResources.TabIndex = 0;
             this.tabCommunityResources.Text = "Resources";
             this.tabCommunityResources.UseVisualStyleBackColor = true;
@@ -467,7 +471,7 @@
             this.dgvCommunityResources.ReadOnly = true;
             this.dgvCommunityResources.RowHeadersVisible = false;
             this.dgvCommunityResources.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.dgvCommunityResources.Size = new System.Drawing.Size(1096, 787);
+            this.dgvCommunityResources.Size = new System.Drawing.Size(1096, 712);
             this.dgvCommunityResources.TabIndex = 0;
             // 
             // txtCommunityNewVal
@@ -937,7 +941,7 @@
             this.tlpEnclaveCharactersInventory.RowCount = 1;
             this.tlpEnclaveCharactersInventory.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpEnclaveCharactersInventory.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpEnclaveCharactersInventory.Size = new System.Drawing.Size(902, 627);
+            this.tlpEnclaveCharactersInventory.Size = new System.Drawing.Size(729, 627);
             this.tlpEnclaveCharactersInventory.TabIndex = 11;
             // 
             // txtCharacterAddress
@@ -1134,7 +1138,7 @@
             this.tlpInspector.RowCount = 2;
             this.tlpInspector.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpInspector.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpInspector.Size = new System.Drawing.Size(1003, 802);
+            this.tlpInspector.Size = new System.Drawing.Size(1003, 744);
             this.tlpInspector.TabIndex = 13;
             // 
             // txtInspectorAddress
@@ -1171,10 +1175,13 @@
             // tabGameLogLogLevels
             // 
             this.tabGameLogLogLevels.AutoScroll = true;
-            this.tabGameLogLogLevels.AutoScrollMinSize = new System.Drawing.Size(0, 4000);
+            this.tabGameLogLogLevels.AutoScrollMinSize = new System.Drawing.Size(0, 400);
+            this.tabGameLogLogLevels.Controls.Add(this.lblLogLevel);
+            this.tabGameLogLogLevels.Controls.Add(this.txtLogLevelValue);
+            this.tabGameLogLogLevels.Controls.Add(this.btnSetLogLevel);
+            this.tabGameLogLogLevels.Controls.Add(this.dgvLogLevels);
             this.tabGameLogLogLevels.Controls.Add(this.btnGameLogLevelsSave);
             this.tabGameLogLogLevels.Controls.Add(this.btnGameLogLevelsLoad);
-            this.tabGameLogLogLevels.Controls.Add(this.tlpGameLogLogLevels);
             this.tabGameLogLogLevels.Controls.Add(this.btnGameLogLogLevelsMin);
             this.tabGameLogLogLevels.Controls.Add(this.btnGameLogLogLevelMax);
             this.tabGameLogLogLevels.Location = new System.Drawing.Point(4, 22);
@@ -1184,6 +1191,48 @@
             this.tabGameLogLogLevels.TabIndex = 0;
             this.tabGameLogLogLevels.Text = "LogLevels";
             this.tabGameLogLogLevels.UseVisualStyleBackColor = true;
+            // 
+            // lblLogLevel
+            // 
+            this.lblLogLevel.AutoSize = true;
+            this.lblLogLevel.Location = new System.Drawing.Point(168, 66);
+            this.lblLogLevel.Name = "lblLogLevel";
+            this.lblLogLevel.Size = new System.Drawing.Size(51, 13);
+            this.lblLogLevel.TabIndex = 8;
+            this.lblLogLevel.Text = "LogLevel";
+            // 
+            // txtLogLevelValue
+            // 
+            this.txtLogLevelValue.Location = new System.Drawing.Point(87, 63);
+            this.txtLogLevelValue.Name = "txtLogLevelValue";
+            this.txtLogLevelValue.Size = new System.Drawing.Size(75, 20);
+            this.txtLogLevelValue.TabIndex = 6;
+            // 
+            // btnSetLogLevel
+            // 
+            this.btnSetLogLevel.Location = new System.Drawing.Point(6, 61);
+            this.btnSetLogLevel.Name = "btnSetLogLevel";
+            this.btnSetLogLevel.Size = new System.Drawing.Size(75, 23);
+            this.btnSetLogLevel.TabIndex = 7;
+            this.btnSetLogLevel.Text = "Set";
+            this.btnSetLogLevel.UseVisualStyleBackColor = true;
+            this.btnSetLogLevel.Click += new System.EventHandler(this.btnSetLogLevel_Click);
+            // 
+            // dgvLogLevels
+            // 
+            this.dgvLogLevels.AllowUserToAddRows = false;
+            this.dgvLogLevels.AllowUserToDeleteRows = false;
+            this.dgvLogLevels.AllowUserToResizeRows = false;
+            this.dgvLogLevels.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvLogLevels.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dgvLogLevels.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvLogLevels.Location = new System.Drawing.Point(6, 90);
+            this.dgvLogLevels.Name = "dgvLogLevels";
+            this.dgvLogLevels.Size = new System.Drawing.Size(1096, 657);
+            this.dgvLogLevels.TabIndex = 5;
+            this.dgvLogLevels.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvLogLevels_CellClick);
             // 
             // btnGameLogLevelsSave
             // 
@@ -1204,22 +1253,6 @@
             this.btnGameLogLevelsLoad.Text = "Load";
             this.btnGameLogLevelsLoad.UseVisualStyleBackColor = true;
             this.btnGameLogLevelsLoad.Click += new System.EventHandler(this.btnGameLogLevelsLoad_Click);
-            // 
-            // tlpGameLogLogLevels
-            // 
-            this.tlpGameLogLogLevels.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tlpGameLogLogLevels.ColumnCount = 2;
-            this.tlpGameLogLogLevels.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpGameLogLogLevels.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpGameLogLogLevels.Location = new System.Drawing.Point(6, 61);
-            this.tlpGameLogLogLevels.Name = "tlpGameLogLogLevels";
-            this.tlpGameLogLogLevels.RowCount = 2;
-            this.tlpGameLogLogLevels.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpGameLogLogLevels.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpGameLogLogLevels.Size = new System.Drawing.Size(1062, 3928);
-            this.tlpGameLogLogLevels.TabIndex = 0;
             // 
             // btnGameLogLogLevelsMin
             // 
@@ -1385,6 +1418,8 @@
             this.tabGameLog.ResumeLayout(false);
             this.tabGameLogTabs.ResumeLayout(false);
             this.tabGameLogLogLevels.ResumeLayout(false);
+            this.tabGameLogLogLevels.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvLogLevels)).EndInit();
             this.tabGameLogLog.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1423,7 +1458,6 @@
         private System.Windows.Forms.TabPage tabGameLog;
         private System.Windows.Forms.TabControl tabGameLogTabs;
         private System.Windows.Forms.TabPage tabGameLogLogLevels;
-        private System.Windows.Forms.TableLayoutPanel tlpGameLogLogLevels;
         private System.Windows.Forms.TabPage tabGameLogLog;
         private System.Windows.Forms.RichTextBox rtbGameLog;
         private System.Windows.Forms.Button btnGameLogLogLevelsMin;
@@ -1496,6 +1530,10 @@
         private System.Windows.Forms.Button btnSetSkillValue;
         private System.Windows.Forms.Button btnGameLogLevelsSave;
         private System.Windows.Forms.Button btnGameLogLevelsLoad;
+        private System.Windows.Forms.DataGridView dgvLogLevels;
+        private System.Windows.Forms.Label lblLogLevel;
+        private System.Windows.Forms.TextBox txtLogLevelValue;
+        private System.Windows.Forms.Button btnSetLogLevel;
     }
 }
 
