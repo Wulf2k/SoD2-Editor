@@ -118,6 +118,8 @@
             this.tabGameLog = new System.Windows.Forms.TabPage();
             this.tabGameLogTabs = new System.Windows.Forms.TabControl();
             this.tabGameLogLogLevels = new System.Windows.Forms.TabPage();
+            this.btnGameLogLevelsSave = new System.Windows.Forms.Button();
+            this.btnGameLogLevelsLoad = new System.Windows.Forms.Button();
             this.tlpGameLogLogLevels = new System.Windows.Forms.TableLayoutPanel();
             this.btnGameLogLogLevelsMin = new System.Windows.Forms.Button();
             this.btnGameLogLogLevelMax = new System.Windows.Forms.Button();
@@ -221,7 +223,7 @@
             this.tabWorld.Location = new System.Drawing.Point(4, 22);
             this.tabWorld.Name = "tabWorld";
             this.tabWorld.Padding = new System.Windows.Forms.Padding(3);
-            this.tabWorld.Size = new System.Drawing.Size(1122, 856);
+            this.tabWorld.Size = new System.Drawing.Size(1122, 782);
             this.tabWorld.TabIndex = 0;
             this.tabWorld.Text = "World";
             this.tabWorld.UseVisualStyleBackColor = true;
@@ -410,7 +412,7 @@
             this.tabCommunity.Controls.Add(this.tabCommunityTabs);
             this.tabCommunity.Location = new System.Drawing.Point(4, 22);
             this.tabCommunity.Name = "tabCommunity";
-            this.tabCommunity.Size = new System.Drawing.Size(1122, 856);
+            this.tabCommunity.Size = new System.Drawing.Size(1122, 782);
             this.tabCommunity.TabIndex = 6;
             this.tabCommunity.Text = "Community";
             this.tabCommunity.UseVisualStyleBackColor = true;
@@ -532,7 +534,7 @@
             this.tabEnclaveDetails.Location = new System.Drawing.Point(4, 22);
             this.tabEnclaveDetails.Name = "tabEnclaveDetails";
             this.tabEnclaveDetails.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclaveDetails.Size = new System.Drawing.Size(924, 811);
+            this.tabEnclaveDetails.Size = new System.Drawing.Size(924, 737);
             this.tabEnclaveDetails.TabIndex = 0;
             this.tabEnclaveDetails.Text = "Details";
             this.tabEnclaveDetails.UseVisualStyleBackColor = true;
@@ -637,7 +639,7 @@
             this.tabEnclavesCharactersDetails.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersDetails.Name = "tabEnclavesCharactersDetails";
             this.tabEnclavesCharactersDetails.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclavesCharactersDetails.Size = new System.Drawing.Size(735, 751);
+            this.tabEnclavesCharactersDetails.Size = new System.Drawing.Size(735, 677);
             this.tabEnclavesCharactersDetails.TabIndex = 0;
             this.tabEnclavesCharactersDetails.Text = "Details";
             this.tabEnclavesCharactersDetails.UseVisualStyleBackColor = true;
@@ -646,7 +648,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 735);
+            this.label3.Location = new System.Drawing.Point(6, 661);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(394, 13);
             this.label3.TabIndex = 16;
@@ -668,7 +670,7 @@
             this.tlpEnclavesCharactersDetails.RowCount = 1;
             this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 726F));
             this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 726F));
-            this.tlpEnclavesCharactersDetails.Size = new System.Drawing.Size(723, 726);
+            this.tlpEnclavesCharactersDetails.Size = new System.Drawing.Size(723, 652);
             this.tlpEnclavesCharactersDetails.TabIndex = 15;
             // 
             // tabEnclavesCharactersSkills
@@ -785,7 +787,7 @@
             this.tabControlEnclavesCharactersEquipmentMelee.Location = new System.Drawing.Point(4, 22);
             this.tabControlEnclavesCharactersEquipmentMelee.Name = "tabControlEnclavesCharactersEquipmentMelee";
             this.tabControlEnclavesCharactersEquipmentMelee.Padding = new System.Windows.Forms.Padding(3);
-            this.tabControlEnclavesCharactersEquipmentMelee.Size = new System.Drawing.Size(721, 699);
+            this.tabControlEnclavesCharactersEquipmentMelee.Size = new System.Drawing.Size(721, 625);
             this.tabControlEnclavesCharactersEquipmentMelee.TabIndex = 0;
             this.tabControlEnclavesCharactersEquipmentMelee.Text = "Melee";
             this.tabControlEnclavesCharactersEquipmentMelee.UseVisualStyleBackColor = true;
@@ -794,7 +796,7 @@
             // 
             this.lblMelee.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblMelee.AutoSize = true;
-            this.lblMelee.Location = new System.Drawing.Point(6, 680);
+            this.lblMelee.Location = new System.Drawing.Point(6, 606);
             this.lblMelee.Name = "lblMelee";
             this.lblMelee.Size = new System.Drawing.Size(61, 13);
             this.lblMelee.TabIndex = 19;
@@ -813,7 +815,7 @@
             this.tlpMeleeWeaponStats.RowCount = 2;
             this.tlpMeleeWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpMeleeWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpMeleeWeaponStats.Size = new System.Drawing.Size(709, 673);
+            this.tlpMeleeWeaponStats.Size = new System.Drawing.Size(709, 599);
             this.tlpMeleeWeaponStats.TabIndex = 0;
             // 
             // tabControlEnclavesCharactersEquipmentSideArm
@@ -822,7 +824,7 @@
             this.tabControlEnclavesCharactersEquipmentSideArm.Controls.Add(this.tlpSideArmWeaponStats);
             this.tabControlEnclavesCharactersEquipmentSideArm.Location = new System.Drawing.Point(4, 22);
             this.tabControlEnclavesCharactersEquipmentSideArm.Name = "tabControlEnclavesCharactersEquipmentSideArm";
-            this.tabControlEnclavesCharactersEquipmentSideArm.Size = new System.Drawing.Size(721, 699);
+            this.tabControlEnclavesCharactersEquipmentSideArm.Size = new System.Drawing.Size(721, 625);
             this.tabControlEnclavesCharactersEquipmentSideArm.TabIndex = 2;
             this.tabControlEnclavesCharactersEquipmentSideArm.Text = "SideArm";
             this.tabControlEnclavesCharactersEquipmentSideArm.UseVisualStyleBackColor = true;
@@ -831,7 +833,7 @@
             // 
             this.lblSidearm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblSidearm.AutoSize = true;
-            this.lblSidearm.Location = new System.Drawing.Point(6, 673);
+            this.lblSidearm.Location = new System.Drawing.Point(6, 599);
             this.lblSidearm.Name = "lblSidearm";
             this.lblSidearm.Size = new System.Drawing.Size(69, 13);
             this.lblSidearm.TabIndex = 19;
@@ -850,7 +852,7 @@
             this.tlpSideArmWeaponStats.RowCount = 2;
             this.tlpSideArmWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpSideArmWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpSideArmWeaponStats.Size = new System.Drawing.Size(712, 666);
+            this.tlpSideArmWeaponStats.Size = new System.Drawing.Size(712, 592);
             this.tlpSideArmWeaponStats.TabIndex = 2;
             // 
             // tabControlEnclavesCharactersEquipmentRanged
@@ -982,7 +984,7 @@
             this.tabSpawner.Controls.Add(this.lblSpawnerLabel);
             this.tabSpawner.Location = new System.Drawing.Point(4, 22);
             this.tabSpawner.Name = "tabSpawner";
-            this.tabSpawner.Size = new System.Drawing.Size(1122, 856);
+            this.tabSpawner.Size = new System.Drawing.Size(1122, 782);
             this.tabSpawner.TabIndex = 2;
             this.tabSpawner.Text = "Spawner";
             this.tabSpawner.UseVisualStyleBackColor = true;
@@ -1031,7 +1033,7 @@
             this.tabInspector.Controls.Add(this.txtInspectorAddress);
             this.tabInspector.Location = new System.Drawing.Point(4, 22);
             this.tabInspector.Name = "tabInspector";
-            this.tabInspector.Size = new System.Drawing.Size(1122, 856);
+            this.tabInspector.Size = new System.Drawing.Size(1122, 782);
             this.tabInspector.TabIndex = 5;
             this.tabInspector.Text = "Inspector";
             this.tabInspector.UseVisualStyleBackColor = true;
@@ -1148,7 +1150,7 @@
             this.tabGameLog.Controls.Add(this.tabGameLogTabs);
             this.tabGameLog.Location = new System.Drawing.Point(4, 22);
             this.tabGameLog.Name = "tabGameLog";
-            this.tabGameLog.Size = new System.Drawing.Size(1122, 856);
+            this.tabGameLog.Size = new System.Drawing.Size(1122, 782);
             this.tabGameLog.TabIndex = 3;
             this.tabGameLog.Text = "GameLog";
             this.tabGameLog.UseVisualStyleBackColor = true;
@@ -1163,23 +1165,45 @@
             this.tabGameLogTabs.Location = new System.Drawing.Point(3, 3);
             this.tabGameLogTabs.Name = "tabGameLogTabs";
             this.tabGameLogTabs.SelectedIndex = 0;
-            this.tabGameLogTabs.Size = new System.Drawing.Size(1116, 850);
+            this.tabGameLogTabs.Size = new System.Drawing.Size(1116, 776);
             this.tabGameLogTabs.TabIndex = 0;
             // 
             // tabGameLogLogLevels
             // 
             this.tabGameLogLogLevels.AutoScroll = true;
             this.tabGameLogLogLevels.AutoScrollMinSize = new System.Drawing.Size(0, 4000);
+            this.tabGameLogLogLevels.Controls.Add(this.btnGameLogLevelsSave);
+            this.tabGameLogLogLevels.Controls.Add(this.btnGameLogLevelsLoad);
             this.tabGameLogLogLevels.Controls.Add(this.tlpGameLogLogLevels);
             this.tabGameLogLogLevels.Controls.Add(this.btnGameLogLogLevelsMin);
             this.tabGameLogLogLevels.Controls.Add(this.btnGameLogLogLevelMax);
             this.tabGameLogLogLevels.Location = new System.Drawing.Point(4, 22);
             this.tabGameLogLogLevels.Name = "tabGameLogLogLevels";
             this.tabGameLogLogLevels.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGameLogLogLevels.Size = new System.Drawing.Size(1108, 824);
+            this.tabGameLogLogLevels.Size = new System.Drawing.Size(1108, 750);
             this.tabGameLogLogLevels.TabIndex = 0;
             this.tabGameLogLogLevels.Text = "LogLevels";
             this.tabGameLogLogLevels.UseVisualStyleBackColor = true;
+            // 
+            // btnGameLogLevelsSave
+            // 
+            this.btnGameLogLevelsSave.Location = new System.Drawing.Point(6, 32);
+            this.btnGameLogLevelsSave.Name = "btnGameLogLevelsSave";
+            this.btnGameLogLevelsSave.Size = new System.Drawing.Size(75, 23);
+            this.btnGameLogLevelsSave.TabIndex = 4;
+            this.btnGameLogLevelsSave.Text = "Save";
+            this.btnGameLogLevelsSave.UseVisualStyleBackColor = true;
+            this.btnGameLogLevelsSave.Click += new System.EventHandler(this.btnGameLogLevelsSave_Click);
+            // 
+            // btnGameLogLevelsLoad
+            // 
+            this.btnGameLogLevelsLoad.Location = new System.Drawing.Point(87, 32);
+            this.btnGameLogLevelsLoad.Name = "btnGameLogLevelsLoad";
+            this.btnGameLogLevelsLoad.Size = new System.Drawing.Size(75, 23);
+            this.btnGameLogLevelsLoad.TabIndex = 3;
+            this.btnGameLogLevelsLoad.Text = "Load";
+            this.btnGameLogLevelsLoad.UseVisualStyleBackColor = true;
+            this.btnGameLogLevelsLoad.Click += new System.EventHandler(this.btnGameLogLevelsLoad_Click);
             // 
             // tlpGameLogLogLevels
             // 
@@ -1189,12 +1213,12 @@
             this.tlpGameLogLogLevels.ColumnCount = 2;
             this.tlpGameLogLogLevels.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpGameLogLogLevels.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpGameLogLogLevels.Location = new System.Drawing.Point(6, 32);
+            this.tlpGameLogLogLevels.Location = new System.Drawing.Point(6, 61);
             this.tlpGameLogLogLevels.Name = "tlpGameLogLogLevels";
             this.tlpGameLogLogLevels.RowCount = 2;
             this.tlpGameLogLogLevels.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpGameLogLogLevels.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpGameLogLogLevels.Size = new System.Drawing.Size(518, 65535);
+            this.tlpGameLogLogLevels.Size = new System.Drawing.Size(1062, 3928);
             this.tlpGameLogLogLevels.TabIndex = 0;
             // 
             // btnGameLogLogLevelsMin
@@ -1224,7 +1248,7 @@
             this.tabGameLogLog.Location = new System.Drawing.Point(4, 22);
             this.tabGameLogLog.Name = "tabGameLogLog";
             this.tabGameLogLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGameLogLog.Size = new System.Drawing.Size(1108, 824);
+            this.tabGameLogLog.Size = new System.Drawing.Size(1108, 750);
             this.tabGameLogLog.TabIndex = 1;
             this.tabGameLogLog.Text = "Log";
             this.tabGameLogLog.UseVisualStyleBackColor = true;
@@ -1232,7 +1256,7 @@
             // btnGameLogClear
             // 
             this.btnGameLogClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGameLogClear.Location = new System.Drawing.Point(1027, 795);
+            this.btnGameLogClear.Location = new System.Drawing.Point(1027, 721);
             this.btnGameLogClear.Name = "btnGameLogClear";
             this.btnGameLogClear.Size = new System.Drawing.Size(75, 23);
             this.btnGameLogClear.TabIndex = 1;
@@ -1247,7 +1271,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.rtbGameLog.Location = new System.Drawing.Point(3, 6);
             this.rtbGameLog.Name = "rtbGameLog";
-            this.rtbGameLog.Size = new System.Drawing.Size(1099, 783);
+            this.rtbGameLog.Size = new System.Drawing.Size(1099, 709);
             this.rtbGameLog.TabIndex = 0;
             this.rtbGameLog.Text = "";
             // 
@@ -1470,6 +1494,8 @@
         private System.Windows.Forms.Label lblCharacterSkillValue;
         private System.Windows.Forms.TextBox txtSkillValue;
         private System.Windows.Forms.Button btnSetSkillValue;
+        private System.Windows.Forms.Button btnGameLogLevelsSave;
+        private System.Windows.Forms.Button btnGameLogLevelsLoad;
     }
 }
 

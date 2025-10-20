@@ -37,6 +37,7 @@ namespace SoD2_Editor
 
         private static uint verIdent = 0;
         private static AddressBook addresses = new AddressBook();
+        private static AddressBook gamelogs = new AddressBook();
         private static AddressBook funcs = new AddressBook();
         private static AddressBook hooks = new AddressBook();
         private World world = null;
@@ -48,7 +49,7 @@ namespace SoD2_Editor
 
         private void GameLogAdd(string name, IntPtr addr1, IntPtr addr2)
         {
-            addresses.Add(name, addr1, addr2);
+            gamelogs.Add(name, addr1, addr2);
             logNames.Add(name);
         }
         public Form1()
@@ -313,7 +314,7 @@ namespace SoD2_Editor
 
         public class AddressBook
         {
-            private readonly Dictionary<string, (IntPtr MS, IntPtr Steam)> _map
+            public readonly Dictionary<string, (IntPtr MS, IntPtr Steam)> _map
                 = new Dictionary<string, (IntPtr, IntPtr)>();
 
             public void Add(string name, IntPtr msAddr, IntPtr steamAddr)
@@ -1046,7 +1047,7 @@ namespace SoD2_Editor
 
                 numValue.ValueChanged += (s, e) =>
                 {
-                    IntPtr addr = addresses.Get(fieldName);
+                    IntPtr addr = gamelogs.Get(fieldName);
                     WUInt8(addr, (byte)numValue.Value);
                 };
 
@@ -1076,7 +1077,7 @@ namespace SoD2_Editor
                 string name = kvp.Key;
                 var entry = kvp.Value;
 
-                IntPtr addr = addresses.Get(name);
+                IntPtr addr = gamelogs.Get(name);
                 byte value = RUInt8(addr);
 
                 if (entry.ValueControl.Value != value)
@@ -1428,14 +1429,14 @@ namespace SoD2_Editor
         {
             foreach (string logName in logNames)
             {
-                WUInt8(addresses.Get(logName), 0);
+                WUInt8(gamelogs.Get(logName), 0);
             }
         }
         private void btnGameLogLogLevelMax_Click(object sender, EventArgs e)
         {
             foreach (string logName in logNames)
             {
-                WUInt8(addresses.Get(logName), 9);
+                WUInt8(gamelogs.Get(logName), 9);
             }
         }
         private void btnGameLogClear_Click(object sender, EventArgs e)
@@ -1824,6 +1825,50 @@ namespace SoD2_Editor
                 Output("No MapUI waypoints found");
         }
 
-        
+        private void btnGameLogLevelsSave_Click(object sender, EventArgs e)
+        {
+            const string baseKeyPath = @"Software\Wulf\SoDEaD\LogLevels";
+
+            using (RegistryKey baseKey = Registry.CurrentUser.CreateSubKey(baseKeyPath))
+            {
+                if (baseKey == null)
+                    throw new InvalidOperationException("Failed to open registry key: " + baseKeyPath);
+
+                foreach (var gamelog in gamelogs._map)
+                {
+                    string name = gamelog.Key;
+                    baseKey.SetValue(name, RUInt8(gamelogs.Get(name)), RegistryValueKind.QWord);
+                }
+            }
+            Output("LogLevels saved to HKCU\\Software\\Wulf\\SoDEaD\\LogLevels");
+        }
+
+        private void btnGameLogLevelsLoad_Click(object sender, EventArgs e)
+        {
+            const string baseKeyPath = @"Software\Wulf\SoDEaD\LogLevels";
+
+            using (RegistryKey baseKey = Registry.CurrentUser.OpenSubKey(baseKeyPath))
+            {
+                if (baseKey == null)
+                {
+                    Output("No saved LogLevels found in registry.");
+                    return;
+                }
+
+                foreach (string name in baseKey.GetValueNames())
+                {
+                    object value = baseKey.GetValue(name);
+                    if (value is long qwordValue)
+                    {
+                        WUInt8(gamelogs.Get(name), (byte)qwordValue);
+                    }
+                    else
+                    {
+                        Output($"Skipping invalid registry value for {name}");
+                    }
+                }
+            }
+            Output("LogLevels loaded from HKCU\\Software\\Wulf\\SoDEaD\\LogLevels");
+        }
     }
 }
