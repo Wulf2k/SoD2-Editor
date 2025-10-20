@@ -72,6 +72,21 @@ namespace SoD2_Editor
                     _enclaveCharactersTable.Rows[i].Delete();
                 }
             }
+
+            string currentCharHex = currDaytonCharacter.BaseAddress.ToString("X");
+            foreach (DataGridViewRow dgRow in dgvEnclaveCharacters.Rows)
+            {
+                if (dgRow.Cells["Addr"].Value?.ToString() == currentCharHex)
+                {
+                    dgRow.DefaultCellStyle.ForeColor = Color.Red;
+                    dgRow.DefaultCellStyle.Font = new Font(dgvEnclaveCharacters.Font, FontStyle.Bold);
+                }
+                else
+                {
+                    dgRow.DefaultCellStyle.ForeColor = Color.White;
+                    dgRow.DefaultCellStyle.Font = dgvEnclaveCharacters.Font;
+                }
+            }
         }
 
 

@@ -85,6 +85,8 @@ namespace SoD2_Editor
             InitEnclaveCharactersTable();
             InitCharacterSkillsTable();
             InitializeCommunityResourceGrid(dgvCommunityResources);
+
+            InitInspectorGrid();
         }
 
         private List<string> logNames;
@@ -1715,52 +1717,6 @@ namespace SoD2_Editor
             }
             else
                 Output("No MapUI waypoints found");
-        }
-
-        private void btnGameLogLevelsSave_Click(object sender, EventArgs e)
-        {
-            const string baseKeyPath = @"Software\Wulf\SoDEaD\LogLevels";
-
-            using (RegistryKey baseKey = Registry.CurrentUser.CreateSubKey(baseKeyPath))
-            {
-                if (baseKey == null)
-                    throw new InvalidOperationException("Failed to open registry key: " + baseKeyPath);
-
-                foreach (var gamelog in gamelogs._map)
-                {
-                    string name = gamelog.Key;
-                    baseKey.SetValue(name, RUInt8(gamelogs.Get(name)), RegistryValueKind.QWord);
-                }
-            }
-            Output("LogLevels saved to HKCU\\Software\\Wulf\\SoDEaD\\LogLevels");
-        }
-
-        private void btnGameLogLevelsLoad_Click(object sender, EventArgs e)
-        {
-            const string baseKeyPath = @"Software\Wulf\SoDEaD\LogLevels";
-
-            using (RegistryKey baseKey = Registry.CurrentUser.OpenSubKey(baseKeyPath))
-            {
-                if (baseKey == null)
-                {
-                    Output("No saved LogLevels found in registry.");
-                    return;
-                }
-
-                foreach (string name in baseKey.GetValueNames())
-                {
-                    object value = baseKey.GetValue(name);
-                    if (value is long qwordValue)
-                    {
-                        WUInt8(gamelogs.Get(name), (byte)qwordValue);
-                    }
-                    else
-                    {
-                        Output($"Skipping invalid registry value for {name}");
-                    }
-                }
-            }
-            Output("LogLevels loaded from HKCU\\Software\\Wulf\\SoDEaD\\LogLevels");
         }
 
         

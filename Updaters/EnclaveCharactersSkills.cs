@@ -34,7 +34,6 @@ namespace SoD2_Editor
             dgvCharacterSkills.RowHeadersVisible = false;
 
             dgvCharacterSkills.Columns["SkillRef"].Visible = false;
-            dgvCharacterSkills.Columns["Name"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgvCharacterSkills.Columns["XP"].DefaultCellStyle.Format = "F4";
             dgvCharacterSkills.Columns["XP"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             dgvCharacterSkills.Columns["Granted By Trait"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;

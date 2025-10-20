@@ -64,6 +64,20 @@ namespace SoD2_Editor
                 if (!enclaveManager.Enclaves.Any(e => e.BaseAddress.ToString("X") == hexAddr))
                     _enclaveTable.Rows[i].Delete();
             }
+            string currentEncHex = currDaytonCharacter.Enclave.BaseAddress.ToString("X");
+            foreach (DataGridViewRow dgRow in dgvEnclaves.Rows)
+            {
+                if (dgRow.Cells["Addr"].Value?.ToString() == currentEncHex)
+                {
+                    dgRow.DefaultCellStyle.ForeColor = Color.Red;
+                    dgRow.DefaultCellStyle.Font = new Font(dgvEnclaves.Font, FontStyle.Bold);
+                }
+                else
+                {
+                    dgRow.DefaultCellStyle.ForeColor = Color.White;
+                    dgRow.DefaultCellStyle.Font = dgvEnclaves.Font;
+                }
+            }
         }
         private void dgvEnclaves_SelectionChanged(object sender, EventArgs e)
         {

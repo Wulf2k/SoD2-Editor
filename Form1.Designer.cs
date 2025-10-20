@@ -105,15 +105,22 @@
             this.lblSpawnerDetails = new System.Windows.Forms.Label();
             this.lblSpawnerLabel = new System.Windows.Forms.Label();
             this.tabInspector = new System.Windows.Forms.TabPage();
+            this.numInspectorArrIndex = new System.Windows.Forms.NumericUpDown();
+            this.txtInspectorPtrToInspect = new System.Windows.Forms.TextBox();
+            this.lblInspectorPtrName = new System.Windows.Forms.Label();
+            this.btnInspectPtr = new System.Windows.Forms.Button();
+            this.lblInspectorAddress = new System.Windows.Forms.Label();
+            this.lblInspectorType = new System.Windows.Forms.Label();
+            this.txtInspectorValue = new System.Windows.Forms.TextBox();
+            this.btnInspectorSetValue = new System.Windows.Forms.Button();
+            this.dgvInspector = new System.Windows.Forms.DataGridView();
             this.btnInspectClosestEnemy = new System.Windows.Forms.Button();
             this.btnInspectController = new System.Windows.Forms.Button();
             this.btnInspectEngine = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
             this.btnInspectDHC = new System.Windows.Forms.Button();
             this.lblInspector = new System.Windows.Forms.Label();
             this.btnInspectWorld = new System.Windows.Forms.Button();
             this.btnInspectorBack = new System.Windows.Forms.Button();
-            this.tlpInspector = new System.Windows.Forms.TableLayoutPanel();
             this.txtInspectorAddress = new System.Windows.Forms.TextBox();
             this.tabGameLog = new System.Windows.Forms.TabPage();
             this.tabGameLogTabs = new System.Windows.Forms.TabControl();
@@ -134,6 +141,7 @@
             this.btnTest = new System.Windows.Forms.Button();
             this.btnTest2 = new System.Windows.Forms.Button();
             this.btnWarpToWaypoint = new System.Windows.Forms.Button();
+            this.lblInspectorPath = new System.Windows.Forms.Label();
             this.tabs.SuspendLayout();
             this.tabWorld.SuspendLayout();
             this.tabCommunity.SuspendLayout();
@@ -159,6 +167,8 @@
             this.tabEnclavesCharactersInventory.SuspendLayout();
             this.tabSpawner.SuspendLayout();
             this.tabInspector.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numInspectorArrIndex)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvInspector)).BeginInit();
             this.tabGameLog.SuspendLayout();
             this.tabGameLogTabs.SuspendLayout();
             this.tabGameLogLogLevels.SuspendLayout();
@@ -723,6 +733,7 @@
             this.dgvCharacterSkills.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvCharacterSkills.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dgvCharacterSkills.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvCharacterSkills.Location = new System.Drawing.Point(7, 34);
             this.dgvCharacterSkills.Name = "dgvCharacterSkills";
@@ -1025,15 +1036,23 @@
             // 
             // tabInspector
             // 
+            this.tabInspector.Controls.Add(this.lblInspectorPath);
+            this.tabInspector.Controls.Add(this.numInspectorArrIndex);
+            this.tabInspector.Controls.Add(this.txtInspectorPtrToInspect);
+            this.tabInspector.Controls.Add(this.lblInspectorPtrName);
+            this.tabInspector.Controls.Add(this.btnInspectPtr);
+            this.tabInspector.Controls.Add(this.lblInspectorAddress);
+            this.tabInspector.Controls.Add(this.lblInspectorType);
+            this.tabInspector.Controls.Add(this.txtInspectorValue);
+            this.tabInspector.Controls.Add(this.btnInspectorSetValue);
+            this.tabInspector.Controls.Add(this.dgvInspector);
             this.tabInspector.Controls.Add(this.btnInspectClosestEnemy);
             this.tabInspector.Controls.Add(this.btnInspectController);
             this.tabInspector.Controls.Add(this.btnInspectEngine);
-            this.tabInspector.Controls.Add(this.label4);
             this.tabInspector.Controls.Add(this.btnInspectDHC);
             this.tabInspector.Controls.Add(this.lblInspector);
             this.tabInspector.Controls.Add(this.btnInspectWorld);
             this.tabInspector.Controls.Add(this.btnInspectorBack);
-            this.tabInspector.Controls.Add(this.tlpInspector);
             this.tabInspector.Controls.Add(this.txtInspectorAddress);
             this.tabInspector.Location = new System.Drawing.Point(4, 22);
             this.tabInspector.Name = "tabInspector";
@@ -1041,6 +1060,94 @@
             this.tabInspector.TabIndex = 5;
             this.tabInspector.Text = "Inspector";
             this.tabInspector.UseVisualStyleBackColor = true;
+            // 
+            // numInspectorArrIndex
+            // 
+            this.numInspectorArrIndex.Location = new System.Drawing.Point(339, 64);
+            this.numInspectorArrIndex.Name = "numInspectorArrIndex";
+            this.numInspectorArrIndex.Size = new System.Drawing.Size(44, 20);
+            this.numInspectorArrIndex.TabIndex = 30;
+            // 
+            // txtInspectorPtrToInspect
+            // 
+            this.txtInspectorPtrToInspect.Location = new System.Drawing.Point(205, 64);
+            this.txtInspectorPtrToInspect.Name = "txtInspectorPtrToInspect";
+            this.txtInspectorPtrToInspect.Size = new System.Drawing.Size(128, 20);
+            this.txtInspectorPtrToInspect.TabIndex = 29;
+            this.txtInspectorPtrToInspect.Text = "0";
+            // 
+            // lblInspectorPtrName
+            // 
+            this.lblInspectorPtrName.AutoSize = true;
+            this.lblInspectorPtrName.Location = new System.Drawing.Point(97, 90);
+            this.lblInspectorPtrName.Name = "lblInspectorPtrName";
+            this.lblInspectorPtrName.Size = new System.Drawing.Size(78, 13);
+            this.lblInspectorPtrName.TabIndex = 28;
+            this.lblInspectorPtrName.Text = "Pointer\'s Name";
+            // 
+            // btnInspectPtr
+            // 
+            this.btnInspectPtr.Location = new System.Drawing.Point(92, 64);
+            this.btnInspectPtr.Name = "btnInspectPtr";
+            this.btnInspectPtr.Size = new System.Drawing.Size(107, 23);
+            this.btnInspectPtr.TabIndex = 27;
+            this.btnInspectPtr.Text = "Inspect Pointer";
+            this.btnInspectPtr.UseVisualStyleBackColor = true;
+            this.btnInspectPtr.Click += new System.EventHandler(this.btnInspectPtr_Click);
+            // 
+            // lblInspectorAddress
+            // 
+            this.lblInspectorAddress.AutoSize = true;
+            this.lblInspectorAddress.Location = new System.Drawing.Point(97, 159);
+            this.lblInspectorAddress.Name = "lblInspectorAddress";
+            this.lblInspectorAddress.Size = new System.Drawing.Size(45, 13);
+            this.lblInspectorAddress.TabIndex = 26;
+            this.lblInspectorAddress.Text = "Address";
+            // 
+            // lblInspectorType
+            // 
+            this.lblInspectorType.AutoSize = true;
+            this.lblInspectorType.Location = new System.Drawing.Point(97, 142);
+            this.lblInspectorType.Name = "lblInspectorType";
+            this.lblInspectorType.Size = new System.Drawing.Size(31, 13);
+            this.lblInspectorType.TabIndex = 25;
+            this.lblInspectorType.Text = "Type";
+            // 
+            // txtInspectorValue
+            // 
+            this.txtInspectorValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtInspectorValue.Location = new System.Drawing.Point(175, 114);
+            this.txtInspectorValue.Name = "txtInspectorValue";
+            this.txtInspectorValue.Size = new System.Drawing.Size(944, 20);
+            this.txtInspectorValue.TabIndex = 23;
+            // 
+            // btnInspectorSetValue
+            // 
+            this.btnInspectorSetValue.Location = new System.Drawing.Point(94, 112);
+            this.btnInspectorSetValue.Name = "btnInspectorSetValue";
+            this.btnInspectorSetValue.Size = new System.Drawing.Size(75, 23);
+            this.btnInspectorSetValue.TabIndex = 24;
+            this.btnInspectorSetValue.Text = "Set";
+            this.btnInspectorSetValue.UseVisualStyleBackColor = true;
+            // 
+            // dgvInspector
+            // 
+            this.dgvInspector.AllowUserToAddRows = false;
+            this.dgvInspector.AllowUserToDeleteRows = false;
+            this.dgvInspector.AllowUserToResizeRows = false;
+            this.dgvInspector.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvInspector.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dgvInspector.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvInspector.Location = new System.Drawing.Point(92, 179);
+            this.dgvInspector.Name = "dgvInspector";
+            this.dgvInspector.RowHeadersVisible = false;
+            this.dgvInspector.Size = new System.Drawing.Size(1027, 600);
+            this.dgvInspector.TabIndex = 22;
+            this.dgvInspector.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvInspector_CellClick);
+            this.dgvInspector.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvInspector_CellDoubleClick);
             // 
             // btnInspectClosestEnemy
             // 
@@ -1072,17 +1179,6 @@
             this.btnInspectEngine.UseVisualStyleBackColor = true;
             this.btnInspectEngine.Click += new System.EventHandler(this.btnInspectEngine_Click);
             // 
-            // label4
-            // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(121, 840);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(457, 13);
-            this.label4.TabIndex = 18;
-            this.label4.Text = "NOTE:  Inspector is inefficient as hell, and will freeze the progam while it refr" +
-    "eshes large objects.";
-            // 
             // btnInspectDHC
             // 
             this.btnInspectDHC.Location = new System.Drawing.Point(11, 93);
@@ -1096,7 +1192,7 @@
             // lblInspector
             // 
             this.lblInspector.AutoSize = true;
-            this.lblInspector.Location = new System.Drawing.Point(286, 11);
+            this.lblInspector.Location = new System.Drawing.Point(205, 11);
             this.lblInspector.Name = "lblInspector";
             this.lblInspector.Size = new System.Drawing.Size(73, 13);
             this.lblInspector.TabIndex = 16;
@@ -1122,24 +1218,6 @@
             this.btnInspectorBack.Text = "Back";
             this.btnInspectorBack.UseVisualStyleBackColor = true;
             this.btnInspectorBack.Click += new System.EventHandler(this.btnInspectorBack_Click);
-            // 
-            // tlpInspector
-            // 
-            this.tlpInspector.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tlpInspector.AutoScroll = true;
-            this.tlpInspector.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tlpInspector.ColumnCount = 2;
-            this.tlpInspector.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpInspector.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpInspector.Location = new System.Drawing.Point(116, 35);
-            this.tlpInspector.Name = "tlpInspector";
-            this.tlpInspector.RowCount = 2;
-            this.tlpInspector.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpInspector.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpInspector.Size = new System.Drawing.Size(1003, 744);
-            this.tlpInspector.TabIndex = 13;
             // 
             // txtInspectorAddress
             // 
@@ -1359,6 +1437,15 @@
             this.btnWarpToWaypoint.UseVisualStyleBackColor = true;
             this.btnWarpToWaypoint.Click += new System.EventHandler(this.btnWarpToWaypoint_Click);
             // 
+            // lblInspectorPath
+            // 
+            this.lblInspectorPath.AutoSize = true;
+            this.lblInspectorPath.Location = new System.Drawing.Point(205, 35);
+            this.lblInspectorPath.Name = "lblInspectorPath";
+            this.lblInspectorPath.Size = new System.Drawing.Size(29, 13);
+            this.lblInspectorPath.TabIndex = 31;
+            this.lblInspectorPath.Text = "Path";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1415,6 +1502,8 @@
             this.tabSpawner.PerformLayout();
             this.tabInspector.ResumeLayout(false);
             this.tabInspector.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numInspectorArrIndex)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvInspector)).EndInit();
             this.tabGameLog.ResumeLayout(false);
             this.tabGameLogTabs.ResumeLayout(false);
             this.tabGameLogLogLevels.ResumeLayout(false);
@@ -1491,13 +1580,11 @@
         private System.Windows.Forms.Label lblInventory;
         private System.Windows.Forms.TabPage tabInspector;
         private System.Windows.Forms.TextBox txtInspectorAddress;
-        private System.Windows.Forms.TableLayoutPanel tlpInspector;
         private System.Windows.Forms.Button btnInspectorBack;
         private System.Windows.Forms.Button btnInspectWorld;
         private System.Windows.Forms.Label lblInspector;
         private System.Windows.Forms.Button btnEnableConsole;
         private System.Windows.Forms.Button btnInspectDHC;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button btnInspectEngine;
         private System.Windows.Forms.TabPage tabCommunity;
         private System.Windows.Forms.DataGridView dgvCommunityResources;
@@ -1534,6 +1621,16 @@
         private System.Windows.Forms.Label lblLogLevel;
         private System.Windows.Forms.TextBox txtLogLevelValue;
         private System.Windows.Forms.Button btnSetLogLevel;
+        private System.Windows.Forms.DataGridView dgvInspector;
+        private System.Windows.Forms.Label lblInspectorType;
+        private System.Windows.Forms.TextBox txtInspectorValue;
+        private System.Windows.Forms.Button btnInspectorSetValue;
+        private System.Windows.Forms.Label lblInspectorAddress;
+        private System.Windows.Forms.NumericUpDown numInspectorArrIndex;
+        private System.Windows.Forms.TextBox txtInspectorPtrToInspect;
+        private System.Windows.Forms.Label lblInspectorPtrName;
+        private System.Windows.Forms.Button btnInspectPtr;
+        private System.Windows.Forms.Label lblInspectorPath;
     }
 }
 

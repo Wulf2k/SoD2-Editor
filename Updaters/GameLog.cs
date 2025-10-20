@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -116,30 +117,51 @@ namespace SoD2_Editor
                 WUInt8(gamelogs.Get(lblLogLevel.Text), newValue);
             }
         }
-        private void _btnCommunityResourceSetValue_Click(object sender, EventArgs e)
+        
+        private void btnGameLogLevelsSave_Click(object sender, EventArgs e)
         {
-            if (_selectedCommunityResource == null || string.IsNullOrEmpty(_selectedCommunityResourceField))
-            {
-                Output("No Resource Selected.");
-                return;
-            }
+            const string baseKeyPath = @"Software\Wulf\SoDEaD\LogLevels";
 
-            if (!float.TryParse(txtCommunityNewVal.Text, out float newValue))
+            using (RegistryKey baseKey = Registry.CurrentUser.CreateSubKey(baseKeyPath))
             {
-                Output("Not a valid number.");
-                return;
-            }
+                if (baseKey == null)
+                    throw new InvalidOperationException("Failed to open registry key: " + baseKeyPath);
 
-            if (_selectedCommunityResourceField == "Supply")
-            {
-                _selectedCommunityResource.Supply = newValue;
+                foreach (var gamelog in gamelogs._map)
+                {
+                    string name = gamelog.Key;
+                    baseKey.SetValue(name, RUInt8(gamelogs.Get(name)), RegistryValueKind.QWord);
+                }
             }
-            else if (_selectedCommunityResourceField == "Accumulator")
-            {
-                _selectedCommunityResource.Accumulator = newValue;
-            }
+            Output("LogLevels saved to HKCU\\Software\\Wulf\\SoDEaD\\LogLevels");
+        }
 
-            Output($"Set {_selectedCommunityResource.Name} to {newValue}");
+        private void btnGameLogLevelsLoad_Click(object sender, EventArgs e)
+        {
+            const string baseKeyPath = @"Software\Wulf\SoDEaD\LogLevels";
+
+            using (RegistryKey baseKey = Registry.CurrentUser.OpenSubKey(baseKeyPath))
+            {
+                if (baseKey == null)
+                {
+                    Output("No saved LogLevels found in registry.");
+                    return;
+                }
+
+                foreach (string name in baseKey.GetValueNames())
+                {
+                    object value = baseKey.GetValue(name);
+                    if (value is long qwordValue)
+                    {
+                        WUInt8(gamelogs.Get(name), (byte)qwordValue);
+                    }
+                    else
+                    {
+                        Output($"Skipping invalid registry value for {name}");
+                    }
+                }
+            }
+            Output("LogLevels loaded from HKCU\\Software\\Wulf\\SoDEaD\\LogLevels");
         }
     }
 }
