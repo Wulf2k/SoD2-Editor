@@ -50,6 +50,7 @@ namespace SoD2_Editor
                 var res = resources[i];
                 var row = _communityResourceTable.Rows[i];
 
+                row["Addr"] = res.BaseAddress.ToString("X");
                 row["Type"] = res.ResourceType.ToString();
                 row["Supply"] = res.Supply;
                 row["Accumulator"] = res.Accumulator;
@@ -59,9 +60,10 @@ namespace SoD2_Editor
             while (_communityResourceTable.Rows.Count > resources.Count)
                 _communityResourceTable.Rows.RemoveAt(_communityResourceTable.Rows.Count - 1);
         }
-        private void InitializeCommunityResourceGrid(DataGridView dgv)
+        private void InitializeCommunityResourceGrid()
         {
             _communityResourceTable = new DataTable();
+            _communityResourceTable.Columns.Add("Addr", typeof(string));
             _communityResourceTable.Columns.Add("Type", typeof(string));
             _communityResourceTable.Columns.Add("Supply", typeof(float));
             _communityResourceTable.Columns.Add("Accumulator", typeof(float));
@@ -69,14 +71,16 @@ namespace SoD2_Editor
             
             _bindingSource = new BindingSource();
             _bindingSource.DataSource = _communityResourceTable;
-            dgv.DataSource = _bindingSource;
-            EnableDarkMode(dgv);
+            dgvCommunityResources.DataSource = _bindingSource;
+            EnableDarkMode(dgvCommunityResources);
 
-            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
-            dgv.Columns["Type"].Width = 80;
-            dgv.Columns["Supply"].Width = 80;
-            dgv.Columns["Accumulator"].Width = 100;
-            dgv.Columns["Description"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgvCommunityResources.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            dgvCommunityResources.Columns["Type"].Width = 80;
+            dgvCommunityResources.Columns["Supply"].Width = 80;
+            dgvCommunityResources.Columns["Accumulator"].Width = 100;
+            dgvCommunityResources.Columns["Description"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
+            dgvCommunityResources.Columns["Addr"].Visible = false;
 
             dgvCommunityResources.CellClick += dgvCommunityResources_CellClick;
         }

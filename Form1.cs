@@ -46,6 +46,8 @@ namespace SoD2_Editor
         private DaytonGameInstance gameInstance = null;
         private DaytonGameGameMode gameMode = null;
 
+        private static IntPtr objTablePtr = IntPtr.Zero;
+
 
         private void GameLogAdd(string name, IntPtr addr1, IntPtr addr2)
         {
@@ -80,13 +82,25 @@ namespace SoD2_Editor
             lblMelee.Text = "";
             lblRanged.Text = "";
             lblSidearm.Text = "";
-            lblInventory.Text = "";
+            lblItemListStatus.Text = "";
             InitEnclaveTable();
             InitEnclaveCharactersTable();
             InitCharacterSkillsTable();
-            InitializeCommunityResourceGrid(dgvCommunityResources);
+            InitCharacterInventoryTable();
+            InitEnclaveInventoryTable();
+            
+            InitializeCommunityResourceGrid();
 
             InitInspectorGrid();
+
+            
+            dgvEnclaves.CellDoubleClick += dgvInspectItem_CellDoubleClick;
+            dgvEnclaveInventory.CellDoubleClick += dgvInspectItem_CellDoubleClick;
+            dgvEnclaveCharacters.CellDoubleClick += dgvInspectItem_CellDoubleClick;
+            dgvEnclaveCharactersInventory.CellDoubleClick += dgvInspectItem_CellDoubleClick;
+            dgvCharacterSkills.CellDoubleClick += dgvInspectItem_CellDoubleClick;
+            dgvItemAdder.CellDoubleClick += dgvInspectItem_CellDoubleClick;
+            dgvCommunityResources.CellDoubleClick += dgvInspectItem_CellDoubleClick;
         }
 
         private List<string> logNames;
@@ -377,6 +391,7 @@ namespace SoD2_Editor
                 if (connected)
                 {
                     refreshTimer.Start();
+                    InitItemLists();
                 }
                 else
                 {
@@ -493,71 +508,85 @@ namespace SoD2_Editor
                             IntPtr enclavePtr = new IntPtr(encaddr);
                             var enclave = new Enclave(enclavePtr);
 
-                            lblEnclavesNumCharacters.Text = $"{enclave.NumCharacters} Characters";
 
-                            if (enclave.NumCharacters == 0) { txtCharacterAddress.Text = "0"; }
-
-                            var enclaveDetails = new StringBuilder();
-                            enclaveDetails.AppendLine($"{enclave.DisplayName}");
-                            enclaveDetails.AppendLine($"{enclave.SchemaPath}");
-                            enclaveDetails.AppendLine($"{enclave.Source}");
-                            enclaveDetails.AppendLine($"");
-                            enclaveDetails.AppendLine($"Characters:             {enclave.NumCharacters}");
-                            enclaveDetails.AppendLine($"NumMemberDeaths:        {enclave.NumMemberDeaths}");
-                            enclaveDetails.AppendLine($"Influence:              {enclave.Influence}");
-                            enclaveDetails.AppendLine($"bDisplayOnMap:          {enclave.bDisplayOnMap}");
-                            enclaveDetails.AppendLine($"EnclaveType:            {enclave.EnclaveType}");
-                            enclaveDetails.AppendLine($"bTradesUsingPrestige:   {enclave.bTradesUsingPrestige}");
-                            enclaveDetails.AppendLine($"bDisbandsOnAnyRecruit:  {enclave.bDisbandsOnAnyRecruit}");
-
-
-                                
-                            lblEnclaveDetails.Text = enclaveDetails.ToString();
-                            if (long.TryParse(txtCharacterAddress.Text, System.Globalization.NumberStyles.HexNumber, null, out long chraddr) && chraddr > 0)
+                            switch (tabControlEnclaves.SelectedTab.Name)
                             {
-                                IntPtr chrPtr = new IntPtr(chraddr);
-                                var chr = new DaytonCharacter(chrPtr);
-                                selectedChar = chr;
-                                switch (tabControlEnclavesCharacters.SelectedTab.Name)
-                                {
-                                    case "tabEnclavesCharactersDetails":
-                                        UpdateCharacterDetails(chr);
-                                        break;
-                                    case "tabEnclavesCharactersSkills":
-                                        UpdateCharacterSkills(chr);
-                                        break;
-                                    case "tabEnclavesCharactersTraits":
-                                        lblCharacterTraits.Text = string.Join(Environment.NewLine, chr.CharacterRecord.TraitNames);
-                                        break;
-                                    case "tabEnclavesCharactersEquipment":
-                                        switch (tabControlEnclavesCharactersEquipment.SelectedTab.Name)
+                                case "tabEnclaveDetails":
+                                    
+
+                                    lblEnclavesNumCharacters.Text = $"{enclave.NumCharacters} Characters";
+
+                                    if (enclave.NumCharacters == 0) { txtCharacterAddress.Text = "0"; }
+
+                                    var enclaveDetails = new StringBuilder();
+                                    enclaveDetails.AppendLine($"{enclave.DisplayName}");
+                                    enclaveDetails.AppendLine($"{enclave.SchemaPath}");
+                                    enclaveDetails.AppendLine($"{enclave.Source}");
+                                    enclaveDetails.AppendLine($"");
+                                    enclaveDetails.AppendLine($"Characters:             {enclave.NumCharacters}");
+                                    enclaveDetails.AppendLine($"NumMemberDeaths:        {enclave.NumMemberDeaths}");
+                                    enclaveDetails.AppendLine($"Influence:              {enclave.Influence}");
+                                    enclaveDetails.AppendLine($"bDisplayOnMap:          {enclave.bDisplayOnMap}");
+                                    enclaveDetails.AppendLine($"EnclaveType:            {enclave.EnclaveType}");
+                                    enclaveDetails.AppendLine($"bTradesUsingPrestige:   {enclave.bTradesUsingPrestige}");
+                                    enclaveDetails.AppendLine($"bDisbandsOnAnyRecruit:  {enclave.bDisbandsOnAnyRecruit}");
+
+
+
+                                    lblEnclaveDetails.Text = enclaveDetails.ToString();
+                                    break;
+                                case "tabEnclaveCharacters":
+                                    if (long.TryParse(txtCharacterAddress.Text, System.Globalization.NumberStyles.HexNumber, null, out long chraddr) && chraddr > 0)
+                                    {
+                                        IntPtr chrPtr = new IntPtr(chraddr);
+                                        var chr = new DaytonCharacter(chrPtr);
+                                        selectedChar = chr;
+                                        switch (tabControlEnclavesCharacters.SelectedTab.Name)
                                         {
-                                            case "tabControlEnclavesCharactersEquipmentMelee":
-                                                UpdateMeleeWeaponDetails(chr.CharacterRecord.Equipment.MeleeWeaponItemInstance);
-                                                lblMelee.Text = $"{chr.CharacterRecord.Equipment.MeleeWeaponItemInstance.ItemClass.Name}";
+                                            case "tabEnclavesCharactersDetails":
+                                                UpdateCharacterDetails(chr);
                                                 break;
-                                            case "tabControlEnclavesCharactersEquipmentSideArm":
-                                                UpdateRangedWeaponDetails(tlpSideArmWeaponStats, chr.CharacterRecord.Equipment.SideArmRangedWeaponItemInstance);
-                                                lblSidearm.Text = $"{chr.CharacterRecord.Equipment.SideArmRangedWeaponItemInstance.ItemClass.Name}";
+                                            case "tabEnclavesCharactersSkills":
+                                                UpdateCharacterSkills(chr);
                                                 break;
-                                            case "tabControlEnclavesCharactersEquipmentRanged":
-                                                UpdateRangedWeaponDetails(tlpRangedWeaponStats, chr.CharacterRecord.Equipment.RangedWeaponItemInstance);
-                                                lblRanged.Text = $"{chr.CharacterRecord.Equipment.RangedWeaponItemInstance.ItemClass.Name}";
+                                            case "tabEnclavesCharactersTraits":
+                                                lblCharacterTraits.Text = string.Join(Environment.NewLine, chr.CharacterRecord.TraitNames);
                                                 break;
-                                        }
-                                        lblEquipment.Text = $"{chr.CharacterRecord.Equipment.Name}";
-                                        break;
-                                    case "tabEnclavesCharactersInventory":
-                                        UpdateCharacterInventoryList(chr);
-                                        lblInventory.Text = $"{chr.CharacterRecord.Inventory.Name}";
-                                        break;
-                                }//end switch cha tab name
-                                lblCharactersLabel.Text = $"{chr.Name}";
-                            }// end if parsed char addr
-                            else
-                            {
-                                lblCharactersLabel.Text = "";
+                                            case "tabEnclavesCharactersEquipment":
+                                                switch (tabControlEnclavesCharactersEquipment.SelectedTab.Name)
+                                                {
+                                                    case "tabControlEnclavesCharactersEquipmentMelee":
+                                                        UpdateMeleeWeaponDetails(chr.CharacterRecord.Equipment.MeleeWeaponItemInstance);
+                                                        lblMelee.Text = $"{chr.CharacterRecord.Equipment.MeleeWeaponItemInstance.ItemClass.Name}";
+                                                        break;
+                                                    case "tabControlEnclavesCharactersEquipmentSideArm":
+                                                        UpdateRangedWeaponDetails(tlpSideArmWeaponStats, chr.CharacterRecord.Equipment.SideArmRangedWeaponItemInstance);
+                                                        lblSidearm.Text = $"{chr.CharacterRecord.Equipment.SideArmRangedWeaponItemInstance.ItemClass.Name}";
+                                                        break;
+                                                    case "tabControlEnclavesCharactersEquipmentRanged":
+                                                        UpdateRangedWeaponDetails(tlpRangedWeaponStats, chr.CharacterRecord.Equipment.RangedWeaponItemInstance);
+                                                        lblRanged.Text = $"{chr.CharacterRecord.Equipment.RangedWeaponItemInstance.ItemClass.Name}";
+                                                        break;
+                                                }
+                                                lblEquipment.Text = $"{chr.CharacterRecord.Equipment.Name}";
+                                                break;
+                                            case "tabEnclavesCharactersInventory":
+                                                UpdateCharacterInventoryList(chr);
+                                                break;
+                                        }//end switch cha tab name
+                                        lblCharactersLabel.Text = $"{chr.Name}";
+                                    }// end if parsed char addr
+                                    else
+                                    {
+                                        lblCharactersLabel.Text = "";
+                                    }
+                                    break;
+                                case "tabEnclaveInventory":
+                                    UpdateEnclaveInventoryList(enclave);
+                                    break;
                             }
+                            
+                            
                         } //end if parse enclave address
                         else 
                         { 
@@ -611,138 +640,7 @@ namespace SoD2_Editor
         
 
         
-        private class InventoryRowEntry
-        {
-            public Label NameLabel { get; set; }
-            public Label QuantityLabel { get; set; }
-            public Button EditButton { get; set; }
-        }
 
-        private readonly Dictionary<int, InventoryRowEntry> _inventoryRows = new Dictionary<int, InventoryRowEntry>();
-        private void InitializeCharacterInventoryTable()
-        {
-            tlpEnclaveCharactersInventory.SuspendLayout();
-            tlpEnclaveCharactersInventory.Controls.Clear();
-            tlpEnclaveCharactersInventory.RowStyles.Clear();
-            tlpEnclaveCharactersInventory.RowCount = 0;
-            tlpEnclaveCharactersInventory.ColumnStyles.Clear();
-            _inventoryRows.Clear();
-
-            tlpEnclaveCharactersInventory.ColumnCount = 3;
-            tlpEnclaveCharactersInventory.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 300));
-            tlpEnclaveCharactersInventory.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
-            tlpEnclaveCharactersInventory.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 50));
-
-            tlpEnclaveCharactersInventory.ResumeLayout();
-        }
-
-        private void UpdateCharacterInventoryList(DaytonCharacter chr)
-        {
-            tlpEnclaveCharactersInventory.SuspendLayout();
-            int slotCount = chr.CharacterRecord.Inventory.Slots.Count;
-            if ((tlpEnclaveCharactersInventory.RowCount != slotCount + 1) || 
-                (chr.CharacterRecord.Inventory.BaseAddress.ToString("X") != txtEnclavesCharactersInventoryAddress.Text))
-            {
-                _inventoryRows.Clear();
-                tlpEnclaveCharactersInventory.RowCount = 0;
-            }
-            if (tlpEnclaveCharactersInventory.RowCount == 0)
-                InitializeCharacterInventoryTable();
-
-
-            txtEnclavesCharactersInventoryAddress.Text = chr.CharacterRecord.Inventory.BaseAddress.ToString("X");
-            
-
-            
-
-            for (int slotIndex = 0; slotIndex < slotCount; slotIndex++)
-            {
-
-                var item = chr.CharacterRecord.Inventory.Slots[slotIndex];
-
-                if (!_inventoryRows.ContainsKey(slotIndex))
-                {
-                    int rowIndex = tlpEnclaveCharactersInventory.RowCount++;
-
-                    var lblName = new Label
-                    {
-                        Text = $"{tlpEnclaveCharactersInventory.RowCount} {item.ItemClass?.Name}" ?? $"Unknown ({slotIndex})",
-                        AutoSize = true,
-                        Dock = DockStyle.Fill,
-                        Anchor = AnchorStyles.Left,
-                        Font = new Font("Consolas", 9),
-                    };
-
-                    var lblQuantity = new Label
-                    {
-                        Text = item.stackCount.ToString(),
-                        AutoSize = true,
-                        Dock = DockStyle.Fill,
-                        Anchor = AnchorStyles.Left,
-                        Font = new Font("Consolas", 9),
-                    };
-
-                    var btnEdit = new Button
-                    {
-                        Text = "Edit",
-                        Width = 25,
-                        Height = 10,
-                        Dock = DockStyle.Fill,
-                        Anchor = AnchorStyles.Left
-                    };
-
-                    btnEdit.Click += (s, e) =>
-                    {
-                        string input = ShowInputDialog("Edit Quantity",
-                            $"Enter new stack quantity for slot {slotIndex} ({item.ItemClass?.Name ?? "Unknown"})",
-                            lblQuantity.Text);
-
-                        if (int.TryParse(input, out int newQty))
-                        {
-                            item.stackCount = newQty;
-                            lblQuantity.Text = newQty.ToString();
-                        }
-                    };
-
-
-
-
-                    tlpEnclaveCharactersInventory.Controls.Add(lblName, 0, rowIndex);
-                    tlpEnclaveCharactersInventory.Controls.Add(btnEdit, 1, rowIndex);
-                    tlpEnclaveCharactersInventory.Controls.Add(lblQuantity, 2, rowIndex);
-                    tlpEnclaveCharactersInventory.RowStyles.Add(new RowStyle(SizeType.Absolute, 16));
-
-
-                    _inventoryRows[slotIndex] = new InventoryRowEntry
-                    {
-                        NameLabel = lblName,
-                        QuantityLabel = lblQuantity,
-                        EditButton = btnEdit
-                    };
-                }
-                else
-                {
-                    var row = _inventoryRows[slotIndex];
-                    row.NameLabel.Text = item.ItemClass?.Name ?? $"Unknown ({slotIndex})";
-                    row.QuantityLabel.Text = item.stackCount.ToString();
-
-                    row.NameLabel.Visible = true;
-                    if (item.stackCount > 0)
-                    {
-                        row.QuantityLabel.Visible = true;
-                        row.EditButton.Visible = true;
-                    }
-                    else
-                    {
-                        row.QuantityLabel.Visible = false;
-                        row.EditButton.Visible = false;
-                    }
-                    
-                }
-            }
-            tlpEnclaveCharactersInventory.RowCount = slotCount + 1;
-            tlpEnclaveCharactersInventory.ResumeLayout();
-        }
 
 
 
@@ -1412,159 +1310,42 @@ namespace SoD2_Editor
 
 
 
-        IntPtr ItemFunc = IntPtr.Zero;
-        IntPtr Items = IntPtr.Zero;
+        
         private void btnTest_Click(object sender, EventArgs e)
         {
-            /*ulong inv = (ulong)currDaytonCharacter.CharacterRecord.Inventory.BaseAddress;
-            if (inv == 0)
-            {
-                Output("Inventory pointer not found.");
-                return;
-            }
-            int Quantity = 1;
-
-            //ulong ItemBP = 0x00000000775EB280;
-            ulong ItemBP = 0x2CCC6C80;
-            ulong FuncCreateItemInstance = (ulong)(_ba + 0x4efce0);
-            ulong FuncTryAddItem = (ulong)(_ba + 0x502010);
-
-            UObject testObj = new UObject((IntPtr)ItemBP);
-            if (testObj.Type != "BlueprintGeneratedClass")
-            {
-                Output("Provided object is not BlueprintGeneratedClass, aborting Add.");
-                return;
-            }
-
-            IntPtr CodeAddItem = Alloc(0x1000);
-            Iced.Intel.Assembler asm = new Iced.Intel.Assembler(bitness: 64);
             
-            asm.sub(rsp, 0x1000);
-            asm.pushfq();
-
-
-            asm.mov(rcx, ItemBP);  //Item blueprintclass
-            asm.mov(rdx, Quantity);
-            asm.call(FuncCreateItemInstance);  //Create Item Instance
-
-            asm.mov(rcx, inv);
-            asm.mov(rdx, rax);
-            asm.mov(r8, 7);
-            asm.mov(r9, 1);
-            asm.mov(rax, rsp);
-            asm.add(rax, 0x20);
-            asm.mov(rbx, 1);
-            asm.mov(__[rax], rbx);
-            asm.call(FuncTryAddItem);
-
-
-            asm.popfq();
-            asm.add(rsp, 0x1000);
-            asm.ret();
-
-            var stream = new MemoryStream();
-            asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)CodeAddItem);
-            byte[] machineCode = stream.ToArray();
-            WBytes(CodeAddItem, machineCode);
-
-            Console.WriteLine(CodeAddItem.ToString("X"));
-            CreateRemoteThread(_proc, IntPtr.Zero, 0, CodeAddItem, IntPtr.Zero, 0, IntPtr.Zero);*/
-
-
-            if (ItemFunc == IntPtr.Zero)
-                ItemFunc = Alloc(0x1000);
-            if (Items == IntPtr.Zero)
-                Items = Alloc(0x1000);
-
-            Iced.Intel.Assembler asm = new Iced.Intel.Assembler(bitness: 64);
-
-            asm.sub(rsp, 0x1000);
-            asm.pushfq();
-            
-            
-            asm.mov(r8, (ulong)(_ba + 0x4f3ca0));   //ConsumableItems
-            asm.mov(rcx, (ulong)Items);
-            asm.call(r8);
-
-            asm.mov(r8, (ulong)(_ba + 0x4f3a00));   //CloseCombatItems
-            asm.mov(rcx, (ulong)Items);
-            asm.add(rcx, 0x10);
-            asm.call(r8);
-
-            asm.mov(r8, (ulong)(_ba + 0x51f550));   //MeleeWeaponItems
-            asm.mov(rcx, (ulong)Items);
-            asm.add(rcx, 0x20);
-            asm.call(r8);
-
-            asm.mov(r8, (ulong)(_ba + 0x51f820));   //RangedWeaponItems
-            asm.mov(rcx, (ulong)Items);
-            asm.add(rcx, 0x30);
-            asm.call(r8);
-
-            asm.popfq();
-            asm.add(rsp, 0x1000);
-            asm.ret();
-
-            var stream = new MemoryStream();
-            asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)ItemFunc);
-            byte[] machineCode = stream.ToArray();
-            WBytes(ItemFunc, machineCode);
-            Console.WriteLine(Items.ToString("X"));
-
-            CreateRemoteThread(_proc, IntPtr.Zero, 0, ItemFunc, IntPtr.Zero, 0, IntPtr.Zero); 
         }
 
 
+        
+        
 
 
         private void btnTest2_Click(object sender, EventArgs e)
         {
-            IntPtr ptr = (IntPtr)0x6b785b40;
-            int num = 0x69;
-
-            for (int i = 0; i < num; i++)
-            {
-                IntPtr itemPtr = RIntPtr(ptr + i * IntPtr.Size);
-                UObject obj = new UObject(itemPtr);
-                FText DisplayName = new FText(itemPtr + 0x28);
-                float infVal = RInt32(itemPtr + 0xf4);
-
-                Console.WriteLine($"{infVal}    {DisplayName.Value.Replace("{[0,+]s}", "")}");
-            }
             
-            /*
-            UObject obj = new UObject((IntPtr)0x775EB280);
-            Console.WriteLine(obj.Name);
-            Console.WriteLine(obj.Type);
-            Console.WriteLine(obj.Class.Name);
-            Console.WriteLine(obj.Class.Path());
-            Console.WriteLine(obj.Path());
-            */
+         
 
-            /*
-            IntPtr objTablePtr = addresses.Get("ObjTablePtr");
-            int numobjs = RInt32(objTablePtr - 0x8);
-            objTablePtr = RIntPtr(objTablePtr);
+            
+            
+            //int numobjs = RInt32(objTablePtr - 0x8);
+            int numobjs = RInt32(addresses.Get("ObjTablePtr") + 0xc);
+            objTablePtr = RIntPtr(addresses.Get("ObjTablePtr"));
 
 
-            List<UObject> ammo = new List<UObject>();
-            List<UObject> backpack = new List<UObject>();
-            List<UObject> ccw = new List<UObject>();
-            List<UObject> cons = new List<UObject>();
-            List<UObject> ranged = new List<UObject>();
-            List<UObject> facilitymods = new List<UObject>();
-            List<UObject> melee = new List<UObject>();
-            List<UObject> misc = new List<UObject>();
-            List<UObject> mods = new List<UObject>();
-            List<UObject> resource = new List<UObject>();
+            
 
             for (int i = 0; i < numobjs; i++)
             {
-                UObject obj = new UObject(RIntPtr(objTablePtr + i * 0x30));
+                UClass obj = new UClass(RIntPtr(objTablePtr + i * 0x18));
+                //UObject obj = new UObject(RIntPtr(objTablePtr + i * 0x30));
                 string path = obj.Path();
-                if (path.Contains("/Game/Item") && (obj.Type == "BlueprintGeneratedClass"))
+
+                /*
+                 * if (path.Contains("/Game/Item") && (obj.Type == "BlueprintGeneratedClass"))
                 //if (obj.Type == "BlueprintGeneratedClass")
                 {
+                    
                     if (path.StartsWith("/Game/Items/BackpackItems"))
                         backpack.Add(obj);
                     else if (path.StartsWith("/Game/Items/MeleeWeapons"))
@@ -1587,13 +1368,57 @@ namespace SoD2_Editor
                         ammo.Add(obj);
                     else
                         Console.WriteLine($"{obj.Path()}   {obj.BaseAddress.ToString("X")} {obj.Type} - {path}");
+                    
+                }*/
+                if (obj.Type == "BlueprintGeneratedClass")
+                {
+
+                    if (path.StartsWith("/Game/Items/CloseCombatItems") && !path.Contains("/SourceData"))
+                        ccw.Add(obj);
+                    else if (path.StartsWith("/Game/Items/MeleeWeapons") && !path.Contains("/Design"))
+                        melee.Add(obj);
+                    else if (path.StartsWith("/Game/Items/Mods"))
+                        mods.Add(obj);
+                    else if (path.StartsWith("/Game/Items/Consumables"))
+                        cons.Add(obj);
+                    else if (path.StartsWith("/Game/Items/RangedWeapons") && !path.Contains("/Design"))     //ammo mixed in?
+                        ranged.Add(obj);
+                    else if (path.StartsWith("/Game/Items/MiscellaneousItems"))
+                        misc.Add(obj);
+                    else if (path.StartsWith("/Game/Items/FacilityModItems"))
+                        facilitymods.Add(obj);
+
+
+
+
+                    else if (path.StartsWith("/Game/Items/ResourceItems/Food/"))
+                        resource.Add(obj);
+                    else if (path.StartsWith("/Game/Items/ResourceItems/Meds/"))
+                        resource.Add(obj);
+                    else if (path.StartsWith("/Game/Items/ResourceItems/Ammo/"))
+                        resource.Add(obj);
+                    else if (path.StartsWith("/Game/Items/ResourceItems/Fuel/"))
+                        resource.Add(obj);
+                    else if (path.StartsWith("/Game/Items/ResourceItems/Materials/"))
+                        resource.Add(obj);
+                    else if (path.StartsWith("/Game/Items/ResourceItems/Parts/"))
+                        resource.Add(obj);
+
+
+
+                    else if (path.StartsWith("/Game/Items/BackpackItems"))
+                        backpack.Add(obj);
+                    else if (path.StartsWith("/Game/Items/Ammo"))
+                        ammo.Add(obj);
+
                 }
+
             }
             
             
 
-            foreach (UObject obj2 in backpack)
-                Console.WriteLine($"{obj2.BaseAddress.ToString("X")} - {obj2.Name}");*/
+            foreach (UObject obj2 in ammo)
+                Console.WriteLine($"{obj2.BaseAddress.ToString("X")} - {obj2.Path()}");
 
             /*foreach (var catalog in gameInstance.ItemCatalogManager.Catalogs)
             {
@@ -1719,6 +1544,29 @@ namespace SoD2_Editor
                 Output("No MapUI waypoints found");
         }
 
-        
+
+
+
+
+        private string ItemStripMarkupText(string txt)
+        {
+            return txt.Replace("{!v}", "")
+                .Replace("{[0+]s}", "")
+                .Replace("{[0,+]'}", "")
+                .Replace("{[0,+]s}", "")
+                .Replace("{[0,+]es}", "")
+                .Replace("{[0,+|1]Copies|Copy}", "Copy")
+                .Replace("{[0,+|1]ves|fe}", "fe")
+                .Replace("{[0,+|1]Knives|Knife}", "Knife")
+                .Replace("{[0,+|1]Quarters|Quarters}", "Quarters")
+                .Replace("{[0,+|1]Scarves|Scarf}", "Scarf")
+                .Replace("{[0,+|1]Bunnies|Bunny}", "Bunny")
+                .Replace("{[0,+|1]Handkerchieves|Handkerchief}", "Handkerchief")
+                .Replace("{[0,+|1]Dice|Die}", "Die")
+                .Replace("{[0,+|1]Stuffies|Stuffy}", "Stuffy")
+                .Replace("{[0,+|1]Entries|Entry}", "Entry")
+                .Replace("{[+]s]}", "");
+        }
+
     }
 }

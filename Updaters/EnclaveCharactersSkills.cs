@@ -19,11 +19,11 @@ namespace SoD2_Editor
         private void InitCharacterSkillsTable()
         {
             _characterSkillsTable = new DataTable();
+            _characterSkillsTable.Columns.Add("Addr", typeof(string));
             _characterSkillsTable.Columns.Add("Name", typeof(string));
             _characterSkillsTable.Columns.Add("Level", typeof(int));
             _characterSkillsTable.Columns.Add("XP", typeof(float));
             _characterSkillsTable.Columns.Add("Granted By Trait", typeof(string));
-            _characterSkillsTable.Columns.Add("SkillRef", typeof(object));
 
             dgvCharacterSkills.DataSource = _characterSkillsTable;
             dgvCharacterSkills.SelectionMode = DataGridViewSelectionMode.CellSelect;
@@ -33,7 +33,7 @@ namespace SoD2_Editor
             dgvCharacterSkills.AllowUserToDeleteRows = false;
             dgvCharacterSkills.RowHeadersVisible = false;
 
-            dgvCharacterSkills.Columns["SkillRef"].Visible = false;
+            dgvCharacterSkills.Columns["Addr"].Visible = false;
             dgvCharacterSkills.Columns["XP"].DefaultCellStyle.Format = "F4";
             dgvCharacterSkills.Columns["XP"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             dgvCharacterSkills.Columns["Granted By Trait"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -52,10 +52,10 @@ namespace SoD2_Editor
                 if (row == null)
                 {
                     row = _characterSkillsTable.NewRow();
+                    row["Addr"] = skill.BaseAddress.ToString("X");
                     row["Name"] = skill.Name;
                     row["Level"] = skill.CurrentLevel;
                     row["XP"] = skill.CurrentXp;
-                    row["SkillRef"] = skill;
                     row["Granted By Trait"] = skill.GrantingTrait;
                     _characterSkillsTable.Rows.Add(row);
                 }

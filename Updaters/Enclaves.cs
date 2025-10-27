@@ -13,7 +13,6 @@ namespace SoD2_Editor
     {
 
         private DataTable _enclaveTable;
-        private EnclaveManager _enclaveManagerRef;
 
         private void InitEnclaveTable()
         {
@@ -36,8 +35,7 @@ namespace SoD2_Editor
         }
         private void UpdateEnclaveList(EnclaveManager enclaveManager)
         {
-            _enclaveManagerRef = enclaveManager;
-            if (_enclaveManagerRef.Name != "EnclaveManagerBp")
+            if (enclaveManager.Name != "EnclaveManagerBp")
                 return;
 
             foreach (var enclave in enclaveManager.Enclaves)
@@ -90,7 +88,6 @@ namespace SoD2_Editor
 
 
             txtCharacterAddress.Text = "0";
-            lblInventory.Text = "";
             lblCharacterTraits.Text = "";
             lblCharactersLabel.Text = "";
             lblEnclavesLabel.Text = "";
@@ -106,8 +103,6 @@ namespace SoD2_Editor
             _rangedWeaponDetailRows.Clear();
 
             tlpEnclavesCharactersDetails.Controls.Clear();
-            txtEnclavesCharactersInventoryAddress.Text = "0";
-            tlpEnclaveCharactersInventory.Controls.Clear();
             tlpMeleeWeaponStats.Controls.Clear();
             tlpRangedWeaponStats.Controls.Clear();
             tlpSideArmWeaponStats.Controls.Clear();

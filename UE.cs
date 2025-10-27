@@ -136,17 +136,19 @@ namespace SoD2_Editor
 
             public string Path()
             {
-                //TODO:  Add path separaters
                 void ParsePath(UObject obj, StringBuilder build)
                 {
                     if (obj.Outer.BaseAddress != IntPtr.Zero)
                     {
                         ParsePath(obj.Outer, build);
                     }
+
+                    if (build.Length > 0)
+                        build.Append('.');
+
                     build.Append(obj.Name);
-
-
                 }
+
                 var sb = new StringBuilder();
                 ParsePath(this, sb);
                 return sb.ToString();

@@ -108,24 +108,25 @@ namespace SoD2_Editor
                     var initprops = chain[i].GetProperties();
                     foreach (var p in initprops)
                     {
-                        string propKey = p.Name;
+                        string offsetStr = $"0x{p.Offset:X4}";
+                        string nameStr = p.Name;
+
                         bool exists = _inspectorTable.Rows
                             .Cast<DataRow>()
-                            .Any(r => r["Name"].ToString() == propKey);
+                            .Any(r => r["Offset"].ToString() == offsetStr && r["Name"].ToString() == nameStr);
 
                         if (!exists)
                         {
                             IntPtr valueAddr = obj.BaseAddress + p.Offset;
                             DataRow row = _inspectorTable.NewRow();
                             row["Address"] = valueAddr.ToString("X16");
-                            row["Offset"] = $"0x{p.Offset:X4}";
+                            row["Offset"] = offsetStr;
                             row["Type"] = p.Field.Type;
-                            row["Name"] = p.Name;
+                            row["Name"] = nameStr;
                             //row["Value"] = valueStr;
                             //row["Ptr"] = valueAddr;
 
                             _inspectorTable.Rows.Add(row);
-                            
                         }
                     }
                 }
@@ -162,7 +163,6 @@ namespace SoD2_Editor
                 }
 
                 string newValue = "";
-                string newType = "";
                 string newPtr = "";
 
                 switch (row["Type"])
@@ -313,7 +313,20 @@ namespace SoD2_Editor
             lblInspectorType.Text = row.Cells["Type"].Value?.ToString();
             lblInspectorAddress.Text = row.Cells["Address"].Value?.ToString();
 
-            txtInspectorPtrToInspect.Text = row.Cells["Ptr"].Value?.ToString();
+            
+
+            btnInspectorSetValue.Enabled = false;
+            switch (row.Cells["Type"].Value?.ToString())
+            {
+                case "BoolProperty":
+                case "ByteProperty":
+                case "IntProperty":
+                case "FloatProperty":
+                case "UInt32Property":
+                    btnInspectorSetValue.Enabled = true;
+                    break;
+            }
+
         }
         private void dgvInspector_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -323,7 +336,60 @@ namespace SoD2_Editor
             txtInspectorAddress.Text = row.Cells["Ptr"].Value?.ToString();
         }
 
+        private void btnInspectorSetValue_Click(object sender, EventArgs e)
+        {
+            string hexAddr = lblInspectorAddress.Text;
+            IntPtr ptr = (IntPtr)Convert.ToInt64(hexAddr, 16);
 
+            switch (lblInspectorType.Text)
+            {
+                case "BoolProperty":
+                case "ByteProperty":
+                    byte byteValue;
+                    if (!byte.TryParse(txtInspectorValue.Text, out byteValue))
+                    {
+                        Output("Failed to parse byte value");
+                        return;
+                    }
+
+                    WUInt8(ptr, byteValue);
+                    Output("ByteProperty value set");
+                    break;
+                case "FloatProperty":
+                    float floatValue;
+                    if (!float.TryParse(txtInspectorValue.Text, out floatValue))
+                    {
+                        Output("Failed to parse float value");
+                        return;
+                    }
+                    
+                    WSingle(ptr, floatValue);
+                    Output("FloatProperty value set");
+                    break;
+                case "IntProperty":
+                    int intValue;
+                    if (!int.TryParse(txtInspectorValue.Text, out intValue))
+                    {
+                        Output("Failed to parse int value");
+                        return;
+                    }
+
+                    WInt32(ptr, intValue);
+                    Output("IntProperty value set");
+                    break;
+                case "UInt32Property":
+                    uint uint32Value;
+                    if (!uint.TryParse(txtInspectorValue.Text, out uint32Value))
+                    {
+                        Output("Failed to parse uint32 value");
+                        return;
+                    }
+
+                    WUInt32(ptr, uint32Value);
+                    Output("UInt32Property value set");
+                    break;
+            }
+        }
         private void btnInspectorBack_Click(object sender, EventArgs e)
         {
             if (inspectHistory.Count > 1)
@@ -335,16 +401,16 @@ namespace SoD2_Editor
         }
         private void btnInspectController_Click(object sender, EventArgs e)
         {
-            txtInspectorAddress.Text = localPlayer.DaytonPlayerController.BaseAddress.ToString("X");
+            txtInspectorAddress.Text = localPlayer?.DaytonPlayerController.BaseAddress.ToString("X");
         }
 
         private void btnInspectClosestEnemy_Click(object sender, EventArgs e)
         {
-            txtInspectorAddress.Text = currDaytonHumanCharacter.ClosestEnemy.ToString("X");
+            txtInspectorAddress.Text = currDaytonHumanCharacter?.ClosestEnemy.ToString("X");
         }
         private void btnInspectDHC_Click(object sender, EventArgs e)
         {
-            txtInspectorAddress.Text = currDaytonHumanCharacter.BaseAddress.ToString("X");
+            txtInspectorAddress.Text = currDaytonHumanCharacter?.BaseAddress.ToString("X");
         }
         private void btnInspectEngine_Click(object sender, EventArgs e)
         {
@@ -353,11 +419,22 @@ namespace SoD2_Editor
         
         private void btnInspectWorld_Click(object sender, EventArgs e)
         {
-            txtInspectorAddress.Text = world.BaseAddress.ToString("X");
+            txtInspectorAddress.Text = world?.BaseAddress.ToString("X");
         }
-        private void btnInspectPtr_Click(object sender, EventArgs e)
+
+
+        private void dgvInspectItem_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            txtInspectorAddress.Text = txtInspectorPtrToInspect.Text;
+            if (e.RowIndex < 0)
+                return;
+
+            var dgv = sender as DataGridView;
+            if (dgv == null || !dgv.Columns.Contains("Addr"))
+                return;
+
+            string addrHex = dgv.Rows[e.RowIndex].Cells["Addr"].Value?.ToString() ?? "";
+            txtInspectorAddress.Text = addrHex;
+            tabs.SelectedTab = tabs.TabPages["tabInspector"];
         }
     }
 }

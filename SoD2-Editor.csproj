@@ -93,6 +93,9 @@
     <Compile Include="SoD2-Objs.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Updaters\EnclaveInventory.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Updaters\Enclaves.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -114,10 +117,16 @@
     <Compile Include="Updaters\GameLog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Updaters\EnclaveCharactersInventory.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Updaters\_blank.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UE.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ItemAdder.cs">
       <SubType>Form</SubType>
     </Compile>
     <EmbeddedResource Include="Form1.resx">

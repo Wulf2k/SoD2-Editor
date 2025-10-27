@@ -63,7 +63,7 @@ namespace SoD2_Editor
 
 
 
-        
+
         public static class GameLog
         {
             public static IntPtr BaseAddress => RIntPtr(addresses.Get("GameLogPtr"));
@@ -85,17 +85,22 @@ namespace SoD2_Editor
         public class AmmoItemInstance : ItemInstance
         {
             public AmmoItemInstance(IntPtr addr) : base(addr) { }
-            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x48));
+            public override UClass ItemClass => new UClass(RIntPtr(BaseAddress + 0x48));
             public override int stackCount
             {
                 get => RInt32(BaseAddress + 0x50);
                 set => WInt32(BaseAddress + 0x50, value);
             }
         }
+        public class BackpackItem : Item
+        {
+            public BackpackItem(IntPtr addr) : base(addr) { }
+            public int Capactity => RInt32(BaseAddress + 0x124);
+        }
         public class BackpackItemInstance : ItemInstance
         {
             public BackpackItemInstance(IntPtr addr) : base(addr) { }
-            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x48));
+            public override UClass ItemClass => new UClass(RIntPtr(BaseAddress + 0x48));
         }
         public class CapsuleComponent : UObject
         {
@@ -148,7 +153,7 @@ namespace SoD2_Editor
         public class CloseCombatItemInstance : ItemInstance
         {
             public CloseCombatItemInstance(IntPtr addr) : base(addr) { }
-            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x50));
+            public override UClass ItemClass => new UClass(RIntPtr(BaseAddress + 0x50));
             public override int stackCount
             {
                 get => RInt32(BaseAddress + 0x48);
@@ -209,7 +214,7 @@ namespace SoD2_Editor
         public class ConsumableItemInstance : ItemInstance
         {
             public ConsumableItemInstance(IntPtr addr) : base(addr) { }
-            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x48));
+            public override UClass ItemClass => new UClass(RIntPtr(BaseAddress + 0x48));
             public override int stackCount
             {
                 get => RInt32(BaseAddress + 0x50);
@@ -449,7 +454,7 @@ namespace SoD2_Editor
             public DynamicPawnSpawner DynamicPawnSpawner => new DynamicPawnSpawner(RIntPtr(BaseAddress + 0x4c8));
         }
         public class DaytonGameGameState : UObject
-        { 
+        {
             public DaytonGameGameState(IntPtr addr) : base(addr) { }
             public FireSettings FireSettings => new FireSettings(RIntPtr(BaseAddress + 0x410));
             public MapStateComponent MapStateComponent => new MapStateComponent(RIntPtr(BaseAddress + 0x440));
@@ -504,7 +509,7 @@ namespace SoD2_Editor
             {
                 get => RUInt8(BaseAddress + 0x370);
                 set => WUInt8(BaseAddress + 0x370, value);
-            } 
+            }
             public byte bIsUnlimitedSpawningEnabled => RUInt8(BaseAddress + 0x37c);
             public byte bIsOHKOZombiesEnabled => RUInt8(BaseAddress + 0x37d);
             public float MaxPopulationMultiplier => RSingle(BaseAddress + 0x460);
@@ -527,7 +532,8 @@ namespace SoD2_Editor
             public string DisplayName => NameProperty.Value;
             public string Source => RUnicodeStr(RIntPtr(BaseAddress + 0x200));
             public string SchemaPath => RUnicodeStr(RIntPtr(BaseAddress + 0x210));
-            public FText NameProperty =>  new FText(BaseAddress + 0x228);
+            public FText NameProperty => new FText(BaseAddress + 0x228);
+            public Inventory Inventory => new Inventory(RIntPtr(BaseAddress + 0x288));
             public int Influence => RInt32(BaseAddress + 0x2A0);
             public int NumMemberDeaths => RInt32(BaseAddress + 0x2A8);
             public byte bDisplayOnMap => RUInt8(BaseAddress + 0x2c8);
@@ -611,7 +617,7 @@ namespace SoD2_Editor
                 get => RInt32(BaseAddress + 0x48);
                 set => WInt32(BaseAddress + 0x48, value);
             }
-            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x50));
+            public override UClass ItemClass => new UClass(RIntPtr(BaseAddress + 0x50));
 
         }
         public class FireSettings : UObject
@@ -629,7 +635,7 @@ namespace SoD2_Editor
         {
             public GameInstance(IntPtr addr) : base(addr) { }
         }
-        public class GameViewport : UObject 
+        public class GameViewport : UObject
         {
             public GameViewport(IntPtr addr) : base(addr) { }
             public UConsole ViewportConsole
@@ -672,6 +678,14 @@ namespace SoD2_Editor
                 } //end get
             }
             public int numSlots => RInt32(BaseAddress + 0x208);
+        }
+        public class Item : UObject
+        {
+            public Item(IntPtr addr) : base(addr) { }
+            public string DisplayName => (new FText(BaseAddress + 0x28)).Value;
+            public string DisplayDescription => (new FText(BaseAddress + 0x58)).Value;
+            public float Weight => RSingle(BaseAddress + 0xF0);
+            public int InfluenceValue => RInt32(BaseAddress + 0xF4);
         }
         public class ItemCatalog : UObject
         {
@@ -731,7 +745,7 @@ namespace SoD2_Editor
         public class ItemInstance : UObject
         {
             public ItemInstance(IntPtr addr) : base(addr) { }
-            public virtual UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x10));
+            public virtual UClass ItemClass => new UClass(RIntPtr(BaseAddress + 0x10));
             public virtual int stackCount { get; set; }
         }
         public class Level : UObject
@@ -772,7 +786,7 @@ namespace SoD2_Editor
                 {
                     var waypoints = new List<WaypointActor>();
                     IntPtr arrPtr = RIntPtr(BaseAddress + 0x290);
-                    for(int i = 0; i < numWayPointActors; i++)
+                    for (int i = 0; i < numWayPointActors; i++)
                     {
                         IntPtr wp = RIntPtr(arrPtr + i * IntPtr.Size);
                         if (wp != IntPtr.Zero)
@@ -809,11 +823,17 @@ namespace SoD2_Editor
             }
             public MapStateComponent MapState => new MapStateComponent(RIntPtr(BaseAddress + 0x968));
         }
+        public class MeleeWeaponItem : WeaponItem
+        {
+            public MeleeWeaponItem(IntPtr addr) : base(addr) { }
+            public MeleeWeaponResource Resource => new MeleeWeaponResource(BaseAddress + 0x128);
+            public EMeleeTypeEnum MeleeType => (EMeleeTypeEnum)RUInt8(BaseAddress + 0x210);
+        }
         public class MeleeWeaponItemInstance : ItemInstance
         {
             public MeleeWeaponItemInstance(IntPtr addr) : base(addr) { }
             public MeleeWeaponResourceStats Stats => new MeleeWeaponResourceStats(RIntPtr(BaseAddress + 0xF8));
-            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x100));
+            public override UClass ItemClass => new UClass(RIntPtr(BaseAddress + 0x100));
             public float Durability
             {
                 get => RSingle(BaseAddress + 0x169c);
@@ -943,6 +963,136 @@ namespace SoD2_Editor
             public string WeaponDesc => RUnicodeStr(RIntPtr(BaseAddress + 0xE8));
             public EMeleeTypeEnum MeleeType => (EMeleeTypeEnum)RUInt8(BaseAddress + 0x110);
         }
+        public class MeleeWeaponResource
+        {
+            public MeleeWeaponResource(IntPtr addr) => BaseAddress = addr;
+            public IntPtr BaseAddress { get; set; }
+            public MeleeWeaponStats Stats => new MeleeWeaponStats(BaseAddress);
+        }
+        public class MeleeWeaponStats
+        {
+            public MeleeWeaponStats(IntPtr addr) => BaseAddress = addr;
+            public IntPtr BaseAddress { get; set; }
+            public float Dismember
+            {
+                get => RSingle(BaseAddress + 0xC);
+                set => WSingle(BaseAddress + 0xC, value);
+            }
+
+            public float DismemberDelta
+            {
+                get => RSingle(BaseAddress + 0x14);
+                set => WSingle(BaseAddress + 0x14, value);
+            }
+
+            public float Impact
+            {
+                get => RSingle(BaseAddress + 0x1C);
+                set => WSingle(BaseAddress + 0x1C, value);
+            }
+
+            public float ImpactDelta
+            {
+                get => RSingle(BaseAddress + 0x24);
+                set => WSingle(BaseAddress + 0x24, value);
+            }
+
+            public float Knockdown
+            {
+                get => RSingle(BaseAddress + 0x2C);
+                set => WSingle(BaseAddress + 0x2C, value);
+            }
+
+            public float KnockdownDelta
+            {
+                get => RSingle(BaseAddress + 0x34);
+                set => WSingle(BaseAddress + 0x34, value);
+            }
+
+            public float Lethality
+            {
+                get => RSingle(BaseAddress + 0x3C);
+                set => WSingle(BaseAddress + 0x3C, value);
+            }
+
+            public float LethalityDelta
+            {
+                get => RSingle(BaseAddress + 0x44);
+                set => WSingle(BaseAddress + 0x44, value);
+            }
+
+            public float Weight
+            {
+                get => RSingle(BaseAddress + 0x4C);
+                set => WSingle(BaseAddress + 0x4C, value);
+            }
+
+            public float PerceptionLoudness
+            {
+                get => RSingle(BaseAddress + 0x54);
+                set => WSingle(BaseAddress + 0x54, value);
+            }
+
+            public float Speed
+            {
+                get => RSingle(BaseAddress + 0x5C);
+                set => WSingle(BaseAddress + 0x5C, value);
+            }
+
+            public float SwingCost
+            {
+                get => RSingle(BaseAddress + 0x64);
+                set => WSingle(BaseAddress + 0x64, value);
+            }
+
+            public float InfluenceValue
+            {
+                get => RSingle(BaseAddress + 0x6C);
+                set => WSingle(BaseAddress + 0x6C, value);
+            }
+
+            public float PrestigeValue
+            {
+                get => RSingle(BaseAddress + 0x74);
+                set => WSingle(BaseAddress + 0x74, value);
+            }
+
+            public float Durability
+            {
+                get => RSingle(BaseAddress + 0x7C);
+                set => WSingle(BaseAddress + 0x7C, value);
+            }
+
+            public float DurabilityLossPerHitMin
+            {
+                get => RSingle(BaseAddress + 0x84);
+                set => WSingle(BaseAddress + 0x84, value);
+            }
+
+            public float DurabilityLossPerHitMax
+            {
+                get => RSingle(BaseAddress + 0x8C);
+                set => WSingle(BaseAddress + 0x8C, value);
+            }
+
+            public float DurabilityLossPerFinisherMin
+            {
+                get => RSingle(BaseAddress + 0x94);
+                set => WSingle(BaseAddress + 0x94, value);
+            }
+
+            public float DurabilityLossPerFinisherMax
+            {
+                get => RSingle(BaseAddress + 0x9C);
+                set => WSingle(BaseAddress + 0x9C, value);
+            }
+        }
+        public class MiscellaneousItem : Item
+        {
+            public MiscellaneousItem(IntPtr addr) : base(addr) { }
+            public EMiscellaneousItemType MiscellaneousItemType => (EMiscellaneousItemType)RUInt8(BaseAddress + 0x10c);
+            public EMiscellaneousItemSubType ItemSubType => (EMiscellaneousItemSubType)RUInt8(BaseAddress + 0x10d);
+        }
         public class MiscellaneousItemInstance : ItemInstance
         {
             public MiscellaneousItemInstance(IntPtr addr) : base(addr) { }
@@ -951,13 +1101,14 @@ namespace SoD2_Editor
                 get => RInt32(BaseAddress + 0x48);
                 set => WInt32(BaseAddress + 0x48, value);
             }
-            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x50));
+            public override UClass ItemClass => new UClass(RIntPtr(BaseAddress + 0x50));
 
         }
         public class RangedWeapon : UObject
         {
             public RangedWeapon(IntPtr addr) : base(addr) { }
-            public RangedWeaponResourceStats Stats => new RangedWeaponResourceStats(RIntPtr(BaseAddress + 0x28));
+            public string WeaponClass => RUnicodeStr(RIntPtr(BaseAddress + 0x128));
+            public RangedWeaponResourceStats Stats => new RangedWeaponResourceStats(BaseAddress + 0x100);
 
         }
         public class RangedWeaponItemInstance : ItemInstance
@@ -968,9 +1119,9 @@ namespace SoD2_Editor
                 get => RSingle(BaseAddress + 0x60);
                 set => WSingle(BaseAddress + 0x60, value);
             }
-            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x68));
+            public override UClass ItemClass => new UClass(RIntPtr(BaseAddress + 0x68));
             public RangedWeapon RangedWeapon => new RangedWeapon(RIntPtr(BaseAddress + 0x70));
-            
+
         }
 
         public class RangedWeaponModItemInstance : ItemInstance
@@ -981,8 +1132,8 @@ namespace SoD2_Editor
                 get => RInt32(BaseAddress + 0x48);
                 set => WInt32(BaseAddress + 0x48, value);
             }
-            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x50));
-            
+            public override UClass ItemClass => new UClass(RIntPtr(BaseAddress + 0x50));
+
         }
         public class RangedWeaponResourceStats : UObject
         {
@@ -1087,14 +1238,19 @@ namespace SoD2_Editor
             }
             public string TracerSettings => RUnicodeStr(RIntPtr(BaseAddress + 0x358));
         }
+        public class ResourceItem : UObject
+        {
+            public ResourceItem(IntPtr addr) : base(addr) { }
+            public ECommunityResourceType ResourceType => (ECommunityResourceType)RUInt8(BaseAddress + 0x128);
+        }
         public class ResourceItemInstance : ItemInstance
         {
             public ResourceItemInstance(IntPtr addr) : base(addr) { }
-            public override UObject ItemClass => new UObject(RIntPtr(BaseAddress + 0x48));
+            public override UClass ItemClass => new UClass(RIntPtr(BaseAddress + 0x48));
         }
 
 
-        
+
         public class TimeOfDayComponent : UObject
         {
             public TimeOfDayComponent(IntPtr addr) : base(addr) { }
@@ -1153,6 +1309,11 @@ namespace SoD2_Editor
             public WaypointIndicatorComponent(IntPtr addr) : base(addr) { }
 
         }
+        public class WeaponItem : Item
+        {
+            public WeaponItem(IntPtr addr) : base(addr) { }
+        }
+
         public class World : UObject
         {
             public World(IntPtr addr) : base(addr) { }
