@@ -577,7 +577,11 @@ namespace SoD2_Editor
         {
             public EnclaveManager(IntPtr addr) : base(addr) { }
 
-            public int NumEnclaves => RInt32(RIntPtr(BaseAddress + 0x170) + 0x10);
+            public int NumEnclaves
+            {
+                get => RInt32(RIntPtr(BaseAddress + 0x170) + 0x10);
+                set => WInt32(RIntPtr(BaseAddress + 0x170) + 0x10, value);
+            }
 
             public List<Enclave> Enclaves
             {

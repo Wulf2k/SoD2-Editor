@@ -18,6 +18,7 @@ using System.Windows.Forms;
 using static Iced.Intel.AssemblerRegisters;
 using static SoD2_Editor.Form1;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace SoD2_Editor
 {
@@ -1504,6 +1505,62 @@ namespace SoD2_Editor
             else
                 Output($"Aborting Warp - Enclave has incorrect name - {_currentEnclave.Name}");
         }
+        private void btnEnclavesDelete_Click(object sender, EventArgs e)
+        {
+
+            Enclave _currentEnclave = null;
+            if (long.TryParse(txtEnclaveAddress.Text, System.Globalization.NumberStyles.HexNumber, null, out long encaddr) && encaddr > 0)
+            {
+                IntPtr encPtr = (IntPtr)encaddr;
+                _currentEnclave = new Enclave(encPtr);
+            }
+            else
+            {
+                Output("Failed to find enclave.");
+                return;
+            }
+
+            if (currDaytonCharacter.Enclave.BaseAddress == _currentEnclave.BaseAddress)
+            {
+                Output("I really, really don't think you should delete your own enclave.");
+                return;
+            }
+
+
+            EnclaveManager encMan = world.GameMode.EnclaveManager;
+            int numEnc = encMan.NumEnclaves;
+            if (numEnc > 0)
+            {
+                IntPtr arrayPtr = RIntPtr(RIntPtr(encMan.BaseAddress + 0x170) + 0x8);
+
+                bool encMatched = false;
+                for (int i = 0; i < numEnc; i++)
+                {
+                    IntPtr enclavePtr = RIntPtr(arrayPtr + (i * IntPtr.Size));
+                    if (enclavePtr == _currentEnclave.BaseAddress)
+                    {
+                        encMatched = true;
+                        encMan.NumEnclaves--;
+                    }
+                    if (encMatched)
+                    {
+                        IntPtr nextEncPtr = RIntPtr(arrayPtr + ((i + 1) * IntPtr.Size));
+                        WIntPtr(arrayPtr + (i * IntPtr.Size), nextEncPtr);
+                    }
+
+                }
+
+                if (encMatched)
+                {
+                    Output($"Deleted enclave {_currentEnclave.DisplayName}");
+                } 
+                else
+                {
+                    Output("Failed to find enclave.");
+                }
+            }
+
+        }
 
         private void btnEnclaveWarpToCharacter_Click(object sender, EventArgs e)
         {
@@ -1526,6 +1583,9 @@ namespace SoD2_Editor
             else
                 Output($"Aborting Warp - Character has incorrect name - {_currentCharacter.Name}");
         }
+        
+        
+        
         IntPtr CodeAddFollower = IntPtr.Zero;
         private void btnEnclavesCharactersAddFollower_Click(object sender, EventArgs e)
         {

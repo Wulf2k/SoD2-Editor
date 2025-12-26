@@ -66,6 +66,7 @@
             this.lblEnclaveDetails = new System.Windows.Forms.Label();
             this.txtEnclaveAddress = new System.Windows.Forms.TextBox();
             this.tabEnclaveCharacters = new System.Windows.Forms.TabPage();
+            this.btnEnclavesCharactersAddFollower = new System.Windows.Forms.Button();
             this.dgvEnclaveCharacters = new System.Windows.Forms.DataGridView();
             this.btnEnclaveWarpToCharacter = new System.Windows.Forms.Button();
             this.lblCharactersLabel = new System.Windows.Forms.Label();
@@ -151,7 +152,7 @@
             this.btnTest2 = new System.Windows.Forms.Button();
             this.btnWarpToWaypoint = new System.Windows.Forms.Button();
             this.lblItemListStatus = new System.Windows.Forms.Label();
-            this.btnEnclavesCharactersAddFollower = new System.Windows.Forms.Button();
+            this.btnEnclavesDelete = new System.Windows.Forms.Button();
             this.tabs.SuspendLayout();
             this.tabWorld.SuspendLayout();
             this.tabCommunity.SuspendLayout();
@@ -557,6 +558,7 @@
             // 
             // tabEnclaveDetails
             // 
+            this.tabEnclaveDetails.Controls.Add(this.btnEnclavesDelete);
             this.tabEnclaveDetails.Controls.Add(this.btnWarpToEnclave);
             this.tabEnclaveDetails.Controls.Add(this.lblEnclaveDetails);
             this.tabEnclaveDetails.Controls.Add(this.txtEnclaveAddress);
@@ -613,6 +615,16 @@
             this.tabEnclaveCharacters.TabIndex = 1;
             this.tabEnclaveCharacters.Text = "Characters";
             this.tabEnclaveCharacters.UseVisualStyleBackColor = true;
+            // 
+            // btnEnclavesCharactersAddFollower
+            // 
+            this.btnEnclavesCharactersAddFollower.Location = new System.Drawing.Point(369, 4);
+            this.btnEnclavesCharactersAddFollower.Name = "btnEnclavesCharactersAddFollower";
+            this.btnEnclavesCharactersAddFollower.Size = new System.Drawing.Size(103, 23);
+            this.btnEnclavesCharactersAddFollower.TabIndex = 20;
+            this.btnEnclavesCharactersAddFollower.Text = "Add Follower";
+            this.btnEnclavesCharactersAddFollower.UseVisualStyleBackColor = true;
+            this.btnEnclavesCharactersAddFollower.Click += new System.EventHandler(this.btnEnclavesCharactersAddFollower_Click);
             // 
             // dgvEnclaveCharacters
             // 
@@ -1578,15 +1590,15 @@
             this.lblItemListStatus.Text = "lblItemListStatus";
             this.lblItemListStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // btnEnclavesCharactersAddFollower
+            // btnEnclavesDelete
             // 
-            this.btnEnclavesCharactersAddFollower.Location = new System.Drawing.Point(369, 4);
-            this.btnEnclavesCharactersAddFollower.Name = "btnEnclavesCharactersAddFollower";
-            this.btnEnclavesCharactersAddFollower.Size = new System.Drawing.Size(103, 23);
-            this.btnEnclavesCharactersAddFollower.TabIndex = 20;
-            this.btnEnclavesCharactersAddFollower.Text = "Add Follower";
-            this.btnEnclavesCharactersAddFollower.UseVisualStyleBackColor = true;
-            this.btnEnclavesCharactersAddFollower.Click += new System.EventHandler(this.btnEnclavesCharactersAddFollower_Click);
+            this.btnEnclavesDelete.Location = new System.Drawing.Point(200, 4);
+            this.btnEnclavesDelete.Name = "btnEnclavesDelete";
+            this.btnEnclavesDelete.Size = new System.Drawing.Size(75, 23);
+            this.btnEnclavesDelete.TabIndex = 14;
+            this.btnEnclavesDelete.Text = "Delete";
+            this.btnEnclavesDelete.UseVisualStyleBackColor = true;
+            this.btnEnclavesDelete.Click += new System.EventHandler(this.btnEnclavesDelete_Click);
             // 
             // Form1
             // 
@@ -1790,6 +1802,7 @@
         private System.Windows.Forms.Label lblItemListStatus;
         private System.Windows.Forms.ComboBox clbItemLists;
         private System.Windows.Forms.Button btnEnclavesCharactersAddFollower;
+        private System.Windows.Forms.Button btnEnclavesDelete;
     }
 }
 
