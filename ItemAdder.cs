@@ -29,6 +29,7 @@ namespace SoD2_Editor
 
         DataTable ammoItemDt = new DataTable();
         DataTable backpackItemDt = new DataTable();
+        DataTable consItemDt = new DataTable();
         DataTable ccwItemDt = new DataTable();
         DataTable facModsItemDt = new DataTable();
         DataTable meleeItemDt = new DataTable();
@@ -201,6 +202,7 @@ namespace SoD2_Editor
                         {
                             dt.Columns.Add("Capacity", typeof(int));
                         }));
+                    var consTask = Task.Run(() => itemList(cons));
                     var ccwTask = Task.Run(() => itemList(ccw));
                     var facModsTask = Task.Run(() => itemList(facilitymods));
                     var miscTask = Task.Run(() => itemList(
@@ -319,6 +321,7 @@ namespace SoD2_Editor
 
                     ammoItemDt = ammoTask.Result;
                     backpackItemDt = backpackTask.Result;
+                    consItemDt = consTask.Result;
                     ccwItemDt = ccwTask.Result;
                     facModsItemDt = facModsTask.Result;
                     meleeItemDt = meleeTask.Result;
@@ -333,6 +336,7 @@ namespace SoD2_Editor
             clbItemLists.Items.Clear();
             clbItemLists.Items.Add("Ammo");
             clbItemLists.Items.Add("Backpacks");
+            clbItemLists.Items.Add("Consumables");
             clbItemLists.Items.Add("Close Combat");
             clbItemLists.Items.Add("Facility Mods");
             clbItemLists.Items.Add("Melee");
@@ -361,6 +365,9 @@ namespace SoD2_Editor
                     break;
                 case "Backpacks":
                     dt = backpackItemDt;
+                    break;
+                case "Consumables":
+                    dt = consItemDt;
                     break;
                 case "Close Combat":
                     dt = ccwItemDt;
@@ -407,6 +414,10 @@ namespace SoD2_Editor
                     break;
                 case "Backpacks":
                     dgvItemAdder.Columns["Type"].Visible = false;
+                    dgvItemAdder.Columns["Path"].Visible = false;
+                    break;
+                case "Consumables":
+                    //dgvItemAdder.Columns["Type"].Visible = false;
                     dgvItemAdder.Columns["Path"].Visible = false;
                     break;
                 case "Close Combat":

@@ -151,6 +151,7 @@
             this.btnTest2 = new System.Windows.Forms.Button();
             this.btnWarpToWaypoint = new System.Windows.Forms.Button();
             this.lblItemListStatus = new System.Windows.Forms.Label();
+            this.btnEnclavesCharactersAddFollower = new System.Windows.Forms.Button();
             this.tabs.SuspendLayout();
             this.tabWorld.SuspendLayout();
             this.tabCommunity.SuspendLayout();
@@ -598,6 +599,7 @@
             // 
             // tabEnclaveCharacters
             // 
+            this.tabEnclaveCharacters.Controls.Add(this.btnEnclavesCharactersAddFollower);
             this.tabEnclaveCharacters.Controls.Add(this.dgvEnclaveCharacters);
             this.tabEnclaveCharacters.Controls.Add(this.btnEnclaveWarpToCharacter);
             this.tabEnclaveCharacters.Controls.Add(this.lblCharactersLabel);
@@ -1576,6 +1578,16 @@
             this.lblItemListStatus.Text = "lblItemListStatus";
             this.lblItemListStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // btnEnclavesCharactersAddFollower
+            // 
+            this.btnEnclavesCharactersAddFollower.Location = new System.Drawing.Point(369, 4);
+            this.btnEnclavesCharactersAddFollower.Name = "btnEnclavesCharactersAddFollower";
+            this.btnEnclavesCharactersAddFollower.Size = new System.Drawing.Size(103, 23);
+            this.btnEnclavesCharactersAddFollower.TabIndex = 20;
+            this.btnEnclavesCharactersAddFollower.Text = "Add Follower";
+            this.btnEnclavesCharactersAddFollower.UseVisualStyleBackColor = true;
+            this.btnEnclavesCharactersAddFollower.Click += new System.EventHandler(this.btnEnclavesCharactersAddFollower_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1777,6 +1789,7 @@
         private System.Windows.Forms.DataGridView dgvItemAdder;
         private System.Windows.Forms.Label lblItemListStatus;
         private System.Windows.Forms.ComboBox clbItemLists;
+        private System.Windows.Forms.Button btnEnclavesCharactersAddFollower;
     }
 }
 

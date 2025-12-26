@@ -1108,7 +1108,8 @@ namespace SoD2_Editor
         {
             public RangedWeapon(IntPtr addr) : base(addr) { }
             public string WeaponClass => RUnicodeStr(RIntPtr(BaseAddress + 0x128));
-            public RangedWeaponResourceStats Stats => new RangedWeaponResourceStats(BaseAddress + 0x100);
+            //public RangedWeaponResourceStats Stats => new RangedWeaponResourceStats(BaseAddress + 0x100);
+            public RangedWeaponResourceStats Stats => new RangedWeaponResourceStats(RIntPtr(BaseAddress + 0x28));
 
         }
         public class RangedWeaponItemInstance : ItemInstance

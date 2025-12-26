@@ -1302,11 +1302,11 @@ namespace SoD2_Editor
             
         }
 
-        
 
-       
 
-        
+
+
+
 
 
 
@@ -1526,6 +1526,62 @@ namespace SoD2_Editor
             else
                 Output($"Aborting Warp - Character has incorrect name - {_currentCharacter.Name}");
         }
+        IntPtr CodeAddFollower = IntPtr.Zero;
+        private void btnEnclavesCharactersAddFollower_Click(object sender, EventArgs e)
+        {
+            DaytonCharacter _currentCharacter = null;
+            if (long.TryParse(txtCharacterAddress.Text, System.Globalization.NumberStyles.HexNumber, null, out long chraddr) && chraddr > 0)
+            {
+                IntPtr chrPtr = (IntPtr)chraddr;
+                _currentCharacter = new DaytonCharacter(chrPtr);
+            }
+            else
+            {
+                Output("Failed to find character.");
+                return;
+            }
+            DaytonPlayerController dpc = localPlayer.DaytonPlayerController;
+            IntPtr fmPtr = dpc.FollowerManagerPtr;
+            IntPtr dc = _currentCharacter.BaseAddress;
+
+
+
+            if (CodeAddFollower == IntPtr.Zero)
+                CodeAddFollower = Alloc(0x1000);
+
+
+
+            AddressBook FollowerAddFuncs = new AddressBook();
+
+            FollowerAddFuncs.Add("CheatAddFollower", _ba + 0x2d2ea0, _ba + 0x02d4c60);
+
+
+            Iced.Intel.Assembler asm = new Iced.Intel.Assembler(bitness: 64);
+
+            asm.sub(rsp, 0x1000);
+            asm.pushfq();
+
+
+            asm.mov(rcx, (ulong)fmPtr);
+            asm.mov(rdx, (ulong)dc);
+            asm.call((ulong)FollowerAddFuncs.Get("CheatAddFollower"));
+
+
+
+
+            asm.popfq();
+            asm.add(rsp, 0x1000);
+            asm.ret();
+
+            var stream = new MemoryStream();
+            asm.Assemble(new Iced.Intel.StreamCodeWriter(stream), (ulong)CodeAddFollower);
+            byte[] machineCode = stream.ToArray();
+            WBytes(CodeAddFollower, machineCode);
+
+            //Console.WriteLine(CodeAddFollower.ToString("X"));
+            CreateRemoteThread(_proc, IntPtr.Zero, 0, CodeAddFollower, IntPtr.Zero, 0, IntPtr.Zero);
+            Output($"Added {_currentCharacter.CharacterRecord.FirstName} {_currentCharacter.CharacterRecord.LastName} as follower.");
+        }
 
         private void btnWarpToWaypoint_Click(object sender, EventArgs e)
         {
@@ -1568,5 +1624,6 @@ namespace SoD2_Editor
                 .Replace("{[+]s]}", "");
         }
 
+        
     }
 }
