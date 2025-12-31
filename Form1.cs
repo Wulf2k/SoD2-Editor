@@ -1286,7 +1286,7 @@ namespace SoD2_Editor
                 eng.GameViewport.ViewportConsole.ConsoleTargetPlayer = localPlayer;
                 if (eng.GameViewport.ViewportConsole.ConsoleTargetPlayer.BaseAddress != IntPtr.Zero)
                 {
-                    Output("Console Enabled - Press Insert in-game to use");
+                    Output("Console Enabled.  Default Console key should be ~");
                 }
                 else
                 {

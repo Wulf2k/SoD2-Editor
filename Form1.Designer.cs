@@ -33,6 +33,7 @@
             this.tabs = new System.Windows.Forms.TabControl();
             this.tabWorld = new System.Windows.Forms.TabPage();
             this.btnEditDayLength = new System.Windows.Forms.Button();
+            this.btnWarpToWaypoint = new System.Windows.Forms.Button();
             this.lblWorldDayLength = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.chkBlindZombies = new System.Windows.Forms.CheckBox();
@@ -62,6 +63,7 @@
             this.dgvEnclaves = new System.Windows.Forms.DataGridView();
             this.tabControlEnclaves = new System.Windows.Forms.TabControl();
             this.tabEnclaveDetails = new System.Windows.Forms.TabPage();
+            this.btnEnclavesDelete = new System.Windows.Forms.Button();
             this.btnWarpToEnclave = new System.Windows.Forms.Button();
             this.lblEnclaveDetails = new System.Windows.Forms.Label();
             this.txtEnclaveAddress = new System.Windows.Forms.TextBox();
@@ -150,9 +152,7 @@
             this.btnDiscord = new System.Windows.Forms.Button();
             this.btnTest = new System.Windows.Forms.Button();
             this.btnTest2 = new System.Windows.Forms.Button();
-            this.btnWarpToWaypoint = new System.Windows.Forms.Button();
             this.lblItemListStatus = new System.Windows.Forms.Label();
-            this.btnEnclavesDelete = new System.Windows.Forms.Button();
             this.tabs.SuspendLayout();
             this.tabWorld.SuspendLayout();
             this.tabCommunity.SuspendLayout();
@@ -224,13 +224,14 @@
             this.tabs.Location = new System.Drawing.Point(12, 41);
             this.tabs.Name = "tabs";
             this.tabs.SelectedIndex = 0;
-            this.tabs.Size = new System.Drawing.Size(1452, 808);
+            this.tabs.Size = new System.Drawing.Size(965, 753);
             this.tabs.TabIndex = 3;
             this.tabs.SelectedIndexChanged += new System.EventHandler(this.tabs_SelectedIndexChanged);
             // 
             // tabWorld
             // 
             this.tabWorld.Controls.Add(this.btnEditDayLength);
+            this.tabWorld.Controls.Add(this.btnWarpToWaypoint);
             this.tabWorld.Controls.Add(this.lblWorldDayLength);
             this.tabWorld.Controls.Add(this.label7);
             this.tabWorld.Controls.Add(this.chkBlindZombies);
@@ -252,7 +253,7 @@
             this.tabWorld.Location = new System.Drawing.Point(4, 22);
             this.tabWorld.Name = "tabWorld";
             this.tabWorld.Padding = new System.Windows.Forms.Padding(3);
-            this.tabWorld.Size = new System.Drawing.Size(1444, 782);
+            this.tabWorld.Size = new System.Drawing.Size(957, 727);
             this.tabWorld.TabIndex = 0;
             this.tabWorld.Text = "World";
             this.tabWorld.UseVisualStyleBackColor = true;
@@ -266,6 +267,16 @@
             this.btnEditDayLength.Text = "Edit";
             this.btnEditDayLength.UseVisualStyleBackColor = true;
             this.btnEditDayLength.Click += new System.EventHandler(this.btnEditDayLength_Click);
+            // 
+            // btnWarpToWaypoint
+            // 
+            this.btnWarpToWaypoint.Location = new System.Drawing.Point(20, 263);
+            this.btnWarpToWaypoint.Name = "btnWarpToWaypoint";
+            this.btnWarpToWaypoint.Size = new System.Drawing.Size(157, 23);
+            this.btnWarpToWaypoint.TabIndex = 8;
+            this.btnWarpToWaypoint.Text = "Warp to WP";
+            this.btnWarpToWaypoint.UseVisualStyleBackColor = true;
+            this.btnWarpToWaypoint.Click += new System.EventHandler(this.btnWarpToWaypoint_Click);
             // 
             // lblWorldDayLength
             // 
@@ -394,7 +405,7 @@
             // 
             this.lblWorldName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblWorldName.AutoSize = true;
-            this.lblWorldName.Location = new System.Drawing.Point(6, 795);
+            this.lblWorldName.Location = new System.Drawing.Point(6, 740);
             this.lblWorldName.Name = "lblWorldName";
             this.lblWorldName.Size = new System.Drawing.Size(58, 13);
             this.lblWorldName.TabIndex = 5;
@@ -441,7 +452,7 @@
             this.tabCommunity.Controls.Add(this.tabCommunityTabs);
             this.tabCommunity.Location = new System.Drawing.Point(4, 22);
             this.tabCommunity.Name = "tabCommunity";
-            this.tabCommunity.Size = new System.Drawing.Size(1444, 782);
+            this.tabCommunity.Size = new System.Drawing.Size(957, 727);
             this.tabCommunity.TabIndex = 6;
             this.tabCommunity.Text = "Community";
             this.tabCommunity.UseVisualStyleBackColor = true;
@@ -455,7 +466,7 @@
             this.tabCommunityTabs.Location = new System.Drawing.Point(4, 4);
             this.tabCommunityTabs.Name = "tabCommunityTabs";
             this.tabCommunityTabs.SelectedIndex = 0;
-            this.tabCommunityTabs.Size = new System.Drawing.Size(1116, 775);
+            this.tabCommunityTabs.Size = new System.Drawing.Size(950, 720);
             this.tabCommunityTabs.TabIndex = 4;
             // 
             // tabCommunityResources
@@ -467,7 +478,7 @@
             this.tabCommunityResources.Location = new System.Drawing.Point(4, 22);
             this.tabCommunityResources.Name = "tabCommunityResources";
             this.tabCommunityResources.Padding = new System.Windows.Forms.Padding(3);
-            this.tabCommunityResources.Size = new System.Drawing.Size(1108, 749);
+            this.tabCommunityResources.Size = new System.Drawing.Size(942, 694);
             this.tabCommunityResources.TabIndex = 0;
             this.tabCommunityResources.Text = "Resources";
             this.tabCommunityResources.UseVisualStyleBackColor = true;
@@ -496,7 +507,7 @@
             this.dgvCommunityResources.ReadOnly = true;
             this.dgvCommunityResources.RowHeadersVisible = false;
             this.dgvCommunityResources.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.dgvCommunityResources.Size = new System.Drawing.Size(1096, 712);
+            this.dgvCommunityResources.Size = new System.Drawing.Size(930, 657);
             this.dgvCommunityResources.TabIndex = 0;
             // 
             // txtCommunityNewVal
@@ -525,7 +536,7 @@
             this.tabEnclaves.Location = new System.Drawing.Point(4, 22);
             this.tabEnclaves.Name = "tabEnclaves";
             this.tabEnclaves.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclaves.Size = new System.Drawing.Size(1444, 782);
+            this.tabEnclaves.Size = new System.Drawing.Size(957, 727);
             this.tabEnclaves.TabIndex = 1;
             this.tabEnclaves.Text = "Enclaves";
             this.tabEnclaves.UseVisualStyleBackColor = true;
@@ -538,7 +549,7 @@
             this.dgvEnclaves.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvEnclaves.Location = new System.Drawing.Point(7, 29);
             this.dgvEnclaves.Name = "dgvEnclaves";
-            this.dgvEnclaves.Size = new System.Drawing.Size(171, 699);
+            this.dgvEnclaves.Size = new System.Drawing.Size(171, 640);
             this.dgvEnclaves.TabIndex = 12;
             this.dgvEnclaves.SelectionChanged += new System.EventHandler(this.dgvEnclaves_SelectionChanged);
             // 
@@ -553,7 +564,7 @@
             this.tabControlEnclaves.Location = new System.Drawing.Point(184, 13);
             this.tabControlEnclaves.Name = "tabControlEnclaves";
             this.tabControlEnclaves.SelectedIndex = 0;
-            this.tabControlEnclaves.Size = new System.Drawing.Size(1254, 763);
+            this.tabControlEnclaves.Size = new System.Drawing.Size(767, 708);
             this.tabControlEnclaves.TabIndex = 11;
             // 
             // tabEnclaveDetails
@@ -565,10 +576,20 @@
             this.tabEnclaveDetails.Location = new System.Drawing.Point(4, 22);
             this.tabEnclaveDetails.Name = "tabEnclaveDetails";
             this.tabEnclaveDetails.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclaveDetails.Size = new System.Drawing.Size(1246, 737);
+            this.tabEnclaveDetails.Size = new System.Drawing.Size(846, 702);
             this.tabEnclaveDetails.TabIndex = 0;
             this.tabEnclaveDetails.Text = "Details";
             this.tabEnclaveDetails.UseVisualStyleBackColor = true;
+            // 
+            // btnEnclavesDelete
+            // 
+            this.btnEnclavesDelete.Location = new System.Drawing.Point(200, 4);
+            this.btnEnclavesDelete.Name = "btnEnclavesDelete";
+            this.btnEnclavesDelete.Size = new System.Drawing.Size(75, 23);
+            this.btnEnclavesDelete.TabIndex = 14;
+            this.btnEnclavesDelete.Text = "Delete";
+            this.btnEnclavesDelete.UseVisualStyleBackColor = true;
+            this.btnEnclavesDelete.Click += new System.EventHandler(this.btnEnclavesDelete_Click);
             // 
             // btnWarpToEnclave
             // 
@@ -611,7 +632,7 @@
             this.tabEnclaveCharacters.Location = new System.Drawing.Point(4, 22);
             this.tabEnclaveCharacters.Name = "tabEnclaveCharacters";
             this.tabEnclaveCharacters.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclaveCharacters.Size = new System.Drawing.Size(1246, 737);
+            this.tabEnclaveCharacters.Size = new System.Drawing.Size(759, 682);
             this.tabEnclaveCharacters.TabIndex = 1;
             this.tabEnclaveCharacters.Text = "Characters";
             this.tabEnclaveCharacters.UseVisualStyleBackColor = true;
@@ -634,7 +655,7 @@
             this.dgvEnclaveCharacters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvEnclaveCharacters.Location = new System.Drawing.Point(8, 32);
             this.dgvEnclaveCharacters.Name = "dgvEnclaveCharacters";
-            this.dgvEnclaveCharacters.Size = new System.Drawing.Size(161, 680);
+            this.dgvEnclaveCharacters.Size = new System.Drawing.Size(161, 618);
             this.dgvEnclaveCharacters.TabIndex = 19;
             this.dgvEnclaveCharacters.SelectionChanged += new System.EventHandler(this.dgvEnclaveCharacters_SelectionChanged);
             // 
@@ -652,7 +673,7 @@
             // 
             this.lblCharactersLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblCharactersLabel.AutoSize = true;
-            this.lblCharactersLabel.Location = new System.Drawing.Point(12, 717);
+            this.lblCharactersLabel.Location = new System.Drawing.Point(21, 656);
             this.lblCharactersLabel.Name = "lblCharactersLabel";
             this.lblCharactersLabel.Size = new System.Drawing.Size(83, 13);
             this.lblCharactersLabel.TabIndex = 17;
@@ -671,7 +692,7 @@
             this.tabControlEnclavesCharacters.Location = new System.Drawing.Point(175, 29);
             this.tabControlEnclavesCharacters.Name = "tabControlEnclavesCharacters";
             this.tabControlEnclavesCharacters.SelectedIndex = 0;
-            this.tabControlEnclavesCharacters.Size = new System.Drawing.Size(1065, 703);
+            this.tabControlEnclavesCharacters.Size = new System.Drawing.Size(578, 647);
             this.tabControlEnclavesCharacters.TabIndex = 16;
             // 
             // tabEnclavesCharactersDetails
@@ -681,7 +702,7 @@
             this.tabEnclavesCharactersDetails.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersDetails.Name = "tabEnclavesCharactersDetails";
             this.tabEnclavesCharactersDetails.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclavesCharactersDetails.Size = new System.Drawing.Size(1057, 677);
+            this.tabEnclavesCharactersDetails.Size = new System.Drawing.Size(570, 621);
             this.tabEnclavesCharactersDetails.TabIndex = 0;
             this.tabEnclavesCharactersDetails.Text = "Details";
             this.tabEnclavesCharactersDetails.UseVisualStyleBackColor = true;
@@ -690,7 +711,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 661);
+            this.label3.Location = new System.Drawing.Point(6, 605);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(394, 13);
             this.label3.TabIndex = 16;
@@ -712,7 +733,7 @@
             this.tlpEnclavesCharactersDetails.RowCount = 1;
             this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 726F));
             this.tlpEnclavesCharactersDetails.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 726F));
-            this.tlpEnclavesCharactersDetails.Size = new System.Drawing.Size(1045, 655);
+            this.tlpEnclavesCharactersDetails.Size = new System.Drawing.Size(558, 599);
             this.tlpEnclavesCharactersDetails.TabIndex = 15;
             // 
             // tabEnclavesCharactersSkills
@@ -724,7 +745,7 @@
             this.tabEnclavesCharactersSkills.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersSkills.Name = "tabEnclavesCharactersSkills";
             this.tabEnclavesCharactersSkills.Padding = new System.Windows.Forms.Padding(3);
-            this.tabEnclavesCharactersSkills.Size = new System.Drawing.Size(1057, 677);
+            this.tabEnclavesCharactersSkills.Size = new System.Drawing.Size(570, 621);
             this.tabEnclavesCharactersSkills.TabIndex = 1;
             this.tabEnclavesCharactersSkills.Text = "Skills";
             this.tabEnclavesCharactersSkills.UseVisualStyleBackColor = true;
@@ -765,7 +786,7 @@
             this.dgvCharacterSkills.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvCharacterSkills.Location = new System.Drawing.Point(7, 34);
             this.dgvCharacterSkills.Name = "dgvCharacterSkills";
-            this.dgvCharacterSkills.Size = new System.Drawing.Size(722, 637);
+            this.dgvCharacterSkills.Size = new System.Drawing.Size(557, 581);
             this.dgvCharacterSkills.TabIndex = 17;
             this.dgvCharacterSkills.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCharacterSkills_CellClick);
             // 
@@ -774,7 +795,7 @@
             this.tabEnclavesCharactersTraits.Controls.Add(this.lblCharacterTraits);
             this.tabEnclavesCharactersTraits.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersTraits.Name = "tabEnclavesCharactersTraits";
-            this.tabEnclavesCharactersTraits.Size = new System.Drawing.Size(1057, 677);
+            this.tabEnclavesCharactersTraits.Size = new System.Drawing.Size(570, 621);
             this.tabEnclavesCharactersTraits.TabIndex = 4;
             this.tabEnclavesCharactersTraits.Text = "Traits";
             this.tabEnclavesCharactersTraits.UseVisualStyleBackColor = true;
@@ -794,7 +815,7 @@
             this.tabEnclavesCharactersEquipment.Controls.Add(this.tabControlEnclavesCharactersEquipment);
             this.tabEnclavesCharactersEquipment.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersEquipment.Name = "tabEnclavesCharactersEquipment";
-            this.tabEnclavesCharactersEquipment.Size = new System.Drawing.Size(1057, 677);
+            this.tabEnclavesCharactersEquipment.Size = new System.Drawing.Size(570, 621);
             this.tabEnclavesCharactersEquipment.TabIndex = 2;
             this.tabEnclavesCharactersEquipment.Text = "Equipment";
             this.tabEnclavesCharactersEquipment.UseVisualStyleBackColor = true;
@@ -803,7 +824,7 @@
             // 
             this.lblEquipment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblEquipment.AutoSize = true;
-            this.lblEquipment.Location = new System.Drawing.Point(6, 657);
+            this.lblEquipment.Location = new System.Drawing.Point(6, 636);
             this.lblEquipment.Name = "lblEquipment";
             this.lblEquipment.Size = new System.Drawing.Size(82, 13);
             this.lblEquipment.TabIndex = 18;
@@ -820,7 +841,7 @@
             this.tabControlEnclavesCharactersEquipment.Location = new System.Drawing.Point(3, 3);
             this.tabControlEnclavesCharactersEquipment.Name = "tabControlEnclavesCharactersEquipment";
             this.tabControlEnclavesCharactersEquipment.SelectedIndex = 0;
-            this.tabControlEnclavesCharactersEquipment.Size = new System.Drawing.Size(729, 651);
+            this.tabControlEnclavesCharactersEquipment.Size = new System.Drawing.Size(564, 610);
             this.tabControlEnclavesCharactersEquipment.TabIndex = 0;
             // 
             // tabControlEnclavesCharactersEquipmentMelee
@@ -830,7 +851,7 @@
             this.tabControlEnclavesCharactersEquipmentMelee.Location = new System.Drawing.Point(4, 22);
             this.tabControlEnclavesCharactersEquipmentMelee.Name = "tabControlEnclavesCharactersEquipmentMelee";
             this.tabControlEnclavesCharactersEquipmentMelee.Padding = new System.Windows.Forms.Padding(3);
-            this.tabControlEnclavesCharactersEquipmentMelee.Size = new System.Drawing.Size(721, 625);
+            this.tabControlEnclavesCharactersEquipmentMelee.Size = new System.Drawing.Size(556, 584);
             this.tabControlEnclavesCharactersEquipmentMelee.TabIndex = 0;
             this.tabControlEnclavesCharactersEquipmentMelee.Text = "Melee";
             this.tabControlEnclavesCharactersEquipmentMelee.UseVisualStyleBackColor = true;
@@ -839,7 +860,7 @@
             // 
             this.lblMelee.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblMelee.AutoSize = true;
-            this.lblMelee.Location = new System.Drawing.Point(6, 606);
+            this.lblMelee.Location = new System.Drawing.Point(6, 565);
             this.lblMelee.Name = "lblMelee";
             this.lblMelee.Size = new System.Drawing.Size(61, 13);
             this.lblMelee.TabIndex = 19;
@@ -858,7 +879,7 @@
             this.tlpMeleeWeaponStats.RowCount = 2;
             this.tlpMeleeWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpMeleeWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpMeleeWeaponStats.Size = new System.Drawing.Size(709, 599);
+            this.tlpMeleeWeaponStats.Size = new System.Drawing.Size(544, 556);
             this.tlpMeleeWeaponStats.TabIndex = 0;
             // 
             // tabControlEnclavesCharactersEquipmentSideArm
@@ -867,7 +888,7 @@
             this.tabControlEnclavesCharactersEquipmentSideArm.Controls.Add(this.tlpSideArmWeaponStats);
             this.tabControlEnclavesCharactersEquipmentSideArm.Location = new System.Drawing.Point(4, 22);
             this.tabControlEnclavesCharactersEquipmentSideArm.Name = "tabControlEnclavesCharactersEquipmentSideArm";
-            this.tabControlEnclavesCharactersEquipmentSideArm.Size = new System.Drawing.Size(721, 625);
+            this.tabControlEnclavesCharactersEquipmentSideArm.Size = new System.Drawing.Size(556, 584);
             this.tabControlEnclavesCharactersEquipmentSideArm.TabIndex = 2;
             this.tabControlEnclavesCharactersEquipmentSideArm.Text = "SideArm";
             this.tabControlEnclavesCharactersEquipmentSideArm.UseVisualStyleBackColor = true;
@@ -876,7 +897,7 @@
             // 
             this.lblSidearm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblSidearm.AutoSize = true;
-            this.lblSidearm.Location = new System.Drawing.Point(6, 599);
+            this.lblSidearm.Location = new System.Drawing.Point(6, 558);
             this.lblSidearm.Name = "lblSidearm";
             this.lblSidearm.Size = new System.Drawing.Size(69, 13);
             this.lblSidearm.TabIndex = 19;
@@ -895,7 +916,7 @@
             this.tlpSideArmWeaponStats.RowCount = 2;
             this.tlpSideArmWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpSideArmWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpSideArmWeaponStats.Size = new System.Drawing.Size(712, 592);
+            this.tlpSideArmWeaponStats.Size = new System.Drawing.Size(547, 551);
             this.tlpSideArmWeaponStats.TabIndex = 2;
             // 
             // tabControlEnclavesCharactersEquipmentRanged
@@ -905,7 +926,7 @@
             this.tabControlEnclavesCharactersEquipmentRanged.Location = new System.Drawing.Point(4, 22);
             this.tabControlEnclavesCharactersEquipmentRanged.Name = "tabControlEnclavesCharactersEquipmentRanged";
             this.tabControlEnclavesCharactersEquipmentRanged.Padding = new System.Windows.Forms.Padding(3);
-            this.tabControlEnclavesCharactersEquipmentRanged.Size = new System.Drawing.Size(721, 625);
+            this.tabControlEnclavesCharactersEquipmentRanged.Size = new System.Drawing.Size(556, 584);
             this.tabControlEnclavesCharactersEquipmentRanged.TabIndex = 1;
             this.tabControlEnclavesCharactersEquipmentRanged.Text = "Ranged";
             this.tabControlEnclavesCharactersEquipmentRanged.UseVisualStyleBackColor = true;
@@ -914,7 +935,7 @@
             // 
             this.lblRanged.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblRanged.AutoSize = true;
-            this.lblRanged.Location = new System.Drawing.Point(6, 599);
+            this.lblRanged.Location = new System.Drawing.Point(6, 558);
             this.lblRanged.Name = "lblRanged";
             this.lblRanged.Size = new System.Drawing.Size(66, 13);
             this.lblRanged.TabIndex = 19;
@@ -933,7 +954,7 @@
             this.tlpRangedWeaponStats.RowCount = 2;
             this.tlpRangedWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpRangedWeaponStats.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpRangedWeaponStats.Size = new System.Drawing.Size(709, 592);
+            this.tlpRangedWeaponStats.Size = new System.Drawing.Size(544, 551);
             this.tlpRangedWeaponStats.TabIndex = 1;
             // 
             // tabEnclavesCharactersInventory
@@ -944,7 +965,7 @@
             this.tabEnclavesCharactersInventory.Controls.Add(this.dgvEnclaveCharactersInventory);
             this.tabEnclavesCharactersInventory.Location = new System.Drawing.Point(4, 22);
             this.tabEnclavesCharactersInventory.Name = "tabEnclavesCharactersInventory";
-            this.tabEnclavesCharactersInventory.Size = new System.Drawing.Size(1057, 677);
+            this.tabEnclavesCharactersInventory.Size = new System.Drawing.Size(570, 621);
             this.tabEnclavesCharactersInventory.TabIndex = 3;
             this.tabEnclavesCharactersInventory.Text = "Inventory";
             this.tabEnclavesCharactersInventory.UseVisualStyleBackColor = true;
@@ -988,7 +1009,7 @@
             this.dgvEnclaveCharactersInventory.Location = new System.Drawing.Point(0, 29);
             this.dgvEnclaveCharactersInventory.Name = "dgvEnclaveCharactersInventory";
             this.dgvEnclaveCharactersInventory.RowHeadersVisible = false;
-            this.dgvEnclaveCharactersInventory.Size = new System.Drawing.Size(732, 645);
+            this.dgvEnclaveCharactersInventory.Size = new System.Drawing.Size(567, 589);
             this.dgvEnclaveCharactersInventory.TabIndex = 24;
             // 
             // txtCharacterAddress
@@ -1019,7 +1040,7 @@
             this.tabEnclaveInventory.Controls.Add(this.dgvEnclaveInventory);
             this.tabEnclaveInventory.Location = new System.Drawing.Point(4, 22);
             this.tabEnclaveInventory.Name = "tabEnclaveInventory";
-            this.tabEnclaveInventory.Size = new System.Drawing.Size(1246, 737);
+            this.tabEnclaveInventory.Size = new System.Drawing.Size(759, 682);
             this.tabEnclaveInventory.TabIndex = 2;
             this.tabEnclaveInventory.Text = "Inventory";
             this.tabEnclaveInventory.UseVisualStyleBackColor = true;
@@ -1035,7 +1056,7 @@
             this.pnlItemAdder.Controls.Add(this.btnItemAdderConsAdd);
             this.pnlItemAdder.Location = new System.Drawing.Point(3, 217);
             this.pnlItemAdder.Name = "pnlItemAdder";
-            this.pnlItemAdder.Size = new System.Drawing.Size(1239, 517);
+            this.pnlItemAdder.Size = new System.Drawing.Size(752, 462);
             this.pnlItemAdder.TabIndex = 11;
             this.pnlItemAdder.Visible = false;
             // 
@@ -1055,7 +1076,7 @@
             this.dgvItemAdder.ReadOnly = true;
             this.dgvItemAdder.RowHeadersVisible = false;
             this.dgvItemAdder.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.dgvItemAdder.Size = new System.Drawing.Size(1228, 455);
+            this.dgvItemAdder.Size = new System.Drawing.Size(741, 400);
             this.dgvItemAdder.TabIndex = 13;
             // 
             // clbItemLists
@@ -1089,7 +1110,7 @@
             // btnToggleItemAdder
             // 
             this.btnToggleItemAdder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToggleItemAdder.Location = new System.Drawing.Point(1107, 3);
+            this.btnToggleItemAdder.Location = new System.Drawing.Point(620, 3);
             this.btnToggleItemAdder.Name = "btnToggleItemAdder";
             this.btnToggleItemAdder.Size = new System.Drawing.Size(135, 23);
             this.btnToggleItemAdder.TabIndex = 10;
@@ -1139,7 +1160,7 @@
             this.dgvEnclaveInventory.ReadOnly = true;
             this.dgvEnclaveInventory.RowHeadersVisible = false;
             this.dgvEnclaveInventory.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.dgvEnclaveInventory.Size = new System.Drawing.Size(1239, 702);
+            this.dgvEnclaveInventory.Size = new System.Drawing.Size(752, 647);
             this.dgvEnclaveInventory.TabIndex = 5;
             // 
             // lblNumEnclaves
@@ -1155,7 +1176,7 @@
             // 
             this.lblEnclavesLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblEnclavesLabel.AutoSize = true;
-            this.lblEnclavesLabel.Location = new System.Drawing.Point(6, 731);
+            this.lblEnclavesLabel.Location = new System.Drawing.Point(4, 672);
             this.lblEnclavesLabel.Name = "lblEnclavesLabel";
             this.lblEnclavesLabel.Size = new System.Drawing.Size(76, 13);
             this.lblEnclavesLabel.TabIndex = 6;
@@ -1168,7 +1189,7 @@
             this.tabSpawner.Controls.Add(this.lblSpawnerLabel);
             this.tabSpawner.Location = new System.Drawing.Point(4, 22);
             this.tabSpawner.Name = "tabSpawner";
-            this.tabSpawner.Size = new System.Drawing.Size(1444, 782);
+            this.tabSpawner.Size = new System.Drawing.Size(957, 727);
             this.tabSpawner.TabIndex = 2;
             this.tabSpawner.Text = "Spawner";
             this.tabSpawner.UseVisualStyleBackColor = true;
@@ -1221,7 +1242,7 @@
             this.tabInspector.Controls.Add(this.txtInspectorAddress);
             this.tabInspector.Location = new System.Drawing.Point(4, 22);
             this.tabInspector.Name = "tabInspector";
-            this.tabInspector.Size = new System.Drawing.Size(1444, 782);
+            this.tabInspector.Size = new System.Drawing.Size(957, 727);
             this.tabInspector.TabIndex = 5;
             this.tabInspector.Text = "Inspector";
             this.tabInspector.UseVisualStyleBackColor = true;
@@ -1286,7 +1307,7 @@
             this.dgvInspector.Location = new System.Drawing.Point(92, 126);
             this.dgvInspector.Name = "dgvInspector";
             this.dgvInspector.RowHeadersVisible = false;
-            this.dgvInspector.Size = new System.Drawing.Size(1349, 653);
+            this.dgvInspector.Size = new System.Drawing.Size(862, 598);
             this.dgvInspector.TabIndex = 22;
             this.dgvInspector.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvInspector_CellClick);
             this.dgvInspector.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvInspector_CellDoubleClick);
@@ -1374,7 +1395,7 @@
             this.tabGameLog.Controls.Add(this.tabGameLogTabs);
             this.tabGameLog.Location = new System.Drawing.Point(4, 22);
             this.tabGameLog.Name = "tabGameLog";
-            this.tabGameLog.Size = new System.Drawing.Size(1444, 782);
+            this.tabGameLog.Size = new System.Drawing.Size(957, 727);
             this.tabGameLog.TabIndex = 3;
             this.tabGameLog.Text = "GameLog";
             this.tabGameLog.UseVisualStyleBackColor = true;
@@ -1389,7 +1410,7 @@
             this.tabGameLogTabs.Location = new System.Drawing.Point(3, 3);
             this.tabGameLogTabs.Name = "tabGameLogTabs";
             this.tabGameLogTabs.SelectedIndex = 0;
-            this.tabGameLogTabs.Size = new System.Drawing.Size(1116, 776);
+            this.tabGameLogTabs.Size = new System.Drawing.Size(951, 721);
             this.tabGameLogTabs.TabIndex = 0;
             // 
             // tabGameLogLogLevels
@@ -1407,7 +1428,7 @@
             this.tabGameLogLogLevels.Location = new System.Drawing.Point(4, 22);
             this.tabGameLogLogLevels.Name = "tabGameLogLogLevels";
             this.tabGameLogLogLevels.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGameLogLogLevels.Size = new System.Drawing.Size(1108, 750);
+            this.tabGameLogLogLevels.Size = new System.Drawing.Size(943, 695);
             this.tabGameLogLogLevels.TabIndex = 0;
             this.tabGameLogLogLevels.Text = "LogLevels";
             this.tabGameLogLogLevels.UseVisualStyleBackColor = true;
@@ -1450,7 +1471,7 @@
             this.dgvLogLevels.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvLogLevels.Location = new System.Drawing.Point(6, 90);
             this.dgvLogLevels.Name = "dgvLogLevels";
-            this.dgvLogLevels.Size = new System.Drawing.Size(1096, 657);
+            this.dgvLogLevels.Size = new System.Drawing.Size(931, 602);
             this.dgvLogLevels.TabIndex = 5;
             this.dgvLogLevels.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvLogLevels_CellClick);
             // 
@@ -1501,7 +1522,7 @@
             this.tabGameLogLog.Location = new System.Drawing.Point(4, 22);
             this.tabGameLogLog.Name = "tabGameLogLog";
             this.tabGameLogLog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGameLogLog.Size = new System.Drawing.Size(1108, 750);
+            this.tabGameLogLog.Size = new System.Drawing.Size(943, 695);
             this.tabGameLogLog.TabIndex = 1;
             this.tabGameLogLog.Text = "Log";
             this.tabGameLogLog.UseVisualStyleBackColor = true;
@@ -1509,7 +1530,7 @@
             // btnGameLogClear
             // 
             this.btnGameLogClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGameLogClear.Location = new System.Drawing.Point(1027, 721);
+            this.btnGameLogClear.Location = new System.Drawing.Point(862, 666);
             this.btnGameLogClear.Name = "btnGameLogClear";
             this.btnGameLogClear.Size = new System.Drawing.Size(75, 23);
             this.btnGameLogClear.TabIndex = 1;
@@ -1524,7 +1545,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.rtbGameLog.Location = new System.Drawing.Point(3, 6);
             this.rtbGameLog.Name = "rtbGameLog";
-            this.rtbGameLog.Size = new System.Drawing.Size(1099, 709);
+            this.rtbGameLog.Size = new System.Drawing.Size(934, 654);
             this.rtbGameLog.TabIndex = 0;
             this.rtbGameLog.Text = "";
             // 
@@ -1533,15 +1554,15 @@
             this.txtOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOutput.Enabled = false;
-            this.txtOutput.Location = new System.Drawing.Point(12, 855);
+            this.txtOutput.Location = new System.Drawing.Point(12, 800);
             this.txtOutput.Name = "txtOutput";
-            this.txtOutput.Size = new System.Drawing.Size(1452, 20);
+            this.txtOutput.Size = new System.Drawing.Size(965, 20);
             this.txtOutput.TabIndex = 4;
             // 
             // btnDiscord
             // 
             this.btnDiscord.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDiscord.Location = new System.Drawing.Point(1385, 12);
+            this.btnDiscord.Location = new System.Drawing.Point(898, 12);
             this.btnDiscord.Name = "btnDiscord";
             this.btnDiscord.Size = new System.Drawing.Size(75, 23);
             this.btnDiscord.TabIndex = 5;
@@ -1551,62 +1572,43 @@
             // 
             // btnTest
             // 
-            this.btnTest.Location = new System.Drawing.Point(474, 12);
+            this.btnTest.Location = new System.Drawing.Point(233, 12);
             this.btnTest.Name = "btnTest";
             this.btnTest.Size = new System.Drawing.Size(75, 23);
             this.btnTest.TabIndex = 6;
             this.btnTest.Text = "Test";
             this.btnTest.UseVisualStyleBackColor = true;
+            this.btnTest.Visible = false;
             this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
             // 
             // btnTest2
             // 
-            this.btnTest2.Location = new System.Drawing.Point(555, 12);
+            this.btnTest2.Location = new System.Drawing.Point(314, 12);
             this.btnTest2.Name = "btnTest2";
             this.btnTest2.Size = new System.Drawing.Size(75, 23);
             this.btnTest2.TabIndex = 7;
             this.btnTest2.Text = "Test 2";
             this.btnTest2.UseVisualStyleBackColor = true;
+            this.btnTest2.Visible = false;
             this.btnTest2.Click += new System.EventHandler(this.btnTest2_Click);
-            // 
-            // btnWarpToWaypoint
-            // 
-            this.btnWarpToWaypoint.Location = new System.Drawing.Point(636, 12);
-            this.btnWarpToWaypoint.Name = "btnWarpToWaypoint";
-            this.btnWarpToWaypoint.Size = new System.Drawing.Size(75, 23);
-            this.btnWarpToWaypoint.TabIndex = 8;
-            this.btnWarpToWaypoint.Text = "Warp to WP";
-            this.btnWarpToWaypoint.UseVisualStyleBackColor = true;
-            this.btnWarpToWaypoint.Click += new System.EventHandler(this.btnWarpToWaypoint_Click);
             // 
             // lblItemListStatus
             // 
             this.lblItemListStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblItemListStatus.AutoSize = true;
-            this.lblItemListStatus.Location = new System.Drawing.Point(1218, 17);
+            this.lblItemListStatus.Location = new System.Drawing.Point(731, 17);
             this.lblItemListStatus.Name = "lblItemListStatus";
             this.lblItemListStatus.Size = new System.Drawing.Size(83, 13);
             this.lblItemListStatus.TabIndex = 9;
             this.lblItemListStatus.Text = "lblItemListStatus";
             this.lblItemListStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // btnEnclavesDelete
-            // 
-            this.btnEnclavesDelete.Location = new System.Drawing.Point(200, 4);
-            this.btnEnclavesDelete.Name = "btnEnclavesDelete";
-            this.btnEnclavesDelete.Size = new System.Drawing.Size(75, 23);
-            this.btnEnclavesDelete.TabIndex = 14;
-            this.btnEnclavesDelete.Text = "Delete";
-            this.btnEnclavesDelete.UseVisualStyleBackColor = true;
-            this.btnEnclavesDelete.Click += new System.EventHandler(this.btnEnclavesDelete_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1476, 887);
+            this.ClientSize = new System.Drawing.Size(989, 832);
             this.Controls.Add(this.lblItemListStatus);
-            this.Controls.Add(this.btnWarpToWaypoint);
             this.Controls.Add(this.btnTest2);
             this.Controls.Add(this.btnTest);
             this.Controls.Add(this.btnDiscord);
